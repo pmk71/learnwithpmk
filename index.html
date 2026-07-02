@@ -105,6 +105,21 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
 /* ── GUIDE CARDS ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
 
+.section-intro{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin-bottom:22px;padding:18px 20px;border:1px solid rgba(88,166,255,.18);
+  border-radius:16px;background:linear-gradient(135deg,rgba(88,166,255,.12),rgba(63,185,80,.07));
+}
+.section-intro .intro-copy h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px}
+.section-intro .intro-copy p{font-size:13.5px;color:var(--text2);line-height:1.65;max-width:620px}
+.intro-pill{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;
+  margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent);background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.2)
+}
+.intro-points{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.intro-chip{font-size:11px;padding:6px 10px;border-radius:999px;background:rgba(13,17,23,.65);color:var(--text3);border:1px solid rgba(255,255,255,.08)}
+
 .card{
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
   padding:28px;text-decoration:none;color:inherit;
@@ -135,6 +150,26 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
 .card:hover .card-cta .arrow{transform:translateX(4px)}
 .card-accent-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent4));opacity:0;transition:opacity .2s}
 .card:hover .card-accent-bar{opacity:1}
+
+/* featured card */
+.card.featured{
+  background:linear-gradient(135deg,rgba(88,166,255,.14),rgba(63,185,80,.08));
+  border-color:rgba(88,166,255,.42);
+  box-shadow:0 24px 48px -20px rgba(88,166,255,.22);
+}
+.card.featured::before{opacity:1}
+.card.featured .card-icon{
+  background:linear-gradient(135deg,rgba(88,166,255,.2),rgba(63,185,80,.16));
+  border-color:rgba(88,166,255,.25);
+}
+.card.featured .card-cta{color:var(--accent2)}
+.card.featured .card-accent-bar{opacity:1;height:4px}
+.featured-badge{
+  display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent);background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.2)
+}
+.featured-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block}
 
 /* soon card */
 .card.soon{opacity:.5;border-style:dashed;cursor:default}
@@ -259,12 +294,45 @@ footer{
   <div class="section-head">
     <div class="section-label">
       <h2>📚 Guides</h2>
-      <span class="pill">2 Live · More Coming</span>
+      <span class="pill">3 Live · More Coming</span>
     </div>
     <span class="section-sub">New content added regularly</span>
   </div>
 
+  <div class="section-intro">
+    <div class="intro-copy">
+      <span class="intro-pill">✨ Featured Now</span>
+      <h3>Start with the strongest foundation: Manual Testing</h3>
+      <p>Build confidence in SDLC, test case writing, defect handling, and interview-ready concepts before diving into automation.</p>
+    </div>
+    <div class="intro-points">
+      <span class="intro-chip">Beginner-friendly</span>
+      <span class="intro-chip">Visual notes</span>
+      <span class="intro-chip">Interview Q&amp;As</span>
+    </div>
+  </div>
+
   <div class="grid">
+
+    <a class="card featured" href="./guides/manual-testing-guide.html">
+      <div class="card-accent-bar"></div>
+      <span class="featured-badge">New • Featured</span>
+      <div class="card-icon">🧭</div>
+      <div class="card-meta">
+        <span>9 Topics</span><span class="sep">·</span>
+        <span>SDLC + STLC</span><span class="sep">·</span>
+        <span>Beginner to Mid</span>
+      </div>
+      <h3>Manual Testing — Complete Notes Guide</h3>
+      <p>Structured notes on SDLC models, testing fundamentals, test case design, defect lifecycle, STLC, and interview Q&amp;As — perfect for freshers and aspiring SDETs.</p>
+      <div class="card-tags">
+        <span class="tag">Manual Testing</span>
+        <span class="tag">SDLC</span>
+        <span class="tag">Test Cases</span>
+        <span class="tag">Defect Mgmt</span>
+      </div>
+      <div class="card-cta">Open guide <span class="arrow">→</span></div>
+    </a>
 
     <a class="card" href="./guides/typescript-playwright-guide.html">
       <div class="card-accent-bar"></div>
