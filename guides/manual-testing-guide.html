@@ -49,6 +49,14 @@ h1,h2,h3,h4,h5{font-family:'Poppins',system-ui,sans-serif}
 .tbtn:hover{background:rgba(255,255,255,.32);transform:translateY(-1px)}
 #menu-btn{display:none;font-size:1.2rem;background:none;border:none;color:#fff;cursor:pointer}
 
+details{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:0;margin:0;box-shadow:0 4px 18px rgba(79,63,224,.08)}
+details summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;font-size:.92rem;font-weight:700;color:var(--primary);border-radius:14px}
+details[open] summary{background:var(--grad-soft);color:var(--text)}
+details p, details ul, details ol{padding:0 18px 18px 18px;font-size:.84rem;color:var(--text2);line-height:1.7}
+details ul{padding-left:24px;margin-top:10px}
+details summary::-webkit-details-marker{display:none}
+.detail-badge{background:rgba(79,63,224,.08);color:#4f3fe0;padding:5px 10px;border-radius:999px;font-size:.72rem;font-weight:700}
+
 /* ── SEARCH RESULTS ── */
 #search-results{position:fixed;top:54px;left:50%;transform:translateX(-50%);width:min(540px,92vw);
   background:var(--bg2);border:1px solid var(--border);border-radius:0 0 10px 10px;
@@ -312,8 +320,8 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div id="topbar">
   <button id="menu-btn" onclick="toggleSidebar()">☰</button>
   <div class="brand">
-    <h1>📘 Manual Testing Notes — Pavan RS Complete Guide</h1>
-    <span class="byline">Compiled &amp; Designed by <strong>Prashanth M K</strong></span>
+    <h1>📘 Manual Testing Notes — Interactive Power Guide</h1>
+    <span class="byline">Built for QA engineers who want faster recall, stronger notes, and practical mastery</span>
   </div>
   <input type="text" id="search-input" placeholder="🔍 Search topics..." oninput="doSearch(this.value)" onblur="setTimeout(()=>{document.getElementById('search-results').style.display='none'},200)">
   <button class="tbtn" onclick="toggleTheme()">🌙 Dark</button>
@@ -400,6 +408,59 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <h2>📘 Manual Testing — Complete Notes Guide</h2>
   <p class="hc-sub">A visual, interactive reference covering SDLC models, testing fundamentals, defect management, STLC, and interview Q&amp;A — built for QA engineers who want concepts to actually click.</p>
   <span class="hero-badge"><span class="hb-avatar">PK</span> Compiled &amp; Designed by Prashanth M K</span>
+</div>
+
+<div id="resume-card" class="card" style="margin-bottom:22px">
+  <div class="resume-meta">
+    <div><strong>Resume where you left off:</strong> <span id="resume-title"></span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="done-btn nav-btn" onclick="resumeLast()">Resume</button>
+      <button class="done-btn nav-btn secondary" onclick="resumeNextUnread()">Next unread</button>
+    </div>
+  </div>
+  <div id="resume-hint" style="margin-top:14px;font-size:.87rem;color:var(--text2)"></div>
+</div>
+
+<div id="chapter-nav" class="card" style="margin-bottom:22px">
+  <button class="done-btn nav-btn secondary" onclick="goPrevTopic()">◀ Previous Topic</button>
+  <button class="done-btn nav-btn" onclick="goNextTopic()">Next Topic ▶</button>
+</div>
+
+<div class="section">
+  <h3 class="sec-title">⚡ Power Learning Lab</h3>
+  <div class="card-grid">
+    <details>
+      <summary>📝 Build a strong test case from this real scenario <span class="detail-badge">Try it</span></summary>
+      <p><strong>Scenario:</strong> A login screen has email, password, Remember Me checkbox, and Login button. If invalid credentials are entered, an error message appears.</p>
+      <ul>
+        <li><strong>Test case id:</strong> TC-MAN-001</li>
+        <li><strong>Precondition:</strong> Registered user exists.</li>
+        <li><strong>Steps:</strong> Enter valid email, invalid password, click Login.</li>
+        <li><strong>Expected result:</strong> User sees error “Invalid email or password” and remains on login page.</li>
+        <li><strong>Additional checks:</strong> Remember Me stays unchecked; password field hides input.</li>
+      </ul>
+      <p class="callout cs">This anchored example helps you turn every requirement into a test case quickly. Replay it in your mind every time you design test cases.</p>
+    </details>
+    <details>
+      <summary>🧩 Triage the defect — choose severity and priority <span class="detail-badge">Practice</span></summary>
+      <p>Click each item below to mark it as reviewed, then compare with the answer pattern in your notes.</p>
+      <ul class="chklist">
+        <li onclick="toggleCheck(this)">Login button disappears after typing password — Severity?</li>
+        <li onclick="toggleCheck(this)">Application crashes on payment checkout — Severity?</li>
+        <li onclick="toggleCheck(this)">Minor spelling mistake in the help text — Severity?</li>
+      </ul>
+      <p class="callout ci">Tip: use <strong>blocker</strong> only for production-breaking issues, <strong>major</strong> for core function failures, and <strong>minor</strong> for low-impact cosmetic issues.</p>
+    </details>
+    <details>
+      <summary>📚 Senior tester memory boost — quick concept flashcards <span class="detail-badge">Review</span></summary>
+      <p>Open this section to see the strongest one-liners for interviews and quick revision.</p>
+      <ul>
+        <li><strong>SDLC:</strong> Builds the product, SDLC defines 8 phases from requirement to maintenance.</li>
+        <li><strong>V&V:</strong> Verification is static, Validation is dynamic — both are must-do.</li>
+        <li><strong>Mute phase:</strong> Development is called mute because testers do not actively test during coding.</li>
+      </ul>
+    </details>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -4320,13 +4381,16 @@ const topics = [
 ];
 
 // ── STATE ──────────────────────────────────────────────────────
+const topicOrder = topics.map(t => t.id);
 let current = 'ch1';
 let read = JSON.parse(localStorage.getItem('notes_read') || '[]');
-const total = 9; // counting major topic groups
+const total = topicOrder.length;
 
 // ── INIT ──────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   updateProgress();
+  const savedLast = localStorage.getItem('notes_last_chapter');
+  if (savedLast && document.getElementById(savedLast)) showResume(savedLast);
   window.addEventListener('scroll', () => {
     const bt = document.getElementById('back-top');
     bt.style.display = window.scrollY > 400 ? 'flex' : 'none';
@@ -4337,12 +4401,52 @@ window.addEventListener('DOMContentLoaded', () => {
 function goChap(id, el) {
   document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
   const ch = document.getElementById(id);
-  if (ch) { ch.classList.add('active'); current = id; }
+  if (ch) { ch.classList.add('active'); current = id; localStorage.setItem('notes_last_chapter', id); }
   window.scrollTo({top:0, behavior:'smooth'});
   if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
   // close all nav subs
   document.querySelectorAll('.nav-sub').forEach(s => s.classList.remove('open'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('open'); });
+}
+
+function showResume(id) {
+  const title = topics.find(t => t.id === id)?.title || 'your last topic';
+  const card = document.getElementById('resume-card');
+  const titleEl = document.getElementById('resume-title');
+  const hint = document.getElementById('resume-hint');
+  if (card && titleEl && hint) {
+    titleEl.textContent = title;
+    const nextUnread = getNextUnread();
+    if (!nextUnread) {
+      hint.textContent = 'All topics completed — great work!';
+    } else if (nextUnread !== id) {
+      const nextTitle = topics.find(t => t.id === nextUnread)?.title || 'next unread topic';
+      hint.textContent = 'Next unread topic: ' + nextTitle + '.';
+    } else {
+      hint.textContent = 'Resume this topic or continue to the next unread item.';
+    }
+    card.style.display = 'block';
+  }
+}
+
+function resumeLast() {
+  const last = localStorage.getItem('notes_last_chapter');
+  if (last) goChap(last, null);
+}
+
+function resumeNextUnread() {
+  const next = getNextUnread();
+  if (next) goChap(next, null);
+}
+
+function goNextTopic() {
+  const idx = topicOrder.indexOf(current);
+  if (idx < topicOrder.length - 1) goChap(topicOrder[idx + 1], null);
+}
+
+function goPrevTopic() {
+  const idx = topicOrder.indexOf(current);
+  if (idx > 0) goChap(topicOrder[idx - 1], null);
 }
 
 function toggleNav(subId, btn) {
@@ -4394,18 +4498,25 @@ function markRead(id) {
   }
   updateProgress();
   // Auto-navigate to next topic
-  const order = ['ch1','ch2a','ch2b','ch2c','ch2d','ch2e','ch3a','ch3b','ch3c','ch3d',
-    'ch4a','ch4b','ch4c','ch4d','ch4e','ch4f','ch4g','ch4h',
-    'ch5a','ch5b','ch5c','ch5d','ch6a','ch6b','ch6c','ch6d',
-    'ch7a','ch7b','ch7c','ch8','ch9'];
-  const idx = order.indexOf(id);
-  if (idx < order.length - 1) goChap(order[idx + 1], null);
+  const idx = topicOrder.indexOf(id);
+  if (idx < topicOrder.length - 1) goChap(topicOrder[idx + 1], null);
 }
 
 function updateProgress() {
-  const pct = Math.round((read.length / 31) * 100); // 31 total sub-topics
+  const pct = Math.round((read.length / total) * 100);
   document.getElementById('prog-bar').style.width = pct + '%';
-  document.getElementById('prog-label').textContent = read.length + ' / 31 topics read (' + pct + '%)';
+  document.getElementById('prog-label').textContent = read.length + ' / ' + total + ' topics read (' + pct + '%)';
+}
+
+function getNextUnread() {
+  const last = localStorage.getItem('notes_last_chapter');
+  const start = topicOrder.indexOf(last);
+  if (start >= 0) {
+    for (let i = start + 1; i < topicOrder.length; i++) {
+      if (!read.includes(topicOrder[i])) return topicOrder[i];
+    }
+  }
+  return topicOrder.find(id => !read.includes(id)) || null;
 }
 
 // ── CHECKLIST ─────────────────────────────────────────────────
