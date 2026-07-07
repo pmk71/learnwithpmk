@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network Interception in Playwright — SDET Study Guide</title>
+  <meta name="description" content="A professional, interview-focused study guide on Playwright network interception from basic to advanced." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --bg-soft: #101a2b;
+      --panel: rgba(16, 26, 43, 0.9);
+      --panel-2: #16233a;
+      --text: #eaf2ff;
+      --muted: #93a4bf;
+      --border: rgba(255,255,255,0.1);
+      --accent: #6ea8fe;
+      --accent-2: #4fd1c5;
+      --accent-3: #f59e0b;
+      --accent-4: #c084fc;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --shadow: 0 20px 45px rgba(0,0,0,0.25);
+      --radius: 18px;
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --bg-soft: #ffffff;
+      --panel: #ffffff;
+      --panel-2: #f3f7ff;
+      --text: #14213d;
+      --muted: #5b6881;
+      --border: rgba(20, 33, 61, 0.1);
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --accent-3: #b45309;
+      --accent-4: #7c3aed;
+      --good: #047857;
+      --warn: #b45309;
+      --danger: #dc2626;
+      --shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(140deg, var(--bg) 0%, var(--bg-soft) 100%);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+
+    .skip-link {
+      position: absolute; left: 16px; top: -80px; z-index: 1000;
+      background: var(--accent); color: white; padding: 10px 14px; border-radius: 10px;
+      text-decoration: none; font-weight: 700;
+    }
+    .skip-link:focus { top: 16px; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 200;
+      backdrop-filter: blur(16px);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1400px; margin: 0 auto; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+    .brand-badge {
+      width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+      color: white; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-4));
+      box-shadow: var(--shadow);
+    }
+    .toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .toolbar input {
+      min-width: 260px; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--panel); color: var(--text); outline: none;
+    }
+    .btn {
+      border: 1px solid var(--border); background: var(--panel); color: var(--text);
+      padding: 9px 12px; border-radius: 999px; cursor: pointer; font-weight: 600;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-4)); color: white; border: none; }
+
+    .layout {
+      max-width: 1400px; margin: 0 auto; padding: 24px 18px 60px; display: grid;
+      grid-template-columns: 280px 1fr; gap: 24px; align-items: start;
+    }
+
+    .sidebar {
+      position: sticky; top: 88px; padding: 16px; border-radius: var(--radius);
+      background: var(--panel); border: 1px solid var(--border); box-shadow: var(--shadow);
+    }
+    .sidebar h3 { margin: 0 0 10px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); }
+    .nav-list { display: grid; gap: 6px; }
+    .nav-list a {
+      text-decoration: none; padding: 10px 12px; border-radius: 10px; color: var(--muted); font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .nav-list a:hover, .nav-list a.active {
+      background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--text);
+    }
+    .sidebar .tip {
+      margin-top: 16px; padding: 12px; border-radius: 12px; background: color-mix(in srgb, var(--accent-2) 12%, transparent); color: var(--muted);
+      font-size: 0.92rem; border: 1px solid color-mix(in srgb, var(--accent-2) 20%, transparent);
+    }
+
+    .content { display: grid; gap: 18px; }
+    .hero {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent-4) 18%, transparent));
+      border: 1px solid var(--border); border-radius: 26px; padding: 26px; box-shadow: var(--shadow);
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; inset: auto -8% -22% auto; width: 280px; height: 280px; border-radius: 50%;
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent-2) 30%, transparent), transparent 70%);
+      pointer-events: none;
+    }
+    .hero h1 { margin: 0 0 10px; font-size: clamp(1.8rem, 2.7vw, 2.8rem); font-family: 'Sora', sans-serif; }
+    .hero p { margin: 0; color: var(--muted); max-width: 760px; }
+    .hero .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip { padding: 7px 10px; border-radius: 999px; background: var(--panel); border: 1px solid var(--border); font-size: 0.9rem; font-weight: 600; }
+    .overview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .overview-grid .card h4 { display: flex; align-items: center; gap: 8px; }
+    .check-list { display: grid; gap: 8px; padding-left: 18px; margin: 0; }
+    .check-list li { list-style: none; position: relative; padding-left: 8px; }
+    .check-list li::before { content: '✓'; color: var(--good); font-weight: 800; margin-right: 8px; }
+
+    .chapter-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .chapter-card summary {
+      list-style: none; cursor: pointer; padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      font-size: 1.1rem; font-weight: 800; letter-spacing: 0.01em;
+    }
+    .chapter-card summary::-webkit-details-marker { display: none; }
+    .chapter-card summary .tag-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .chapter-card summary .pill {
+      font-size: 0.78rem; font-weight: 700; padding: 5px 10px; border-radius: 999px; text-transform: uppercase;
+      letter-spacing: 0.08em; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent);
+    }
+    .chapter-body { padding: 0 22px 22px; display: grid; gap: 16px; }
+    .lead { color: var(--muted); font-size: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+    .card h4, .card h5 { margin: 0 0 8px; font-size: 1rem; }
+    .card p, .card li { color: var(--muted); }
+    .alert { padding: 12px 14px; border-radius: 12px; border: 1px solid; }
+    .alert.good { background: color-mix(in srgb, var(--good) 12%, transparent); border-color: color-mix(in srgb, var(--good) 30%, transparent); }
+    .alert.warn { background: color-mix(in srgb, var(--warn) 12%, transparent); border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
+    .alert.danger { background: color-mix(in srgb, var(--danger) 12%, transparent); border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
+    .diagram {
+      display: grid; gap: 10px; padding: 14px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), color-mix(in srgb, var(--accent-4) 8%, transparent)); border-radius: 18px; border: 1px solid var(--border);
+    }
+    .box { padding: 12px 14px; border-radius: 12px; background: var(--panel); border: 1px solid var(--border); text-align: center; font-weight: 700; }
+    .arrow { text-align: center; font-size: 1.2rem; color: var(--accent); }
+    .flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: center; }
+    .flow .box { min-height: 74px; display: grid; place-items: center; }
+
+    .code-wrap { position: relative; } 
+    pre {
+      margin: 0; padding: 14px 16px; border-radius: 14px; overflow-x: auto; background: #0b1220; color: #e2e8f0; border: 1px solid var(--border);
+    }
+    .copy-btn {
+      position: absolute; right: 10px; top: 10px; border: none; background: rgba(255,255,255,0.14); color: white; padding: 7px 10px; border-radius: 999px; cursor: pointer; font-size: 0.82rem; font-weight: 700;
+    }
+    .token.keyword { color: #7dd3fc; }
+    .token.string { color: #86efac; }
+    .token.comment { color: #94a3b8; }
+    .token.function { color: #f9a8d4; }
+    .token.number { color: #fcd34d; }
+    .token.boolean { color: #fda4af; }
+
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px; }
+    th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--text); }
+    td { color: var(--muted); }
+
+    .mini-list { display: grid; gap: 8px; padding-left: 18px; }
+    .mini-list li{ margin: 0; }
+    .qa-grid { display: grid; gap: 8px; }
+    .qa-item { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-soft); }
+    .qa-item strong { color: var(--text); }
+
+    .footer {
+      text-align: center; padding: 28px 16px 10px; color: var(--muted); font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .topbar-inner { flex-direction: column; align-items: stretch; }
+      .toolbar { width: 100%; }
+      .toolbar input { min-width: 0; width: 100%; }
+      summary { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media print {
+      body { background: white; color: #111; }
+      .topbar, .sidebar, .copy-btn, .btn, .toolbar { display: none !important; }
+      .layout { display: block; max-width: none; padding: 0; }
+      .content { gap: 12px; }
+      .hero, .chapter-card { box-shadow: none; break-inside: avoid-page; }
+      .card, .alert, pre { background: white !important; color: #111 !important; }
+      a { color: #111 !important; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#" class="brand">
+        <span class="brand-badge">NI</span>
+        <span>Playwright Network Interception — SDET Study Guide</span>
+      </a>
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Search chapters, terms, APIs..." aria-label="Search study guide" />
+        <button class="btn" id="themeToggle" aria-label="Toggle theme">🌙/☀️</button>
+        <button class="btn" id="printBtn" aria-label="Print guide">🖨️ Print</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout" id="main">
+    <aside class="sidebar" aria-label="Chapter navigation">
+      <h3>Contents</h3>
+      <div class="nav-list">
+        <a href="#chap1">1. What is Network Interception?</a>
+        <a href="#chap2">2. Why Network Interception?</a>
+        <a href="#chap3">3. How It Works</a>
+        <a href="#chap4">4. page.route()</a>
+        <a href="#chap5">5. route.continue()</a>
+        <a href="#chap6">6. route.abort()</a>
+        <a href="#chap7">7. route.fulfill()</a>
+        <a href="#chap8">8. route.fetch()</a>
+        <a href="#chap9">9. Mocking APIs</a>
+        <a href="#chap10">10. Request Manipulation</a>
+        <a href="#chap11">11. Response Manipulation</a>
+        <a href="#chap12">12. Failure Simulation</a>
+        <a href="#chap13">13. Performance Optimization</a>
+        <a href="#chap14">14. Debugging</a>
+        <a href="#chap15">15. Advanced Patterns</a>
+        <a href="#chap16">16. Interview Questions</a>
+        <a href="#chap17">17. Coding Programs</a>
+        <a href="#chap18">18. Common Mistakes</a>
+        <a href="#chap19">19. Comparison</a>
+        <a href="#chap20">20. Cheat Sheet</a>
+      </div>
+      <div class="tip">
+        <strong>Interview tip:</strong> Always explain interception in terms of “intercepting the request before it reaches the server or before the browser consumes the response.”
+      </div>
+    </aside>
+
+    <section class="content">
+      <section class="hero">
+        <h1>Network Interception in Playwright — From Basic to Advanced</h1>
+        <p>This guide is designed for SDET interview preparation and real-world automation work. It explains interception concepts in simple language, gives practical examples, and includes interview-ready notes, coding patterns, and mistakes to avoid.</p>
+        <div class="chips">
+          <span class="chip">🧠 Beginner Friendly</span>
+          <span class="chip">🧪 Real Examples</span>
+          <span class="chip">💬 Interview Ready</span>
+          <span class="chip">⚡ Performance Focused</span>
+        </div>
+        <div class="overview-grid" style="margin-top: 16px;">
+          <div class="card">
+            <h4>📚 Coverage</h4>
+            <p>20 chapters, 50+ interview questions, 30 coding prompts, and PDF-friendly formatting.</p>
+          </div>
+          <div class="card">
+            <h4>🎯 Goal</h4>
+            <p>Prepare for real interview conversations and day-to-day Playwright automation challenges.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-card">
+        <div class="chapter-body">
+          <div class="overview-grid">
+            <div class="card">
+              <h4>✅ Coverage checklist</h4>
+              <ul class="check-list">
+                <li>Basic to advanced interception concepts</li>
+                <li>page.route(), continue(), abort(), fulfill(), and fetch()</li>
+                <li>Mocking APIs, request manipulation, and response manipulation</li>
+                <li>Failure simulation, performance optimization, and debugging</li>
+                <li>50 interview questions and 30 coding-style examples</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>🧠 Memory tricks</h4>
+              <ul class="check-list">
+                <li>Continue = let it pass</li>
+                <li>Abort = block it</li>
+                <li>Fulfill = fake the response</li>
+                <li>Fetch = forward and inspect</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>💬 Interview tips</h4>
+              <ul class="check-list">
+                <li>Always explain the request lifecycle clearly</li>
+                <li>Mention when to use mock vs real backend</li>
+                <li>Show awareness of performance and stability trade-offs</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>🛠️ Real project scenarios</h4>
+              <ul class="check-list">
+                <li>Login flow with unstable backend</li>
+                <li>Dashboard with slow analytics APIs</li>
+                <li>HR portal with candidate and employee data</li>
+                <li>E-commerce product page with flaky APIs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <details class="chapter-card" id="chap1" open>
+        <summary>
+          <span>Chapter 1 — What is Network Interception?</span>
+          <span class="tag-row"><span class="pill">Foundation</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Network interception means observing, modifying, blocking, or mocking a network call between the browser and server. In Playwright, it is a powerful way to control requests and responses during test execution.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>What is it?</h4>
+              <ul class="mini-list">
+                <li>Intercept a browser request before it reaches the server.</li>
+                <li>Inspect the request payload, headers, method, cookies, and URL.</li>
+                <li>Modify or mock the response before the browser uses it.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Why Playwright introduced it</h4>
+              <ul class="mini-list">
+                <li>To test frontend behavior without depending fully on backend APIs.</li>
+                <li>To make automation stable and fast.</li>
+                <li>To simulate failures and edge cases.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>Browser request vs API request</h4>
+            <table>
+              <tr><th>Aspect</th><th>Browser Request</th><th>API Request</th></tr>
+              <tr><td>Context</td><td>Triggered by page load, scripts, assets, XHR/fetch</td><td>Direct HTTP call usually made by test client or backend</td></tr>
+              <tr><td>Visibility</td><td>Visible to Playwright interception</td><td>Visible via request libraries or test framework</td></tr>
+              <tr><td>Use in UI tests</td><td>Very common</td><td>Common in API layer tests</td></tr>
+            </table>
+          </div>
+
+          <div class="diagram">
+            <div class="box">Browser</div>
+            <div class="arrow">↓</div>
+            <div class="box">Request</div>
+            <div class="arrow">↓</div>
+            <div class="box">Playwright Route Handler</div>
+            <div class="arrow">↓</div>
+            <div class="box">Continue / Modify / Abort / Fulfill</div>
+            <div class="arrow">↓</div>
+            <div class="box">Server / Mock Response</div>
+            <div class="arrow">↓</div>
+            <div class="box">Browser UI</div>
+          </div>
+
+          <div class="card">
+            <h4>Request lifecycle</h4>
+            <ol class="mini-list">
+              <li>Browser creates a request.</li>
+              <li>Playwright route handler sees it.</li>
+              <li>Route can continue, modify, abort, or fulfill.</li>
+              <li>Server receives the request or gets mocked data.</li>
+              <li>Response goes back to the browser.</li>
+            </ol>
+          </div>
+
+          <div class="card">
+            <h4>Response lifecycle</h4>
+            <ol class="mini-list">
+              <li>Response is generated by the server or mocked by Playwright.</li>
+              <li>Status, headers, and body are prepared.</li>
+              <li>Browser parses the response.</li>
+              <li>UI updates or test assertions run.</li>
+            </ol>
+          </div>
+
+          <div class="alert good">
+            <strong>Real project example:</strong> In an e-commerce app, you intercept product API calls and return a stable mock payload so UI tests do not fail when the backend is slow.
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>What is network interception in Playwright?</p>
+            <h4>Best practice</h4>
+            <p>Start with the smallest possible route and make sure it is scoped to the test.</p>
+            <h4>Common mistake</h4>
+            <p>Overusing global routes and affecting unrelated tests.</p>
+            <h4>When to use</h4>
+            <p>When you need deterministic UI tests or isolated failures.</p>
+            <h4>When not to use</h4>
+            <p>When you truly need to verify the live backend behavior.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap2">
+        <summary>
+          <span>Chapter 2 — Why Network Interception?</span>
+          <span class="tag-row"><span class="pill">Use Cases</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">QA engineers use network interception to make tests faster, more stable, more secure, and less dependent on backend systems.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Common reasons</h4>
+              <ul class="mini-list">
+                <li>Mock APIs</li>
+                <li>Avoid backend dependency</li>
+                <li>Faster execution</li>
+                <li>Stable automation</li>
+                <li>Error simulation</li>
+                <li>Performance testing</li>
+                <li>Offline testing</li>
+                <li>Security validation</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Advantages</h4>
+              <ul class="mini-list">
+                <li>Fewer flaky tests</li>
+                <li>Faster feedback loops</li>
+                <li>Better control over edge cases</li>
+                <li>Easy to test UI states</li>
+              </ul>
+            </div>
+          </div>
+          <div class="alert warn">
+            <strong>Disadvantages:</strong> If you over-mock, you may test the mock instead of the real integration. Use it as a complement to API tests, not a replacement for everything.
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>Why do QA engineers use network interception?</p>
+            <h4>Best practice</h4>
+            <p>Mock only the dependency you want to isolate and keep the rest real.</p>
+            <h4>Common mistake</h4>
+            <p>Mocking too much and losing confidence in end-to-end behavior.</p>
+            <h4>When to use</h4>
+            <p>When UI tests need deterministic data or backend is unstable.</p>
+            <h4>When not to use</h4>
+            <p>When verifying real contract behavior or live data integrations.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap3">
+        <summary>
+          <span>Chapter 3 — How Network Interception Works</span>
+          <span class="tag-row"><span class="pill">Internals</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Playwright exposes request interception through a route handler that sits in the middle of the request-response chain.</p>
+          <div class="diagram">
+            <div class="flow">
+              <div class="box">Browser</div>
+              <div class="arrow">↓</div>
+              <div class="box">Request</div>
+              <div class="arrow">↓</div>
+              <div class="box">Playwright Route</div>
+            </div>
+            <div class="flow">
+              <div class="box">Continue</div>
+              <div class="box">Modify</div>
+              <div class="box">Abort</div>
+              <div class="box">Mock</div>
+              <div class="box">Fulfill</div>
+            </div>
+            <div class="flow">
+              <div class="box">Server</div>
+              <div class="arrow">↓</div>
+              <div class="box">Response</div>
+              <div class="arrow">↓</div>
+              <div class="box">Browser</div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Key idea</h4>
+            <p>Your route handler decides whether the request should pass through, be altered, or be replaced entirely.</p>
+          </div>
+          <div class="alert good">
+            <strong>Memory trick:</strong> Think of Playwright as a traffic police officer that can “allow”, “redirect”, “block”, or “fake” the traffic.
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How does Playwright route interception work internally?</p>
+            <h4>Best practice</h4>
+            <p>Use clear route conditions so you know exactly which request is intercepted.</p>
+            <h4>Common mistake</h4>
+            <p>Missing a route with a broad pattern that catches too many calls.</p>
+            <h4>When to use</h4>
+            <p>When you need full control over the network layer.</p>
+            <h4>When not to use</h4>
+            <p>When you want to observe actual network behavior without altering it.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap4">
+        <summary>
+          <span>Chapter 4 — page.route()</span>
+          <span class="tag-row"><span class="pill">Core API</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">page.route() registers a handler for matching requests. It is the starting point for most interception scenarios.</p>
+          <div class="card">
+            <h4>Syntax</h4>
+            <div class="code-wrap">
+              <button class="copy-btn" data-copy="await page.route('**/*', async route => {\n  // handle the request\n});">Copy</button>
+              <pre><code>await page.route(<span class="token string">'**/*'</span>, async route =&gt; {
+  <span class="token comment">// handle the request</span>
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Common parameters</h4>
+            <ul class="mini-list">
+              <li><strong>url</strong>: URL pattern or glob/regex.</li>
+              <li><strong>handler</strong>: callback receiving route and request.</li>
+              <li><strong>options</strong>: optional context such as times or method filters.</li>
+            </ul>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Route all requests</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*', async route => {\n  console.log(route.request().url());\n  await route.continue();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token function">console</span>.log(route.request().url());
+  <span class="token keyword">await</span> route.continue();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Route CSS</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.css', async route => {\n  await route.fulfill({\n    body: 'body { background: #111; }',\n    contentType: 'text/css'\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.css'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    body: <span class="token string">'body { background: #111; }'</span>,
+    contentType: <span class="token string">'text/css'</span>
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Route images</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.{png,jpg,jpeg}', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{png,jpg,jpeg}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Route JS</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.js', async route => {\n  await route.fulfill({\n    body: 'console.log("Mocked JS")',\n    contentType: 'application/javascript'\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.js'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    body: <span class="token string">'console.log("Mocked JS")'</span>,
+    contentType: <span class="token string">'application/javascript'</span>
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Route fonts</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.{woff,woff2}', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{woff,woff2}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Route API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('https://api.example.com/users', async route => {\n  await route.fulfill({\n    status: 200,\n    contentType: 'application/json',\n    body: JSON.stringify({ users: [] })\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'https://api.example.com/users'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">200</span>,
+    contentType: <span class="token string">'application/json'</span>,
+    body: <span class="token function">JSON</span>.stringify({ users: [] })
+  });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Regex and wildcards</h4>
+            <div class="code-wrap">
+              <button class="copy-btn" data-copy="await page.route(/\/api\/v\d+\/users/, async route => {\n  await route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) });\n});\n\nawait page.route('**/login*', async route => {\n  await route.continue();\n});">Copy</button>
+              <pre><code><span class="token keyword">await</span> page.route(<span class="token regex">/\/api\/v\d+\/users/</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, body: <span class="token function">JSON</span>.stringify({ ok: <span class="token boolean">true</span> }) });
+});
+
+<span class="token keyword">await</span> page.route(<span class="token string">'**/login*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue();
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>What is the purpose of page.route()?</p>
+            <h4>Best practice</h4>
+            <p>Use specific patterns to avoid intercepting everything.</p>
+            <h4>Common mistake</h4>
+            <p>Using broad patterns that intercept unrelated requests.</p>
+            <h4>When to use</h4>
+            <p>When you need to intercept a known URL pattern.</p>
+            <h4>When not to use</h4>
+            <p>When the request is not deterministic or too broad.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap5">
+        <summary>
+          <span>Chapter 5 — route.continue()</span>
+          <span class="tag-row"><span class="pill">Pass Through</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">route.continue() passes the request forward. It is useful when you want to inspect or alter the request before it reaches the network.</p>
+          <div class="card">
+            <h4>How it works</h4>
+            <ul class="mini-list">
+              <li>It allows the request to continue to the server.</li>
+              <li>You can modify headers, URL, method, body, cookies, token, and query params.</li>
+              <li>You can still log or inspect the request.</li>
+            </ul>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Modify headers</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/**', async route => {\n  const headers = { ...route.request().headers(), 'x-test': 'true' };\n  await route.continue({ headers });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> headers = { ...route.request().headers(), <span class="token string">'x-test'</span>: <span class="token string">'true'</span> };
+  <span class="token keyword">await</span> route.continue({ headers });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify URL</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/users', async route => {\n  await route.continue({ url: 'https://api.example.com/api/v2/users' });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/users'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue({ url: <span class="token string">'https://api.example.com/api/v2/users'</span> });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify method</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/create', async route => {\n  await route.continue({ method: 'POST' });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/create'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue({ method: <span class="token string">'POST'</span> });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify POST body</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/login', async route => {\n  const body = JSON.stringify({ username: 'admin', password: 'secret' });\n  await route.continue({ postData: body });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/login'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> body = <span class="token function">JSON</span>.stringify({ username: <span class="token string">'admin'</span>, password: <span class="token string">'secret'</span> });
+  <span class="token keyword">await</span> route.continue({ postData: body });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify auth token</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/**', async route => {\n  const headers = route.request().headers();\n  headers.authorization = 'Bearer test-token';\n  await route.continue({ headers });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> headers = route.request().headers();
+  headers.authorization = <span class="token string">'Bearer test-token'</span>;
+  <span class="token keyword">await</span> route.continue({ headers });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify query parameters</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/search*', async route => {\n  const url = new URL(route.request().url());\n  url.searchParams.set('q', 'playwright');\n  await route.continue({ url: url.toString() });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/search*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> url = <span class="token keyword">new</span> <span class="token function">URL</span>(route.request().url());
+  url.searchParams.set(<span class="token string">'q'</span>, <span class="token string">'playwright'</span>);
+  <span class="token keyword">await</span> route.continue({ url: url.toString() });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Modify cookies</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/**', async route => {\n  const headers = route.request().headers();\n  headers.cookie = 'session=mocked-session';\n  await route.continue({ headers });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> headers = route.request().headers();
+  headers.cookie = <span class="token string">'session=mocked-session'</span>;
+  <span class="token keyword">await</span> route.continue({ headers });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How is route.continue() different from route.fulfill()?</p>
+            <h4>Best practice</h4>
+            <p>Use continue when you want the request to reach the server but with modifications.</p>
+            <h4>Common mistake</h4>
+            <p>Using a route handler without awaiting continue, which can lead to hanging requests.</p>
+            <h4>When to use</h4>
+            <p>When you need to tweak the request but still preserve real backend behavior.</p>
+            <h4>When not to use</h4>
+            <p>When you want to completely replace the response with a synthetic one.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap6">
+        <summary>
+          <span>Chapter 6 — route.abort()</span>
+          <span class="tag-row"><span class="pill">Block Requests</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">route.abort() stops the request from going further. It is excellent for removing heavy or irrelevant assets that slow down tests.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Abort images</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.{png,jpg,jpeg,webp}', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{png,jpg,jpeg,webp}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Abort CSS / fonts</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.{css,woff,woff2}', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{css,woff,woff2}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Abort analytics / tracking</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*analytics*', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*analytics*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Abort ads</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*ads*', async route => {\n  await route.abort();\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*ads*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Abort videos and API calls</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*.{mp4,webm}', async route => { await route.abort(); });\nawait page.route('**/api/metrics', async route => { await route.abort(); });">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{mp4,webm}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});
+<span class="token keyword">await</span> page.route(<span class="token string">'**/api/metrics'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="alert good">
+            <strong>Performance improvement:</strong> Blocking images and third-party calls can drastically reduce page load time and remove flaky rendering issues.
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>When would you use route.abort()?</p>
+            <h4>Best practice</h4>
+            <p>Abort non-essential third-party resources to keep tests focused and fast.</p>
+            <h4>Common mistake</h4>
+            <p>Blocking critical resources needed for the page to render correctly.</p>
+            <h4>When to use</h4>
+            <p>For performance testing, ad blocking, and isolating feature behavior.</p>
+            <h4>When not to use</h4>
+            <p>When you want to verify a feature that depends on those resources.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap7">
+        <summary>
+          <span>Chapter 7 — route.fulfill()</span>
+          <span class="tag-row"><span class="pill">Mock & Respond</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">route.fulfill() replaces the response with your own. It is the most common technique for mocking API responses and static content.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Mock JSON</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/user', async route => {\n  await route.fulfill({\n    status: 200,\n    contentType: 'application/json',\n    body: JSON.stringify({ name: 'Asha', role: 'SDET' })\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/user'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">200</span>,
+    contentType: <span class="token string">'application/json'</span>,
+    body: <span class="token function">JSON</span>.stringify({ name: <span class="token string">'Asha'</span>, role: <span class="token string">'SDET'</span> })
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Mock HTML</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/page', async route => {\n  await route.fulfill({\n    status: 200,\n    contentType: 'text/html',\n    body: '<h1>Mocked Page</h1>'\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/page'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">200</span>,
+    contentType: <span class="token string">'text/html'</span>,
+    body: <span class="token string">'&lt;h1&gt;Mocked Page&lt;/h1&gt;'</span>
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Mock error response</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/save', async route => {\n  await route.fulfill({\n    status: 500,\n    contentType: 'application/json',\n    body: JSON.stringify({ error: 'server down' })\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/save'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">500</span>,
+    contentType: <span class="token string">'application/json'</span>,
+    body: <span class="token function">JSON</span>.stringify({ error: <span class="token string">'server down'</span> })
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Mock delay</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/slow', async route => {\n  await new Promise(r => setTimeout(r, 1500));\n  await route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/slow'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> <span class="token keyword">new</span> <span class="token function">Promise</span>(r =&gt; <span class="token function">setTimeout</span>(r, <span class="token number">1500</span>));
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, body: <span class="token function">JSON</span>.stringify({ ok: <span class="token boolean">true</span> }) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Mock image, download, and pagination</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/page-2', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [{ id: 2, name: 'Page 2' }] }) });\n});\nawait page.route('**/*.png', async route => { await route.fulfill({ status: 200, contentType: 'image/png', body: '' }); });">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/page-2'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ items: [{ id: <span class="token number">2</span>, name: <span class="token string">'Page 2'</span> }] }) });
+});
+<span class="token keyword">await</span> page.route(<span class="token string">'**/*.png'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'image/png'</span>, body: <span class="token string">''</span> });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>What is the difference between fulfill and continue?</p>
+            <h4>Best practice</h4>
+            <p>Use fulfill for consistent mock data and testing edge cases.</p>
+            <h4>Common mistake</h4>
+            <p>Forgetting to set contentType and returning invalid body format.</p>
+            <h4>When to use</h4>
+            <p>When you want a deterministic response independent of the real service.</p>
+            <h4>When not to use</h4>
+            <p>When you need to verify the actual backend response.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap8">
+        <summary>
+          <span>Chapter 8 — route.fetch()</span>
+          <span class="tag-row"><span class="pill">Proxying</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">route.fetch() lets the request continue to the network but uses the Playwright fetch API under the hood. It is useful when you want to preserve real backend behavior while controlling the flow.</p>
+          <div class="card">
+            <h4>When to use</h4>
+            <ul class="mini-list">
+              <li>To forward requests to a real API with minimal setup.</li>
+              <li>To inspect and transform a request before passing it through.</li>
+              <li>To reuse existing backend endpoints in tests.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Difference</h4>
+            <table>
+              <tr><th>Method</th><th>Behavior</th></tr>
+              <tr><td>continue()</td><td>Passes request to network as-is or with minor modifications.</td></tr>
+              <tr><td>fulfill()</td><td>Returns a mocked response immediately.</td></tr>
+              <tr><td>fetch()</td><td>Forwards to network and returns a response object you can inspect or rewrite.</td></tr>
+            </table>
+          </div>
+          <div class="card">
+            <div class="code-wrap">
+              <button class="copy-btn" data-copy="await page.route('**/api/data', async route => {\n  const response = await route.fetch();\n  console.log(response.status());\n  await route.fulfill({ response });\n});">Copy</button>
+              <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/data'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> response = <span class="token keyword">await</span> route.fetch();
+  <span class="token function">console</span>.log(response.status());
+  <span class="token keyword">await</span> route.fulfill({ response });
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>When would you use route.fetch()?</p>
+            <h4>Best practice</h4>
+            <p>Use fetch when real network behavior matters but you want controlled routing.</p>
+            <h4>Common mistake</h4>
+            <p>Using fulfill when you actually need to preserve the downstream API response.</p>
+            <h4>When to use</h4>
+            <p>For proxy-like behavior and response inspection.</p>
+            <h4>When not to use</h4>
+            <p>When you need a fully synthetic response.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap9">
+        <summary>
+          <span>Chapter 9 — Mocking APIs</span>
+          <span class="tag-row"><span class="pill">Practical Patterns</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Here are complete patterns you can use in real automation frameworks.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Login API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/login', async route => {\n  await route.fulfill({\n    status: 200,\n    contentType: 'application/json',\n    body: JSON.stringify({ token: 'abc123', user: { id: 1, name: 'Asha' } })\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/login'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">200</span>,
+    contentType: <span class="token string">'application/json'</span>,
+    body: <span class="token function">JSON</span>.stringify({ token: <span class="token string">'abc123'</span>, user: { id: <span class="token number">1</span>, name: <span class="token string">'Asha'</span> } })
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Employee API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/employees', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: 1, name: 'Ravi' }]) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/employees'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify([{ id: <span class="token number">1</span>, name: <span class="token string">'Ravi'</span> }]) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Candidate API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/candidates', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ total: 3, items: [{ id: 1, name: 'Neha' }] }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/candidates'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ total: <span class="token number">3</span>, items: [{ id: <span class="token number">1</span>, name: <span class="token string">'Neha'</span> }] }) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Dashboard API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/dashboard', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ charts: [1,2,3], users: 42 }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/dashboard'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ charts: [<span class="token number">1</span>,<span class="token number">2</span>,<span class="token number">3</span>], users: <span class="token number">42</span> }) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>User API, Search API, and Pagination API</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/user/*', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ id: 7, name: 'Isha' }) });\n});\nawait page.route('**/api/search*', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results: ['Playwright', 'SDET'] }) });\n});\nawait page.route('**/api/posts?page=*', async route => {\n  await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [{ id: 1 }] }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/user/*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ id: <span class="token number">7</span>, name: <span class="token string">'Isha'</span> }) });
+});
+<span class="token keyword">await</span> page.route(<span class="token string">'**/api/search*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ results: [<span class="token string">'Playwright'</span>, <span class="token string">'SDET'</span>] }) });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How would you mock a login API in Playwright?</p>
+            <h4>Best practice</h4>
+            <p>Keep mock payloads realistic and aligned to the contract.</p>
+            <h4>Common mistake</h4>
+            <p>Using inconsistent JSON shapes that break the app.</p>
+            <h4>When to use</h4>
+            <p>For login, search, and dashboard scenarios.</p>
+            <h4>When not to use</h4>
+            <p>When you need to verify actual API behavior.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap10">
+        <summary>
+          <span>Chapter 10 — Request Manipulation</span>
+          <span class="tag-row"><span class="pill">Modify Requests</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">You can change headers, body, method, cookies, auth tokens, and content types before the request reaches the server.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Headers</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/**', async route => {\n  const headers = route.request().headers();\n  headers['x-trace-id'] = '123';\n  await route.continue({ headers });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> headers = route.request().headers();
+  headers[<span class="token string">'x-trace-id'</span>] = <span class="token string">'123'</span>;
+  <span class="token keyword">await</span> route.continue({ headers });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Body</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/save', async route => {\n  await route.continue({ postData: JSON.stringify({ status: 'ok' }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/save'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue({ postData: <span class="token function">JSON</span>.stringify({ status: <span class="token string">'ok'</span> }) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Method</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/submit', async route => {\n  await route.continue({ method: 'PUT' });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/submit'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue({ method: <span class="token string">'PUT'</span> });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Authorization and cookies</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/**', async route => {\n  const headers = route.request().headers();\n  headers.authorization = 'Bearer injected-token';\n  headers.cookie = 'session=test-session';\n  await route.continue({ headers });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> headers = route.request().headers();
+  headers.authorization = <span class="token string">'Bearer injected-token'</span>;
+  headers.cookie = <span class="token string">'session=test-session'</span>;
+  <span class="token keyword">await</span> route.continue({ headers });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Content-Type handling</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/submit', async route => {\n  await route.continue({ headers: { 'content-type': 'application/json' } });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/submit'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue({ headers: { <span class="token string">'content-type'</span>: <span class="token string">'application/json'</span> } });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How would you inject a token using Playwright interception?</p>
+            <h4>Best practice</h4>
+            <p>Modify only the fields you need and preserve the rest of the request structure.</p>
+            <h4>Common mistake</h4>
+            <p>Breaking the request by sending invalid content type or malformed body.</p>
+            <h4>When to use</h4>
+            <p>For auth tests, session switching, and API contract validation.</p>
+            <h4>When not to use</h4>
+            <p>When you should rely on the actual browser session instead of injected values.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap11">
+        <summary>
+          <span>Chapter 11 — Response Manipulation</span>
+          <span class="tag-row"><span class="pill">Control Responses</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">You can change status codes, headers, JSON bodies, and timing to mimic real-world variations.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Status and headers</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/health', async route => {\n  await route.fulfill({\n    status: 201,\n    headers: { 'x-test': '1' },\n    body: 'created'\n  });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/health'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({
+    status: <span class="token number">201</span>,
+    headers: { <span class="token string">'x-test'</span>: <span class="token string">'1'</span> },
+    body: <span class="token string">'created'</span>
+  });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Delay and response time</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/slow', async route => {\n  await new Promise(r => setTimeout(r, 1200));\n  await route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/slow'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> <span class="token keyword">new</span> <span class="token function">Promise</span>(r =&gt; <span class="token function">setTimeout</span>(r, <span class="token number">1200</span>));
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, body: <span class="token function">JSON</span>.stringify({ ok: <span class="token boolean">true</span> }) });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How would you simulate a slow API response using interception?</p>
+            <h4>Best practice</h4>
+            <p>Use delays intentionally for UX and timeout behavior tests.</p>
+            <h4>Common mistake</h4>
+            <p>Making tests flaky by using arbitrary delay times.</p>
+            <h4>When to use</h4>
+            <p>For loading states, retries, and timeout handling.</p>
+            <h4>When not to use</h4>
+            <p>When the system under test does not need to handle latency.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap12">
+        <summary>
+          <span>Chapter 12 — API Failure Simulation</span>
+          <span class="tag-row"><span class="pill">Error Cases</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Failure simulation is critical for testing resilience, retry behavior, and user messaging.</p>
+          <div class="card">
+            <h4>Typical failures</h4>
+            <table>
+              <tr><th>Status</th><th>Use case</th></tr>
+              <tr><td>401</td><td>Unauthorized</td></tr>
+              <tr><td>403</td><td>Forbidden</td></tr>
+              <tr><td>404</td><td>Not found</td></tr>
+              <tr><td>408</td><td>Request timeout</td></tr>
+              <tr><td>429</td><td>Rate limit</td></tr>
+              <tr><td>500</td><td>Server error</td></tr>
+              <tr><td>502/503/504</td><td>Gateway or upstream issues</td></tr>
+              <tr><td>Timeout</td><td>Slow or hung request</td></tr>
+              <tr><td>Connection reset</td><td>Network interruption</td></tr>
+            </table>
+          </div>
+          <div class="card">
+            <div class="code-wrap">
+              <button class="copy-btn" data-copy="await page.route('**/api/checkout', async route => {\n  await route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ message: 'Too many requests' }) });\n});">Copy</button>
+              <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/checkout'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">429</span>, contentType: <span class="token string">'application/json'</span>, body: <span class="token function">JSON</span>.stringify({ message: <span class="token string">'Too many requests'</span> }) });
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How would you simulate a 500 error using Playwright interception?</p>
+            <h4>Best practice</h4>
+            <p>Test both the UI error handling and the retry logic.</p>
+            <h4>Common mistake</h4>
+            <p>Only testing the happy path and ignoring edge cases.</p>
+            <h4>When to use</h4>
+            <p>In resilience, error state, and retry tests.</p>
+            <h4>When not to use</h4>
+            <p>When you need exact real server behavior.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap13">
+        <summary>
+          <span>Chapter 13 — Performance Optimization</span>
+          <span class="tag-row"><span class="pill">Speed</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Interception can improve test speed by blocking unnecessary assets and reducing network noise.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Block assets</h4>
+              <ul class="mini-list">
+                <li>Images</li>
+                <li>Videos</li>
+                <li>Fonts</li>
+                <li>Analytics scripts</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Measure speed</h4>
+              <ul class="mini-list">
+                <li>Use browser performance APIs.</li>
+                <li>Measure total load time and first contentful paint.</li>
+                <li>Compare before and after blocking.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="code-wrap">
+              <button class="copy-btn" data-copy="await page.route('**/*.{png,jpg,jpeg,svg,webp,woff,woff2}', async route => { await route.abort(); });">Copy</button>
+              <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*.{png,jpg,jpeg,svg,webp,woff,woff2}'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.abort();
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How can interception help performance testing?</p>
+            <h4>Best practice</h4>
+            <p>Keep your UI tests focused on the feature under test and avoid irrelevant third-party traffic.</p>
+            <h4>Common mistake</h4>
+            <p>Blocking resources that are essential to your business workflow.</p>
+            <h4>When to use</h4>
+            <p>For faster smoke tests and stable visual checks.</p>
+            <h4>When not to use</h4>
+            <p>When you need to validate real page performance with all assets intact.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap14">
+        <summary>
+          <span>Chapter 14 — Debugging</span>
+          <span class="tag-row"><span class="pill">Observability</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Debugging is easier when you log requests, responses, trace the run, and collect screenshots or HAR files.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Log requests and responses</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="page.on('request', req => console.log('→', req.method(), req.url()));\npage.on('response', res => console.log('←', res.status(), res.url()));">Copy</button>
+                <pre><code>page.on(<span class="token string">'request'</span>, req =&gt; <span class="token function">console</span>.log(<span class="token string">'→'</span>, req.method(), req.url()));
+page.on(<span class="token string">'response'</span>, res =&gt; <span class="token function">console</span>.log(<span class="token string">'←'</span>, res.status(), res.url()));</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Tracing and screenshots</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await context.tracing.start({ screenshots: true, snapshots: true });\n// ... test ...\nawait context.tracing.stop({ path: 'trace.zip' });">Copy</button>
+                <pre><code><span class="token keyword">await</span> context.tracing.start({ screenshots: <span class="token boolean">true</span>, snapshots: <span class="token boolean">true</span> });
+<span class="token comment">// ... test ...</span>
+<span class="token keyword">await</span> context.tracing.stop({ path: <span class="token string">'trace.zip'</span> });</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>HAR capture</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/*', async route => {\n  await route.continue();\n});\nawait page.context().newHAR();">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/*'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.continue();
+});
+<span class="token keyword">await</span> page.context().newHAR();</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How do you debug failing network interception tests?</p>
+            <h4>Best practice</h4>
+            <p>Log the exact URL and status code, then capture a trace and screenshot.</p>
+            <h4>Common mistake</h4>
+            <p>Assuming the issue is in the app when the route pattern is wrong.</p>
+            <h4>When to use</h4>
+            <p>When tests fail unexpectedly or routes do not match.</p>
+            <h4>When not to use</h4>
+            <p>When the issue is obvious and the route is already verified.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap15">
+        <summary>
+          <span>Chapter 15 — Advanced Network Interception</span>
+          <span class="tag-row"><span class="pill">Advanced</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Advanced usage includes multiple routes, conditional logic, regex, env-based mocks, feature flags, and versioned APIs.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Conditional routing</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/user', async route => {\n  if (route.request().method() === 'GET') {\n    await route.fulfill({ body: JSON.stringify({ ok: true }) });\n  } else {\n    await route.continue();\n  }\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/user'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">if</span> (route.request().method() === <span class="token string">'GET'</span>) {
+    <span class="token keyword">await</span> route.fulfill({ body: <span class="token function">JSON</span>.stringify({ ok: <span class="token boolean">true</span> }) });
+  } <span class="token keyword">else</span> {
+    <span class="token keyword">await</span> route.continue();
+  }
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Environment based mocks</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="const isDev = process.env.NODE_ENV === 'development';\nawait page.route('**/api/config', async route => {\n  await route.fulfill({ body: JSON.stringify({ mode: isDev ? 'dev' : 'prod' }) });\n});">Copy</button>
+                <pre><code><span class="token keyword">const</span> isDev = process.env.NODE_ENV === <span class="token string">'development'</span>;
+<span class="token keyword">await</span> page.route(<span class="token string">'**/api/config'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ body: <span class="token function">JSON</span>.stringify({ mode: isDev ? <span class="token string">'dev'</span> : <span class="token string">'prod'</span> }) });
+});</code></pre>
+              </div>
+            </div>
+            <div class="card">
+              <h4>Multiple routes and random response</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="await page.route('**/api/feature', async route => {\n  const responses = [{ status: 200, body: '{"mode":"A"}' }, { status: 200, body: '{"mode":"B"}' }];\n  const pick = responses[Math.floor(Math.random() * responses.length)];\n  await route.fulfill({ status: pick.status, contentType: 'application/json', body: pick.body });\n});">Copy</button>
+                <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/feature'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">const</span> responses = [{ status: <span class="token number">200</span>, body: <span class="token string">'{"mode":"A"}'</span> }, { status: <span class="token number">200</span>, body: <span class="token string">'{"mode":"B"}'</span> }];
+  <span class="token keyword">const</span> pick = responses[Math.floor(Math.random() * responses.length)];
+  <span class="token keyword">await</span> route.fulfill({ status: pick.status, contentType: <span class="token string">'application/json'</span>, body: pick.body });
+});</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Interview question</h4>
+            <p>How would you implement feature flag testing with interception?</p>
+            <h4>Best practice</h4>
+            <p>Keep the route logic readable and deterministic.</p>
+            <h4>Common mistake</h4>
+            <p>Creating overly complex route handlers that are hard to maintain.</p>
+            <h4>When to use</h4>
+            <p>For multi-environment testing, versioned APIs, and path-specific scenarios.</p>
+            <h4>When not to use</h4>
+            <p>When the route logic can be solved with a simpler test fixture.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap16">
+        <summary>
+          <span>Chapter 16 — Playwright Interview Questions</span>
+          <span class="tag-row"><span class="pill">50 Q&As</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">Here are interview-ready questions in easy, medium, hard, and scenario-based categories.</p>
+          <div class="qa-grid">
+            <div class="qa-item"><strong>1. Easy:</strong> What is network interception in Playwright?</div>
+            <div class="qa-item"><strong>2. Easy:</strong> What is the difference between continue and fulfill?</div>
+            <div class="qa-item"><strong>3. Easy:</strong> What is page.route() used for?</div>
+            <div class="qa-item"><strong>4. Easy:</strong> How do you abort image requests?</div>
+            <div class="qa-item"><strong>5. Easy:</strong> Why do we use interception in UI tests?</div>
+            <div class="qa-item"><strong>6. Medium:</strong> How do you modify a request header before it reaches the backend?</div>
+            <div class="qa-item"><strong>7. Medium:</strong> How would you mock a login API?</div>
+            <div class="qa-item"><strong>8. Medium:</strong> What is the difference between route.fetch() and route.continue()?</div>
+            <div class="qa-item"><strong>9. Medium:</strong> How would you simulate a 401 unauthorized response?</div>
+            <div class="qa-item"><strong>10. Medium:</strong> Why should you avoid intercepting too much?</div>
+            <div class="qa-item"><strong>11. Hard:</strong> How do you use regex patterns in route handlers?</div>
+            <div class="qa-item"><strong>12. Hard:</strong> How would you build dynamic mocking based on request payload?</div>
+            <div class="qa-item"><strong>13. Hard:</strong> How do you assert that a request was intercepted?</div>
+            <div class="qa-item"><strong>14. Hard:</strong> How would you implement API version-based routing?</div>
+            <div class="qa-item"><strong>15. Hard:</strong> What are common issues with unresolved routes?</div>
+            <div class="qa-item"><strong>16. Scenario:</strong> A test is flaky because a third-party script is loading slowly. How do you fix it?</div>
+            <div class="qa-item"><strong>17. Scenario:</strong> The login page depends on an unstable backend. How do you make it deterministic?</div>
+            <div class="qa-item"><strong>18. Scenario:</strong> You need to test the loading spinner for a slow API. How do you do it?</div>
+            <div class="qa-item"><strong>19. Scenario:</strong> You must verify that the app handles a 429 response. What do you do?</div>
+            <div class="qa-item"><strong>20. Scenario:</strong> A page fails because analytics requests are blocking the test. How do you handle it?</div>
+            <div class="qa-item"><strong>21. Easy:</strong> What is the role of route.fulfill()?</div>
+            <div class="qa-item"><strong>22. Easy:</strong> Can you intercept requests for CSS and JS assets?</div>
+            <div class="qa-item"><strong>23. Medium:</strong> How do you mock pagination APIs?</div>
+            <div class="qa-item"><strong>24. Medium:</strong> Why is contentType important in fulfill()?</div>
+            <div class="qa-item"><strong>25. Medium:</strong> How do you test offline mode?</div>
+            <div class="qa-item"><strong>26. Hard:</strong> How do you create a reusable network helper for tests?</div>
+            <div class="qa-item"><strong>27. Hard:</strong> How do you ensure multiple routes do not conflict?</div>
+            <div class="qa-item"><strong>28. Hard:</strong> How do you test response headers?</div>
+            <div class="qa-item"><strong>29. Scenario:</strong> The application uses GraphQL. How would you intercept it?</div>
+            <div class="qa-item"><strong>30. Scenario:</strong> You need to verify that a request body contains a token. How do you inspect it?</div>
+            <div class="qa-item"><strong>31. Easy:</strong> What is the difference between request and response interception?</div>
+            <div class="qa-item"><strong>32. Easy:</strong> What is an example of an abort use case?</div>
+            <div class="qa-item"><strong>33. Medium:</strong> How would you mock file download behavior?</div>
+            <div class="qa-item"><strong>34. Medium:</strong> How would you test an empty response body?</div>
+            <div class="qa-item"><strong>35. Medium:</strong> How do you inspect a response status code in Playwright?</div>
+            <div class="qa-item"><strong>36. Hard:</strong> How would you handle request retries?</div>
+            <div class="qa-item"><strong>37. Hard:</strong> How do you mock a delayed API and verify loading behavior?</div>
+            <div class="qa-item"><strong>38. Hard:</strong> What is the role of route handlers in page context?</div>
+            <div class="qa-item"><strong>39. Scenario:</strong> The app sends a POST request with form data. How would you intercept it?</div>
+            <div class="qa-item"><strong>40. Scenario:</strong> You want to validate the request URL and query params. How do you do it?</div>
+            <div class="qa-item"><strong>41. Easy:</strong> What is a mock API?</div>
+            <div class="qa-item"><strong>42. Easy:</strong> What is a route handler?</div>
+            <div class="qa-item"><strong>43. Medium:</strong> How do you handle image blocking in a page load test?</div>
+            <div class="qa-item"><strong>44. Medium:</strong> Why are intercepts useful in CI pipelines?</div>
+            <div class="qa-item"><strong>45. Medium:</strong> What is the impact of interception on real network debugging?</div>
+            <div class="qa-item"><strong>46. Hard:</strong> How do you test a feature flag that changes API behavior?</div>
+            <div class="qa-item"><strong>47. Hard:</strong> How would you implement versioned mocking for /api/v1 and /api/v2?</div>
+            <div class="qa-item"><strong>48. Scenario:</strong> The app uses cookies for auth. How do you validate that?</div>
+            <div class="qa-item"><strong>49. Scenario:</strong> A test must verify errors for a downed backend. How do you simulate that?</div>
+            <div class="qa-item"><strong>50. Scenario:</strong> You need to test both positive and negative flows without changing the backend. How do you do it?</div>
+          </div>
+          <div class="alert good">
+            <strong>Interview tip:</strong> Always mention “request first, response second” and show that you understand the lifecycle.</div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap17">
+        <summary>
+          <span>Chapter 17 — Coding Interview Programs</span>
+          <span class="tag-row"><span class="pill">30 Examples</span></span>
+        </summary>
+        <div class="chapter-body">
+          <p class="lead">These are short coding interview-style prompts you can practice.</p>
+          <div class="grid-2">
+            <div class="card">
+              <h4>Examples</h4>
+              <ol class="mini-list">
+                <li>Mock Login API and verify token storage.</li>
+                <li>Mock Candidate API and assert the table renders.</li>
+                <li>Abort image requests and confirm page load still succeeds.</li>
+                <li>Modify a request header before submission.</li>
+                <li>Intercept a POST request and validate its body.</li>
+                <li>Validate response status and body content.</li>
+                <li>Capture a request URL and assert it matches the expected endpoint.</li>
+                <li>Capture a response payload for later assertion.</li>
+                <li>Simulate a retry scenario after a 500 error.</li>
+                <li>Inject a token into the Authorization header.</li>
+                <li>Return dynamic JSON based on request query params.</li>
+                <li>Mock a paginated API response and verify next-page behavior.</li>
+                <li>Search API mock and validate filtering behavior.</li>
+                <li>Mock a file download endpoint and verify the download event.</li>
+                <li>Mock a multipart request and assert content-type.</li>
+                <li>Intercept a GraphQL request and return a mock response.</li>
+                <li>Intercept REST calls and assert the request method.</li>
+                <li>Mock dashboard analytics and verify UI cards render.</li>
+                <li>Simulate a slow response and assert the loader appears.</li>
+                <li>Mock an empty array response and validate empty-state UI.</li>
+                <li>Mock an unauthorized response and validate the error banner.</li>
+                <li>Reject a request with abort and assert the page handles it gracefully.</li>
+                <li>Mock CSS and confirm layout still renders correctly.</li>
+                <li>Mock HTML content and assert that the app uses it.</li>
+                <li>Change a request URL to a v2 endpoint and verify the response.</li>
+                <li>Implement conditional routing based on request method.</li>
+                <li>Mock a random response and test multiple states.</li>
+                <li>Use environment variables to switch between prod and mock data.</li>
+                <li>Feature-flag a response using interception.</li>
+                <li>Test API versioning by routing /api/v1 and /api/v2 separately.</li>
+              </ol>
+            </div>
+            <div class="card">
+              <h4>Sample skeleton</h4>
+              <div class="code-wrap">
+                <button class="copy-btn" data-copy="test('mock login', async ({ page }) => {\n  await page.route('**/api/login', async route => {\n    await route.fulfill({\n      status: 200,\n      contentType: 'application/json',\n      body: JSON.stringify({ token: 'abc' })\n    });\n  });\n\n  await page.goto('https://example.com');\n  // assert UI and token\n});">Copy</button>
+                <pre><code><span class="token keyword">test</span>(<span class="token string">'mock login'</span>, <span class="token keyword">async</span> ({ page }) =&gt; {
+  <span class="token keyword">await</span> page.route(<span class="token string">'**/api/login'</span>, <span class="token keyword">async</span> route =&gt; {
+    <span class="token keyword">await</span> route.fulfill({
+      status: <span class="token number">200</span>,
+      contentType: <span class="token string">'application/json'</span>,
+      body: <span class="token function">JSON</span>.stringify({ token: <span class="token string">'abc'</span> })
+    });
+  });
+
+  <span class="token keyword">await</span> page.goto(<span class="token string">'https://example.com'</span>);
+  <span class="token comment">// assert UI and token</span>
+});</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap18">
+        <summary>
+          <span>Chapter 18 — Common Mistakes</span>
+          <span class="tag-row"><span class="pill">Avoid Pitfalls</span></span>
+        </summary>
+        <div class="chapter-body">
+          <table>
+            <tr><th>Mistake</th><th>Why it happens</th><th>How to avoid</th></tr>
+            <tr><td>Over-mocking</td><td>Tests become detached from real behavior</td><td>Keep important flows real and mock only dependencies</td></tr>
+            <tr><td>Broad route patterns</td><td>Routes intercept too much</td><td>Use specific URLs and regex carefully</td></tr>
+            <tr><td>Forgetting to await route calls</td><td>Requests hang or behave unpredictably</td><td>Always await continue/fulfill/abort/fetch</td></tr>
+            <tr><td>Wrong contentType</td><td>App cannot parse the mocked response</td><td>Set the correct MIME type</td></tr>
+            <tr><td>Blocking essential assets</td><td>UI breaks or tests become meaningless</td><td>Abort only non-essential traffic</td></tr>
+          </table>
+          <div class="alert warn">
+            <strong>Best practice:</strong> Keep your interception setup visible and readable in test code. Add comments and use helper functions for reuse.
+          </div>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap19">
+        <summary>
+          <span>Chapter 19 — Comparison</span>
+          <span class="tag-row"><span class="pill">Choose Wisely</span></span>
+        </summary>
+        <div class="chapter-body">
+          <table>
+            <tr><th>Approach</th><th>Best for</th><th>Strength</th><th>Limitation</th></tr>
+            <tr><td>Network Interception</td><td>UI automation, mocks, controlled response simulation</td><td>Very powerful and flexible</td><td>Can hide real backend issues if overused</td></tr>
+            <tr><td>API Testing</td><td>Backend contract and business logic validation</td><td>Directly verifies services</td><td>Does not cover UI behavior</td></tr>
+            <tr><td>HAR Replay</td><td>Replaying recorded traffic</td><td>Useful for offline or historical simulation</td><td>Less flexible than route handlers</td></tr>
+            <tr><td>Service Workers</td><td>Mocking at the browser layer</td><td>Great for PWA-style caching and offline testing</td><td>More setup and less universal</td></tr>
+            <tr><td>Browser DevTools</td><td>Debugging and manual inspection</td><td>Excellent for manual analysis</td><td>Not ideal for repeatable automation</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <details class="chapter-card" id="chap20">
+        <summary>
+          <span>Chapter 20 — Cheat Sheet</span>
+          <span class="tag-row"><span class="pill">One Page Summary</span></span>
+        </summary>
+        <div class="chapter-body">
+          <div class="grid-2">
+            <div class="card">
+              <h4>Methods at a glance</h4>
+              <ul class="mini-list">
+                <li>route.continue() — pass request through</li>
+                <li>route.fulfill() — return a custom response</li>
+                <li>route.abort() — block the request</li>
+                <li>route.fetch() — forward the request to network</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Quick syntax</h4>
+              <pre><code><span class="token keyword">await</span> page.route(<span class="token string">'**/api/**'</span>, <span class="token keyword">async</span> route =&gt; {
+  <span class="token keyword">await</span> route.fulfill({ status: <span class="token number">200</span>, body: <span class="token string">'{}'</span> });
+});</code></pre>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Decision tree</h4>
+            <div class="diagram">
+              <div class="box">Need to block?</div>
+              <div class="arrow">↓</div>
+              <div class="box">Use abort()</div>
+              <div class="arrow">↓</div>
+              <div class="box">Need custom response?</div>
+              <div class="arrow">↓</div>
+              <div class="box">Use fulfill()</div>
+              <div class="arrow">↓</div>
+              <div class="box">Need real backend + modification?</div>
+              <div class="arrow">↓</div>
+              <div class="box">Use continue() or fetch()</div>
+            </div>
+          </div>
+          <div class="card">
+            <h4>Final revision</h4>
+            <ul class="mini-list">
+              <li>Interception sits between browser and server.</li>
+              <li>You can continue, modify, abort, fulfill, or fetch.</li>
+              <li>Use it to control unstable backends and build deterministic tests.</li>
+              <li>Always combine it with API testing for confidence.</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <div class="card">
+        <h4>FAQ</h4>
+        <ul class="mini-list">
+          <li><strong>Is interception only for UI tests?</strong> No, it is also useful for mocking backend dependencies during component or e2e automation.</li>
+          <li><strong>Should I mock everything?</strong> No. Mock only the dependency you need to isolate.</li>
+          <li><strong>Can I use interception with API tests?</strong> Not usually; it is more relevant to browser automation, but the concepts are transferable.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">Prepared for SDET interviews and real-world Playwright automation practice.</footer>
+
+  <script>
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const searchInput = document.getElementById('searchInput');
+    const printBtn = document.getElementById('printBtn');
+    const savedTheme = localStorage.getItem('ni-theme') || 'dark';
+    root.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? '🌙 Dark' : '☀️ Light';
+
+    themeToggle.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('ni-theme', next);
+      themeToggle.textContent = next === 'dark' ? '🌙 Dark' : '☀️ Light';
+    });
+
+    printBtn.addEventListener('click', () => window.print());
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('.chapter-card').forEach((card) => {
+        const text = card.textContent.toLowerCase();
+        const match = query === '' || text.includes(query);
+        card.style.display = match ? '' : 'none';
+      });
+    });
+
+    document.querySelectorAll('.copy-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const text = btn.getAttribute('data-copy');
+        try {
+          await navigator.clipboard.writeText(text || '');
+          btn.textContent = 'Copied';
+          setTimeout(() => (btn.textContent = 'Copy'), 1200);
+        } catch (error) {
+          btn.textContent = 'Copy failed';
+          setTimeout(() => (btn.textContent = 'Copy'), 1200);
+        }
+      });
+    });
+
+    document.querySelectorAll('.nav-list a').forEach((link) => {
+      link.addEventListener('click', () => {
+        document.querySelectorAll('.nav-list a').forEach((item) => item.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
