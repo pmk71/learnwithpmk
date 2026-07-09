@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Objects — Complete Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#12141c;
+    --panel:#181b26;
+    --panel-2:#1e2230;
+    --panel-3:#20253550;
+    --border:#2b3042;
+    --text:#e7e8ee;
+    --muted:#8b8fa3;
+    --key:#e8a33d;
+    --value:#4fd1c5;
+    --string:#a3d977;
+    --punct:#5a6178;
+    --accent:#e8a33d;
+    --danger:#e8637a;
+    --purple:#c792ea;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;padding:0;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(232,163,61,0.08), transparent 60%),
+      radial-gradient(900px 500px at -5% 10%, rgba(79,209,197,0.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{font-family:'JetBrains Mono',monospace;}
+  ::selection{background:rgba(232,163,61,0.3);}
+
+  .progress{position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--key),var(--value)); z-index:100; width:0%; transition:width .1s ease;}
+
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 28px;
+    background:rgba(18,20,28,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .brand{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .brand .brace{color:var(--key);}
+  .brand .sub{color:var(--muted); font-weight:400; font-size:12px;}
+  .search-wrap{position:relative; flex:1; max-width:340px; min-width:180px;}
+  .search-wrap svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--muted); pointer-events:none;}
+  #searchInput{
+    width:100%; padding:9px 12px 9px 32px; border-radius:8px;
+    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; outline:none;
+  }
+  #searchInput:focus{border-color:var(--accent);}
+  #searchInput::placeholder{color:var(--muted);}
+  .search-count{position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:10.5px; color:var(--muted); font-family:'JetBrains Mono',monospace;}
+  .actions{display:flex; gap:10px; align-items:center;}
+  .btn{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600;
+    padding:9px 16px; border-radius:8px; border:1px solid var(--border);
+    background:var(--panel-2); color:var(--text); cursor:pointer;
+    display:flex; align-items:center; gap:7px;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--accent); transform:translateY(-1px);}
+  .btn.primary{background:linear-gradient(135deg, var(--key), #c97f1f); color:#161616; border:none;}
+  .btn.primary:hover{filter:brightness(1.08);}
+  .btn svg{width:14px; height:14px;}
+  .btn.loading{opacity:.6; pointer-events:none;}
+
+  .layout{display:flex; max-width:1360px; margin:0 auto;}
+  .sidebar{
+    width:250px; flex-shrink:0; position:sticky; top:64px; height:calc(100vh - 64px);
+    overflow-y:auto; padding:24px 14px 40px 28px; border-right:1px solid var(--border);
+  }
+  .sidebar::-webkit-scrollbar{width:6px;}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+  .sidebar-title{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 12px 4px;}
+  .nav-item{display:flex; align-items:center; justify-content:space-between; gap:6px; font-family:'JetBrains Mono',monospace; font-size:12.3px; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:7px; margin-bottom:1px; border-left:2px solid transparent; transition:all .15s ease;}
+  .nav-item:hover{color:var(--text); background:var(--panel);}
+  .nav-item.active{color:var(--key); border-left-color:var(--key); background:var(--panel);}
+  .nav-item .num{color:var(--punct); margin-right:6px;}
+  .nav-item .label{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .progress-check{width:12px; height:12px; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0;}
+  .progress-check.done{background:var(--string); border-color:var(--string);}
+
+  main{flex:1; min-width:0; padding:36px 44px 100px;}
+
+  .hero{padding:30px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px;}
+  .hero-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--value); letter-spacing:.14em; text-transform:uppercase; margin-bottom:14px;}
+  .hero h1{font-family:'JetBrains Mono',monospace; font-size:clamp(26px,4vw,42px); font-weight:800; margin:0 0 14px; line-height:1.15;}
+  .hero h1 .key{color:var(--key);} .hero h1 .punct{color:var(--punct);}
+  .hero p{color:var(--muted); font-size:15px; max-width:640px; line-height:1.6; margin:0 0 20px;}
+  .hero-object{font-family:'JetBrains Mono',monospace; font-size:13px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px 20px; color:var(--muted); line-height:1.85; overflow-x:auto;}
+  .hero-object .k{color:var(--key);} .hero-object .v{color:var(--value);} .hero-object .s{color:var(--string);} .hero-object .p{color:var(--punct);}
+  .hero-stats{display:flex; gap:22px; margin-top:18px; flex-wrap:wrap;}
+  .hstat{font-family:'JetBrains Mono',monospace;}
+  .hstat b{color:var(--key); font-size:18px; display:block;}
+  .hstat span{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em;}
+
+  section.topic{margin-bottom:20px; scroll-margin-top:80px; border:1px solid var(--border); border-radius:14px; background:rgba(24,27,38,0.35); overflow:hidden;}
+  .topic-head{display:flex; align-items:center; gap:12px; padding:20px 22px; cursor:pointer; user-select:none;}
+  .topic-num{font-family:'JetBrains Mono',monospace; color:var(--key); font-weight:700; font-size:13px; flex-shrink:0;}
+  .topic-head h2{font-family:'JetBrains Mono',monospace; font-size:19px; margin:0; font-weight:700; flex:1;}
+  .topic-head .chev{width:16px; height:16px; color:var(--muted); transition:transform .25s ease; flex-shrink:0;}
+  section.topic.collapsed .chev{transform:rotate(-90deg);}
+  .topic-body{padding:0 22px 26px;}
+  section.topic.collapsed .topic-body{display:none;}
+  .topic-desc{color:var(--muted); font-size:13.5px; margin:-6px 0 20px; max-width:720px; line-height:1.6;}
+
+  .defbox{
+    display:flex; gap:12px; background:linear-gradient(135deg, rgba(232,163,61,.08), rgba(79,209,197,.05));
+    border:1px solid rgba(232,163,61,.25); border-radius:10px; padding:14px 18px; margin-bottom:20px;
+  }
+  .defbox .ico{font-size:18px; flex-shrink:0; line-height:1;}
+  .defbox p{margin:0; font-size:13.5px; line-height:1.65; color:var(--text);}
+  .defbox b{color:var(--key);}
+
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px;}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 18px 18px;}
+  .card h3{font-family:'JetBrains Mono',monospace; font-size:13px; margin:0 0 10px; color:var(--text); display:flex; align-items:center; gap:8px;}
+  .card h3 .dot{width:6px; height:6px; border-radius:50%; background:var(--key); flex-shrink:0;}
+
+  pre{position:relative; margin:0 0 10px; background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:12px 40px 12px 14px; overflow-x:auto; font-size:12.3px; line-height:1.65;}
+  pre code{font-family:'JetBrains Mono',monospace; color:var(--text);}
+  .copy-btn{position:absolute; top:8px; right:8px; width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--panel); color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:.5; transition:opacity .15s, color .15s, border-color .15s;}
+  pre:hover .copy-btn{opacity:1;}
+  .copy-btn:hover{color:var(--key); border-color:var(--key);}
+  .copy-btn svg{width:13px; height:13px;}
+  .copy-btn.copied{color:var(--string); border-color:var(--string);}
+
+  .tok-kw{color:var(--purple);} .tok-fn{color:var(--value);} .tok-str{color:var(--string);}
+  .tok-com{color:var(--muted); font-style:italic;} .tok-key{color:var(--key);} .tok-num{color:#f78c6c;}
+
+  .card p.note{color:var(--muted); font-size:12.3px; margin:0; line-height:1.55;}
+  .tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10.5px; padding:2px 8px; border-radius:20px; border:1px solid var(--border); color:var(--muted); margin-bottom:10px;}
+  .tag.mut{color:var(--danger); border-color:rgba(232,99,122,.35);}
+  .tag.immut{color:var(--string); border-color:rgba(163,217,119,.35);}
+  .tag.warn{color:var(--key); border-color:rgba(232,163,61,.35);}
+
+  table{width:100%; border-collapse:collapse; font-size:12.8px;}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600; position:sticky; top:0; background:var(--panel);}
+  td code{font-family:'JetBrains Mono',monospace; color:var(--key); font-size:12.3px;}
+  .table-wrap{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:auto; max-height:420px;}
+
+  .qa{background:var(--panel); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; cursor:pointer;}
+  .qa .q{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--value); margin:0; padding:15px 18px; display:flex; gap:10px; align-items:center; justify-content:space-between;}
+  .qa .q .qtext{display:flex; gap:8px;}
+  .qa .q .qmark{color:var(--key);}
+  .qa .q .plus{color:var(--muted); font-size:16px; transition:transform .2s ease; flex-shrink:0;}
+  .qa.open .q .plus{transform:rotate(45deg); color:var(--key);}
+  .qa .a{color:var(--muted); font-size:12.8px; line-height:1.65; margin:0; padding:0 18px; max-height:0; overflow:hidden; transition:all .25s ease;}
+  .qa.open .a{padding:0 18px 16px; max-height:200px;}
+
+  .playground{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px 20px;}
+  .playground textarea{width:100%; min-height:130px; background:var(--panel-2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:12px 14px; resize:vertical; outline:none; line-height:1.6;}
+  .playground textarea:focus{border-color:var(--accent);}
+  .playground .run-row{display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+  .run-btn{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:8px 18px; border-radius:7px; border:none; background:linear-gradient(135deg,var(--value),#2a9d92); color:#0b1615; cursor:pointer; display:flex; gap:6px; align-items:center;}
+  .run-btn:hover{filter:brightness(1.1);}
+  .run-hint{color:var(--muted); font-size:11px; font-family:'JetBrains Mono',monospace;}
+  .output{margin-top:12px; background:#0d0f16; border:1px solid var(--border); border-radius:8px; padding:12px 14px; font-family:'JetBrains Mono',monospace; font-size:12.3px; color:var(--string); min-height:20px; white-space:pre-wrap; word-break:break-word;}
+  .output.err{color:var(--danger);}
+  .output:empty::before{content:'// output will appear here'; color:var(--muted); font-style:italic;}
+
+  footer{border-top:1px solid var(--border); padding:26px 44px; color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  .hidden{display:none !important;}
+  .no-results{text-align:center; color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:13px; padding:40px 0;}
+
+  @media (max-width: 900px){
+    .sidebar{display:none;}
+    main{padding:26px 18px 80px;}
+    .topbar{padding:12px 16px;}
+    .search-wrap{order:3; max-width:none; width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progressBar"></div>
+
+<div class="topbar">
+  <div class="brand"><span class="brace">{</span> JS.Objects <span class="sub">// complete reference</span> <span class="brace">}</span></div>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input type="text" id="searchInput" placeholder="Search methods, keywords, code...">
+    <span class="search-count" id="searchCount"></span>
+  </div>
+  <div class="actions">
+    <button class="btn" id="expandAllBtn" title="Expand or collapse all sections">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      Toggle All
+    </button>
+    <button class="btn" id="printBtn" title="Print / Save as PDF">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Print
+    </button>
+    <button class="btn primary" id="downloadBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+      Download Image
+    </button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <p class="sidebar-title">Contents</p>
+    <a class="nav-item active" href="#what-is"><span class="num">01</span><span class="label">What Is an Object?</span></a>
+    <a class="nav-item" href="#creation"><span class="num">02</span><span class="label">Object Creation</span></a>
+    <a class="nav-item" href="#access"><span class="num">03</span><span class="label">Property Access</span></a>
+    <a class="nav-item" href="#chaining"><span class="num">04</span><span class="label">Optional Chaining · ??</span></a>
+    <a class="nav-item" href="#destructure"><span class="num">05</span><span class="label">Destructuring &amp; Spread</span></a>
+    <a class="nav-item" href="#methods"><span class="num">06</span><span class="label">Static Methods</span></a>
+    <a class="nav-item" href="#iteration"><span class="num">07</span><span class="label">Iteration</span></a>
+    <a class="nav-item" href="#accessors"><span class="num">08</span><span class="label">Getters, Setters &amp; this</span></a>
+    <a class="nav-item" href="#immutability"><span class="num">09</span><span class="label">Immutability</span></a>
+    <a class="nav-item" href="#descriptors"><span class="num">10</span><span class="label">Property Descriptors</span></a>
+    <a class="nav-item" href="#prototype"><span class="num">11</span><span class="label">Prototypes &amp; Inheritance</span></a>
+    <a class="nav-item" href="#symbols"><span class="num">12</span><span class="label">Symbols &amp; Computed Keys</span></a>
+    <a class="nav-item" href="#proxy"><span class="num">13</span><span class="label">Proxy &amp; Reflect</span></a>
+    <a class="nav-item" href="#copy"><span class="num">14</span><span class="label">Cloning &amp; Comparison</span></a>
+    <a class="nav-item" href="#objvsmap"><span class="num">15</span><span class="label">Object vs Map</span></a>
+    <a class="nav-item" href="#pitfalls"><span class="num">16</span><span class="label">Pitfalls &amp; Best Practices</span></a>
+    <a class="nav-item" href="#playground"><span class="num">17</span><span class="label">Live Playground</span></a>
+    <a class="nav-item" href="#interview"><span class="num">18</span><span class="label">Interview Q&amp;A</span></a>
+    <a class="nav-item" href="#quickref"><span class="num">19</span><span class="label">Quick Reference</span></a>
+  </nav>
+
+  <main id="capture">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Learn With PMK71 · Interactive Quick Reference</div>
+      <h1><span class="punct">{</span> JavaScript <span class="key">Objects</span> <span class="punct">}</span></h1>
+      <p>A complete, interactive reference covering definitions, creation, access, methods, iteration, immutability, descriptors, prototypes, Proxy, and the questions that come up most in QA/SDET and frontend interviews. Search, expand, copy, and try snippets live.</p>
+      <div class="hero-object"><span class="p">const</span> cheatSheet <span class="p">=</span> <span class="p">{</span><br>
+      &nbsp;&nbsp;<span class="k">sections</span><span class="p">:</span> <span class="v">19</span><span class="p">,</span><br>
+      &nbsp;&nbsp;<span class="k">interactive</span><span class="p">:</span> <span class="v">true</span><span class="p">,</span><br>
+      &nbsp;&nbsp;<span class="k">audience</span><span class="p">:</span> <span class="s">'SDET & Automation Engineers'</span><span class="p">,</span><br>
+      &nbsp;&nbsp;<span class="k">level</span><span class="p">:</span> <span class="s">'0–5 yrs'</span><br>
+      <span class="p">};</span></div>
+      <div class="hero-stats">
+        <div class="hstat"><b>19</b><span>Sections</span></div>
+        <div class="hstat"><b>25+</b><span>Code Examples</span></div>
+        <div class="hstat"><b>1</b><span>Live Playground</span></div>
+        <div class="hstat"><b>10</b><span>Interview Q&amp;A</span></div>
+      </div>
+    </div>
+
+    <!-- 01 WHAT IS AN OBJECT -->
+    <section class="topic" id="what-is">
+      <div class="topic-head"><span class="topic-num">01</span><h2>What Is an Object?</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">📘</span>
+          <p><b>Definition:</b> An object is an unordered collection of <b>key–value pairs</b> called properties. Keys are strings (or Symbols); values can be any type, including functions, which are then called <b>methods</b>. Objects are <b>mutable</b> and are always <b>passed and compared by reference</b>, never by value.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Anatomy of an Object</h3>
+            <pre><code><span class="tok-kw">const</span> config = {
+  env: <span class="tok-str">'staging'</span>,   <span class="tok-com">// string</span>
+  timeout: <span class="tok-num">30000</span>,   <span class="tok-com">// number</span>
+  headless: <span class="tok-kw">true</span>,    <span class="tok-com">// boolean</span>
+  browsers: [<span class="tok-str">'chrome'</span>], <span class="tok-com">// array</span>
+  login: <span class="tok-kw">async</span> () =&gt; {},<span class="tok-com">// method</span>
+  proxy: <span class="tok-kw">null</span>       <span class="tok-com">// null</span>
+};</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Every value in the object is a <b>property</b>; if the value is a function, it's called a <b>method</b>.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>The <code>typeof null</code> Gotcha</h3>
+            <pre><code><span class="tok-kw">typeof</span> {}          <span class="tok-com">// → "object"</span>
+<span class="tok-kw">typeof</span> <span class="tok-kw">null</span>        <span class="tok-com">// → "object" ⚠ bug!</span>
+{} === {}          <span class="tok-com">// → false</span>
+<span class="tok-kw">typeof</span> []          <span class="tok-com">// → "object" (arrays too)</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">This is a long-standing JS bug preserved for backwards compatibility — always check <code>value === null</code> explicitly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 CREATION -->
+    <section class="topic" id="creation">
+      <div class="topic-head"><span class="topic-num">02</span><h2>Object Creation</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Five common ways to create objects, from the simplest literal syntax to factory functions.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Object Literal</h3>
+            <pre><code><span class="tok-kw">const</span> person = {
+  name: <span class="tok-str">'John'</span>,
+  age: <span class="tok-num">30</span>,
+  greet() { console.log(<span class="tok-str">'Hi'</span>); }
+};</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">The most common way to create an object — best for one-off, simple structures.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Constructor Function</h3>
+            <pre><code><span class="tok-kw">function</span> <span class="tok-fn">Person</span>(name, age) {
+  <span class="tok-kw">this</span>.name = name;
+  <span class="tok-kw">this</span>.age = age;
+}
+<span class="tok-kw">const</span> p = <span class="tok-kw">new</span> Person(<span class="tok-str">'John'</span>, <span class="tok-num">30</span>);</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Uses the <code>new</code> keyword to stamp out multiple similar instances.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Object.create()</h3>
+            <pre><code><span class="tok-kw">const</span> proto = {
+  greet() { <span class="tok-com">/* ... */</span> }
+};
+<span class="tok-kw">const</span> obj = Object.create(proto);</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Creates a new object with an explicit prototype — no constructor call involved.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Class Syntax (ES6)</h3>
+            <pre><code><span class="tok-kw">class</span> <span class="tok-fn">Person</span> {
+  constructor(name) {
+    <span class="tok-kw">this</span>.name = name;
+  }
+}
+<span class="tok-kw">const</span> p = <span class="tok-kw">new</span> Person(<span class="tok-str">'John'</span>);</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Syntactic sugar over prototype-based inheritance — cleaner, more readable syntax.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Factory Function</h3>
+            <pre><code><span class="tok-kw">function</span> <span class="tok-fn">makeUser</span>(name, role) {
+  <span class="tok-kw">return</span> { name, role, active: <span class="tok-kw">true</span> };
+}
+makeUser(<span class="tok-str">'Alice'</span>, <span class="tok-str">'admin'</span>);
+<span class="tok-com">// → {name:"Alice", role:"admin", active:true}</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">A plain function that returns a new object — no <code>new</code> or <code>this</code> needed. Great for test fixtures.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 ACCESS -->
+    <section class="topic" id="access">
+      <div class="topic-head"><span class="topic-num">03</span><h2>Property Access &amp; Manipulation</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Reading, writing, deleting, and checking properties on an object.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Dot vs. Bracket Notation</h3>
+            <pre><code>obj.property
+obj[<span class="tok-str">'property'</span>]
+obj[variableKey]  <span class="tok-com">// dynamic key</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Bracket notation is required when the key is dynamic or not a valid identifier (e.g. <code>"base-url"</code>).</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Adding / Updating</h3>
+            <pre><code>obj.newProp = <span class="tok-str">'value'</span>;
+obj[<span class="tok-str">'newProp'</span>] = <span class="tok-str">'value'</span>;</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Assigning to a non-existent key creates it; assigning to an existing key updates it.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Deleting Properties</h3>
+            <pre><code><span class="tok-kw">delete</span> obj.property;</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Removes the property entirely (not just sets it to <code>undefined</code>).</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Checking Existence</h3>
+            <pre><code><span class="tok-str">'prop'</span> <span class="tok-kw">in</span> obj
+obj.hasOwnProperty(<span class="tok-str">'prop'</span>)
+Object.hasOwn(obj, <span class="tok-str">'prop'</span>) <span class="tok-com">// ES2022</span>
+obj.prop !== <span class="tok-kw">undefined</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note"><code>in</code> checks the prototype chain too; <code>hasOwnProperty</code> / <code>Object.hasOwn</code> check only the object itself.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 OPTIONAL CHAINING -->
+    <section class="topic" id="chaining">
+      <div class="topic-head"><span class="topic-num">04</span><h2>Optional Chaining &amp; Nullish Coalescing</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🛡️</span>
+          <p><b>Definition:</b> Optional chaining (<code>?.</code>) stops evaluating and returns <code>undefined</code> the moment it hits <code>null</code>/<code>undefined</code>, instead of throwing. Nullish coalescing (<code>??</code>) provides a fallback <b>only</b> for <code>null</code>/<code>undefined</code> — not for other falsy values like <code>0</code> or <code>""</code>.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Optional Chaining (<code>?.</code>)</h3>
+            <pre><code><span class="tok-kw">const</span> city = user?.address?.city;
+user?.getRole?.();     <span class="tok-com">// safe method call</span>
+items?.[<span class="tok-num">0</span>];              <span class="tok-com">// safe array access</span>
+<span class="tok-com">// Without ?. — throws if user is null:</span>
+user.address.city      <span class="tok-com">// ✘ TypeError!</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Essential when handling API responses in tests where fields may be missing.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Nullish Coalescing (<code>??</code>)</h3>
+            <pre><code><span class="tok-kw">null</span> ?? <span class="tok-str">'default'</span>       <span class="tok-com">// → "default"</span>
+<span class="tok-num">0</span> ?? <span class="tok-str">'default'</span>          <span class="tok-com">// → 0   ✓ (not falsy)</span>
+<span class="tok-str">''</span> ?? <span class="tok-str">'default'</span>         <span class="tok-com">// → ''  ✓</span>
+<span class="tok-num">0</span> || <span class="tok-str">'default'</span>          <span class="tok-com">// → "default" ⚠ replaces 0</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Prefer <code>??</code> over <code>||</code> whenever <code>0</code>, <code>""</code>, or <code>false</code> are valid values.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Nullish Assignment (<code>??=</code>)</h3>
+            <pre><code><span class="tok-kw">let</span> x = <span class="tok-kw">null</span>;
+x ??= <span class="tok-str">'set now'</span>; <span class="tok-com">// → "set now"</span>
+
+<span class="tok-com">// Combine ?. with ??</span>
+cfg?.timeout ?? <span class="tok-num">5000</span>;
+user?.role?.toUpperCase() ?? <span class="tok-str">'GUEST'</span>;</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Only assigns when the variable is currently <code>null</code> or <code>undefined</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 DESTRUCTURE -->
+    <section class="topic" id="destructure">
+      <div class="topic-head"><span class="topic-num">05</span><h2>Destructuring &amp; Spread</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">📦</span>
+          <p><b>Definition:</b> <b>Destructuring</b> unpacks properties from an object into standalone variables in one line — supports renaming, default values, nested unpacking, and rest collection. <b>Spread</b> (<code>...obj</code>) does the reverse: it copies enumerable own properties out into a new object.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Basic Destructuring</h3>
+            <pre><code><span class="tok-kw">const</span> { name, age = <span class="tok-num">18</span> } = person;
+<span class="tok-kw">const</span> { name: userName } = person; <span class="tok-com">// rename</span>
+<span class="tok-kw">const</span> { name: n, ...rest } = person; <span class="tok-com">// rest</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Extracts properties into variables, with optional defaults, renaming, and a rest collector.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Nested &amp; Function Params</h3>
+            <pre><code><span class="tok-kw">const</span> { data: { user: { name } } } = response;
+
+<span class="tok-kw">function</span> <span class="tok-fn">login</span>({ email, password, retries = <span class="tok-num">3</span> }) {
+  console.log(email, retries);
+}
+login({ email: <span class="tok-str">'a@b.com'</span>, password: <span class="tok-str">'pw'</span> });</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Destructuring directly in function parameters keeps signatures short and self-documenting.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Spread Operator</h3>
+            <pre><code><span class="tok-kw">const</span> clone = { ...base };
+<span class="tok-kw">const</span> merged = { ...base, ...extra };
+<span class="tok-kw">const</span> override = { ...base, env: <span class="tok-str">'prod'</span> };</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Later keys override earlier ones — creates a <b>shallow</b> copy (nested objects are still shared references).</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Destructure in Loops</h3>
+            <pre><code><span class="tok-kw">const</span> users = [{name:<span class="tok-str">'A'</span>, role:<span class="tok-str">'admin'</span>}];
+<span class="tok-kw">for</span> (<span class="tok-kw">const</span> { name, role } <span class="tok-kw">of</span> users) {
+  console.log(name, role);
+}</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Common pattern for data-driven Playwright/Jest tests iterating over test-case objects.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 METHODS -->
+    <section class="topic" id="methods">
+      <div class="topic-head"><span class="topic-num">06</span><h2>Static Object Methods</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">The <code>Object.*</code> methods used constantly in real code and interviews.</p>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Method</th><th>Returns</th><th>Use case</th></tr>
+            <tr><td><code>Object.keys(obj)</code></td><td>Array of keys</td><td>Loop over property names</td></tr>
+            <tr><td><code>Object.values(obj)</code></td><td>Array of values</td><td>Loop over property values</td></tr>
+            <tr><td><code>Object.entries(obj)</code></td><td>Array of [key, value]</td><td>Loop over pairs, convert to Map</td></tr>
+            <tr><td><code>Object.assign(t, ...s)</code></td><td>Merged object (mutates <code>t</code>)</td><td>Shallow merge / clone</td></tr>
+            <tr><td><code>Object.freeze(obj)</code></td><td>Same object, frozen</td><td>Prevent all mutation</td></tr>
+            <tr><td><code>Object.seal(obj)</code></td><td>Same object, sealed</td><td>Prevent add/remove, allow edits</td></tr>
+            <tr><td><code>Object.fromEntries(arr)</code></td><td>New object</td><td>Array/Map → object</td></tr>
+            <tr><td><code>Object.create(proto)</code></td><td>New object</td><td>Create with explicit prototype</td></tr>
+            <tr><td><code>Object.is(a, b)</code></td><td>Boolean</td><td>Strict equality, NaN-safe</td></tr>
+            <tr><td><code>Object.hasOwn(obj, k)</code></td><td>Boolean</td><td>Own property check (ES2022)</td></tr>
+            <tr><td><code>Object.getPrototypeOf(obj)</code></td><td>Prototype object</td><td>Inspect the prototype chain</td></tr>
+            <tr><td><code>Object.getOwnPropertyNames(o)</code></td><td>Array of all own keys</td><td>Includes non-enumerable keys</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 ITERATION -->
+    <section class="topic" id="iteration">
+      <div class="topic-head"><span class="topic-num">07</span><h2>Iteration</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Different ways to loop through — or transform — an object's properties.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>for...in</h3>
+            <pre><code><span class="tok-kw">for</span> (<span class="tok-kw">const</span> key <span class="tok-kw">in</span> obj) {
+  console.log(key, obj[key]);
+}</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Iterates enumerable keys, <b>including inherited ones</b> — guard with <code>hasOwnProperty</code>.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Object.entries + forEach</h3>
+            <pre><code>Object.entries(obj).forEach(
+  ([key, value]) =&gt; console.log(key, value)
+);</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">The modern, safest way — only own enumerable properties, no chain leakage.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Transform via fromEntries</h3>
+            <pre><code>Object.fromEntries(
+  Object.entries(cfg)
+    .map(([k, v]) =&gt; [k, v * <span class="tok-num">2</span>])
+);
+<span class="tok-com">// double every numeric value</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Map/filter the entries array, then rebuild the object — the immutable way to transform objects.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Count / Filter Properties</h3>
+            <pre><code>Object.values(scores).filter(v =&gt; v &gt; <span class="tok-num">100</span>).length;
+Object.keys(scores).length; <span class="tok-com">// property count</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Handy for asserting response shape — e.g. "response has exactly 3 keys" in a test.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 ACCESSORS -->
+    <section class="topic" id="accessors">
+      <div class="topic-head"><span class="topic-num">08</span><h2>Getters, Setters &amp; <code>this</code></h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🔑</span>
+          <p><b>Definition:</b> <b>Getters</b> and <b>setters</b> intercept property reads and writes so you can compute, validate, or log on access — they're used exactly like normal properties but run function logic underneath. <code>this</code> refers to the object a method is called on, decided at <b>call time</b>, not definition time.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Method Shorthand &amp; this</h3>
+            <pre><code><span class="tok-kw">const</span> testConfig = {
+  env: <span class="tok-str">'staging'</span>,
+  getUrl() {
+    <span class="tok-kw">return</span> `https://${<span class="tok-kw">this</span>.env}.app.com`;
+  }
+};
+testConfig.getUrl(); <span class="tok-com">// → "https://staging.app.com"</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note"><code>this</code> = the object the method was called on.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Getter / Setter</h3>
+            <pre><code><span class="tok-kw">const</span> config = {
+  _env: <span class="tok-str">'staging'</span>,
+  <span class="tok-kw">get</span> baseUrl() {
+    <span class="tok-kw">return</span> `https://${<span class="tok-kw">this</span>._env}.app.com`;
+  },
+  <span class="tok-kw">set</span> env(val) {
+    <span class="tok-kw">if</span> (!<span class="tok-str">['staging','prod']</span>.includes(val))
+      <span class="tok-kw">throw new</span> Error(<span class="tok-str">'Invalid env'</span>);
+    <span class="tok-kw">this</span>._env = val;
+  }
+};
+config.env = <span class="tok-str">'prod'</span>;   <span class="tok-com">// runs the setter</span>
+config.baseUrl;        <span class="tok-com">// → "https://prod.app.com"</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Accessed like plain properties — no <code>()</code> — but let you validate input or compute derived values.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>⚠ Arrow Functions &amp; this</h3>
+            <pre><code><span class="tok-kw">const</span> bad = {
+  val: <span class="tok-num">42</span>,
+  get: () =&gt; <span class="tok-kw">this</span>.val <span class="tok-com">// ✘ undefined!</span>
+};</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Arrow functions don't have their own <code>this</code> — they inherit it from the enclosing (outer) scope, not the object.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Async Methods</h3>
+            <pre><code><span class="tok-kw">const</span> testConfig = {
+  <span class="tok-kw">async</span> fetchData() {
+    <span class="tok-kw">const</span> url = <span class="tok-kw">this</span>.getUrl();
+    <span class="tok-kw">return</span> fetch(url);
+  }
+};</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Common in Page Object Models where async actions need access to <code>this.selectors</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 IMMUTABILITY -->
+    <section class="topic" id="immutability">
+      <div class="topic-head"><span class="topic-num">09</span><h2>Immutability</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🔒</span>
+          <p><b>Definition:</b> By default, every object property can be changed, added, or removed. <code>Object.freeze()</code> and <code>Object.seal()</code> restrict that — both operate <b>shallowly</b>, meaning nested objects remain fully mutable unless frozen separately.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <span class="tag immut">immutable</span>
+            <h3><span class="dot"></span>Object.freeze()</h3>
+            <pre><code><span class="tok-kw">const</span> obj = Object.freeze({ a: <span class="tok-num">1</span> });
+obj.a = <span class="tok-num">2</span>;   <span class="tok-com">// silently fails (strict: throws)</span>
+Object.isFrozen(obj); <span class="tok-com">// → true</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Nothing can be changed, added, or removed. Great for exporting constants/enums.</p>
+          </div>
+          <div class="card">
+            <span class="tag warn">restricted</span>
+            <h3><span class="dot"></span>Object.seal()</h3>
+            <pre><code><span class="tok-kw">const</span> obj = Object.seal({ a: <span class="tok-num">1</span> });
+obj.a = <span class="tok-num">2</span>;    <span class="tok-com">// ✔ allowed — edits OK</span>
+obj.b = <span class="tok-num">3</span>;    <span class="tok-com">// ✘ blocked — no new keys</span>
+<span class="tok-kw">delete</span> obj.a; <span class="tok-com">// ✘ blocked — no deletion</span>
+Object.isSealed(obj); <span class="tok-com">// → true</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Existing properties can still be edited, but nothing can be added or removed.</p>
+          </div>
+          <div class="card">
+            <span class="tag mut">gotcha</span>
+            <h3><span class="dot"></span>Shallow Freeze Trap</h3>
+            <pre><code><span class="tok-kw">const</span> cfg = Object.freeze({
+  env: <span class="tok-str">'dev'</span>,
+  nested: { port: <span class="tok-num">3000</span> }
+});
+cfg.nested.port = <span class="tok-num">9999</span>; <span class="tok-com">// ✔ works! not deep</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">To deep-freeze, recursively call <code>Object.freeze()</code> on every nested object.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 DESCRIPTORS -->
+    <section class="topic" id="descriptors">
+      <div class="topic-head"><span class="topic-num">10</span><h2>Property Descriptors</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">⚙️</span>
+          <p><b>Definition:</b> Every property secretly carries a <b>descriptor</b> object controlling its behavior: <code>value</code>, <code>writable</code> (can it change?), <code>enumerable</code> (does it show up in loops/<code>Object.keys</code>?), and <code>configurable</code> (can it be deleted or reconfigured?). <code>Object.defineProperty()</code> lets you set these directly.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Object.defineProperty()</h3>
+            <pre><code>Object.defineProperty(obj, <span class="tok-str">'version'</span>, {
+  value: <span class="tok-str">'1.0.0'</span>,
+  writable: <span class="tok-kw">false</span>,   <span class="tok-com">// can't change</span>
+  enumerable: <span class="tok-kw">true</span>,   <span class="tok-com">// shows in keys()</span>
+  configurable: <span class="tok-kw">false</span> <span class="tok-com">// can't delete</span>
+});
+obj.version = <span class="tok-str">'2'</span>; <span class="tok-com">// silently fails</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">More granular than <code>Object.freeze()</code> — lock down a single property instead of the whole object.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Inspecting Descriptors</h3>
+            <pre><code>Object.getOwnPropertyDescriptor(obj, <span class="tok-str">'version'</span>);
+<span class="tok-com">// → { value:"1.0.0", writable:false, ... }</span>
+
+Object.getOwnPropertyDescriptors(obj);
+<span class="tok-com">// → descriptors for ALL own properties</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Useful for debugging why a property "won't update" in a test fixture.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 PROTOTYPE -->
+    <section class="topic" id="prototype">
+      <div class="topic-head"><span class="topic-num">11</span><h2>Prototypes &amp; Inheritance</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🧬</span>
+          <p><b>Definition:</b> Every object has an internal link — its <b>prototype</b> — to another object it inherits properties and methods from. When you access a property JS doesn't find, it walks up this <b>prototype chain</b> until it finds it or reaches <code>null</code>.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Prototype Chain</h3>
+            <pre><code><span class="tok-kw">function</span> <span class="tok-fn">Animal</span>(name) { <span class="tok-kw">this</span>.name = name; }
+Animal.prototype.speak = <span class="tok-kw">function</span>() {
+  console.log(<span class="tok-kw">this</span>.name + <span class="tok-str">' makes a sound'</span>);
+};
+<span class="tok-kw">const</span> dog = <span class="tok-kw">new</span> Animal(<span class="tok-str">'Rex'</span>);
+dog.speak(); <span class="tok-com">// found via prototype chain</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note"><code>dog</code> doesn't own <code>speak</code> — it's found one level up the chain.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>class extends</h3>
+            <pre><code><span class="tok-kw">class</span> BasePage {
+  constructor(page) { <span class="tok-kw">this</span>.page = page; }
+  <span class="tok-kw">async</span> goto(url) { <span class="tok-kw">await</span> <span class="tok-kw">this</span>.page.goto(url); }
+}
+<span class="tok-kw">class</span> LoginPage <span class="tok-kw">extends</span> BasePage {
+  <span class="tok-kw">async</span> login() { <span class="tok-com">/* uses this.page */</span> }
+}</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Class inheritance is prototype inheritance under the hood — common in Page Object base classes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 SYMBOLS -->
+    <section class="topic" id="symbols">
+      <div class="topic-head"><span class="topic-num">12</span><h2>Symbols &amp; Computed Property Names</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🔣</span>
+          <p><b>Definition:</b> A <code>Symbol</code> creates a guaranteed-unique key, useful for near-private properties that won't collide or show up in normal enumeration. <b>Computed property names</b> (<code>[expr]: value</code>) let you use a variable or expression as an object key at creation time.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Computed Property Names</h3>
+            <pre><code><span class="tok-kw">const</span> key = <span class="tok-str">'status'</span>;
+<span class="tok-kw">const</span> obj = { [key]: <span class="tok-str">'active'</span> };
+<span class="tok-com">// → { status: "active" }</span>
+
+<span class="tok-kw">const</span> env = <span class="tok-str">'staging'</span>;
+<span class="tok-kw">const</span> urls = {
+  [env]: <span class="tok-str">'https://staging.app.com'</span>
+};</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Common for building lookup objects keyed by a dynamic environment or ID.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Symbol Keys</h3>
+            <pre><code><span class="tok-kw">const</span> ID = Symbol(<span class="tok-str">'id'</span>);
+<span class="tok-kw">const</span> user = { [ID]: <span class="tok-num">42</span>, name: <span class="tok-str">'Alice'</span> };
+
+user[ID];             <span class="tok-com">// → 42</span>
+Object.keys(user);    <span class="tok-com">// → ["name"] (no Symbol!)</span>
+Object.getOwnPropertySymbols(user); <span class="tok-com">// → [Symbol(id)]</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Symbols are excluded from <code>Object.keys</code>, <code>for...in</code>, and <code>JSON.stringify</code> — a soft-private key.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 PROXY -->
+    <section class="topic" id="proxy">
+      <div class="topic-head"><span class="topic-num">13</span><h2>Proxy &amp; Reflect</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🪞</span>
+          <p><b>Definition:</b> A <code>Proxy</code> wraps an object and lets you intercept fundamental operations — reading a property, setting one, checking <code>in</code>, deleting — via <b>trap</b> functions. Used for validation, logging, virtual properties, or reactive frameworks.</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Basic Proxy</h3>
+            <pre><code><span class="tok-kw">const</span> handler = {
+  get(target, prop) {
+    <span class="tok-kw">if</span> (prop <span class="tok-kw">in</span> target) <span class="tok-kw">return</span> target[prop];
+    <span class="tok-kw">return</span> `Key "${prop}" not found`;
+  },
+  set(target, prop, val) {
+    <span class="tok-kw">if</span> (<span class="tok-kw">typeof</span> val !== <span class="tok-str">'string'</span>)
+      <span class="tok-kw">throw new</span> Error(<span class="tok-str">'String only!'</span>);
+    target[prop] = val;
+    <span class="tok-kw">return true</span>;
+  }
+};
+<span class="tok-kw">const</span> cfg = <span class="tok-kw">new</span> Proxy({ env: <span class="tok-str">'dev'</span> }, handler);
+cfg.env;      <span class="tok-com">// → "dev"</span>
+cfg.missing;  <span class="tok-com">// → 'Key "missing" not found'</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Useful for building strict test-config objects that fail loudly on typos.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Reflect (companion API)</h3>
+            <pre><code>Reflect.get(obj, <span class="tok-str">'env'</span>);
+Reflect.set(obj, <span class="tok-str">'env'</span>, <span class="tok-str">'prod'</span>);
+Reflect.has(obj, <span class="tok-str">'env'</span>);      <span class="tok-com">// like 'in'</span>
+Reflect.ownKeys(obj);          <span class="tok-com">// strings + symbols</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note"><code>Reflect</code> mirrors the same operations Proxy traps intercept — often used together inside trap handlers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 CLONE -->
+    <section class="topic" id="copy">
+      <div class="topic-head"><span class="topic-num">14</span><h2>Cloning &amp; Comparison</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Copying objects safely and comparing them correctly.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>Shallow vs Deep Clone</h3>
+            <pre><code><span class="tok-kw">const</span> shallow = { ...obj };
+<span class="tok-kw">const</span> deep = structuredClone(obj); <span class="tok-com">// ✓ safe</span>
+<span class="tok-com">// or (loses functions/undefined):</span>
+<span class="tok-kw">const</span> d2 = JSON.parse(JSON.stringify(obj));</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Shallow clones still share nested object references — use <code>structuredClone</code> for a true deep copy.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Reference Equality</h3>
+            <pre><code>{ a: <span class="tok-num">1</span> } === { a: <span class="tok-num">1</span> } <span class="tok-com">// false — different refs</span>
+<span class="tok-kw">const</span> x = { a: <span class="tok-num">1</span> };
+<span class="tok-kw">const</span> y = x;
+x === y <span class="tok-com">// true — same reference</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">Objects compare by reference, not value — use a deep-equal utility (or <code>toEqual</code> in tests) to compare contents.</p>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>Object.is() vs ===</h3>
+            <pre><code>Object.is(NaN, NaN);   <span class="tok-com">// → true  (unlike ===)</span>
+NaN === NaN;            <span class="tok-com">// → false</span>
+Object.is(<span class="tok-num">0</span>, -<span class="tok-num">0</span>);      <span class="tok-com">// → false</span>
+<span class="tok-num">0</span> === -<span class="tok-num">0</span>;               <span class="tok-com">// → true</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+            <p class="note">A rare edge case, but a favorite interview trick question.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15 OBJECT VS MAP -->
+    <section class="topic" id="objvsmap">
+      <div class="topic-head"><span class="topic-num">15</span><h2>Object vs Map</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="defbox">
+          <span class="ico">🗺️</span>
+          <p><b>Definition:</b> <code>Map</code> is a dedicated key-value collection, distinct from plain objects — it accepts <b>any</b> value as a key (not just strings/Symbols), preserves insertion order reliably, and has a built-in <code>.size</code>.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Feature</th><th>Object</th><th>Map</th></tr>
+            <tr><td>Key types</td><td>String / Symbol only</td><td>Any value (object, function, etc.)</td></tr>
+            <tr><td>Size</td><td><code>Object.keys(o).length</code></td><td><code>map.size</code></td></tr>
+            <tr><td>Iteration order</td><td>Mostly insertion (edge cases with numeric keys)</td><td>Guaranteed insertion order</td></tr>
+            <tr><td>Default keys</td><td>Inherits from <code>Object.prototype</code></td><td>No default keys — clean map</td></tr>
+            <tr><td>Iteration</td><td><code>for...in</code> / <code>Object.entries</code></td><td>Directly iterable (<code>for...of</code>)</td></tr>
+            <tr><td>Best for</td><td>Structured records, JSON data</td><td>Frequently changing key-value data</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 PITFALLS -->
+    <section class="topic" id="pitfalls">
+      <div class="topic-head"><span class="topic-num">16</span><h2>Common Pitfalls &amp; Best Practices</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="card-grid">
+          <div class="card">
+            <h3><span class="dot"></span>⚠ Gotchas</h3>
+            <pre><code><span class="tok-com">// typeof null === "object" — bug!</span>
+<span class="tok-kw">typeof</span> <span class="tok-kw">null</span> <span class="tok-com">// "object"</span>
+
+<span class="tok-com">// Objects pass by reference</span>
+<span class="tok-kw">const</span> a = { x: <span class="tok-num">1</span> };
+<span class="tok-kw">const</span> b = a;
+b.x = <span class="tok-num">99</span>;
+a.x <span class="tok-com">// → 99 ⚠ same ref!</span>
+
+<span class="tok-com">// Spread is shallow only</span>
+<span class="tok-kw">const</span> c = { ...a }; <span class="tok-com">// nested objs still shared</span>
+
+<span class="tok-com">// {} === {} is always false</span>
+{} === {} <span class="tok-com">// → false</span></code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+          </div>
+          <div class="card">
+            <h3><span class="dot"></span>✓ Best Practices</h3>
+            <pre><code><span class="tok-com">// Use ?. for safe access</span>
+body?.user?.name ?? <span class="tok-str">'unknown'</span>;
+
+<span class="tok-com">// structuredClone for deep copy</span>
+structuredClone(obj);
+
+<span class="tok-com">// Object.hasOwn over hasOwnProperty</span>
+Object.hasOwn(obj, <span class="tok-str">'key'</span>); <span class="tok-com">// ES2022</span>
+
+<span class="tok-com">// Object.freeze for constants</span>
+<span class="tok-kw">const</span> ROUTES = Object.freeze({
+  login: <span class="tok-str">'/login'</span>, dashboard: <span class="tok-str">'/dashboard'</span>
+});
+
+<span class="tok-com">// Destructure in fn params — self-documenting</span>
+<span class="tok-kw">async function</span> <span class="tok-fn">login</span>({ email, password }) {}
+
+<span class="tok-com">// JSON.stringify to compare by value</span>
+JSON.stringify(a) === JSON.stringify(b);</code><button class="copy-btn" title="Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 PLAYGROUND -->
+    <section class="topic" id="playground">
+      <div class="topic-head"><span class="topic-num">17</span><h2>Live Playground</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Edit the JavaScript below and run it — <code>console.log</code> output shows up underneath. Runs entirely in your browser.</p>
+        <div class="playground">
+          <textarea id="pgCode" spellcheck="false">const base = { env: "dev", retries: 3 };
+const extra = { timeout: 5000, headless: true };
+
+const merged = { ...base, ...extra };
+console.log("merged:", merged);
+
+const { env, ...rest } = merged;
+console.log("env:", env);
+console.log("rest:", rest);</textarea>
+          <div class="run-row">
+            <span class="run-hint">Cmd/Ctrl + Enter also runs</span>
+            <button class="run-btn" id="runBtn">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Run Code
+            </button>
+          </div>
+          <div class="output" id="pgOutput"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 INTERVIEW -->
+    <section class="topic" id="interview">
+      <div class="topic-head"><span class="topic-num">18</span><h2>Interview Q&amp;A</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <p class="topic-desc">Click a question to reveal the answer.</p>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> What's the difference between <code>Object.freeze()</code> and <code>const</code>?</span><span class="plus">+</span></p><p class="a"><code>const</code> only prevents reassigning the variable itself; the object it points to can still be mutated. <code>Object.freeze()</code> prevents the object's own properties from being changed, added, or removed.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> How do you check if a variable is an object vs an array?</span><span class="plus">+</span></p><p class="a">Use <code>Array.isArray(value)</code> — arrays are technically objects, so <code>typeof</code> returns <code>'object'</code> for both.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> What does <code>hasOwnProperty</code> guard against?</span><span class="plus">+</span></p><p class="a">It excludes properties inherited from the prototype chain, so a <code>for...in</code> loop only processes the object's own data.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> Why use <code>Object.entries()</code> over <code>for...in</code>?</span><span class="plus">+</span></p><p class="a">It returns only own enumerable properties as an array you can safely map, filter, or reduce — no risk of inherited keys leaking in.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> How would you deep-compare two objects in a test assertion?</span><span class="plus">+</span></p><p class="a">Most test frameworks (Jest, Playwright's <code>expect</code>) provide a deep-equality matcher like <code>toEqual()</code> that recursively compares structure and values rather than references.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> When would you reach for a getter/setter instead of a plain property?</span><span class="plus">+</span></p><p class="a">When a value needs validation on write (a setter rejecting bad input) or needs to be computed from other properties on read (a getter deriving a full URL from a base + path), rather than stored directly.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> What's the real difference between <code>structuredClone()</code> and <code>JSON.parse(JSON.stringify())</code>?</span><span class="plus">+</span></p><p class="a"><code>structuredClone()</code> handles more types correctly — Dates, Maps, Sets, circular references — while the JSON trick silently drops functions and <code>undefined</code> values and throws on circular references.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> Why might you use a <code>Proxy</code> in a test framework?</span><span class="plus">+</span></p><p class="a">To fail fast on typos — e.g. a config Proxy that throws immediately when a test reads a key that doesn't exist, instead of silently returning <code>undefined</code> and failing later with a confusing error.</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> Does spreading an object copy its methods?</span><span class="plus">+</span></p><p class="a">Yes, but only as references to the same function — spread copies own enumerable properties, including function values, but doesn't clone the functions themselves (functions aren't affected by shallow vs deep copy since they're not mutated).</p></div>
+
+        <div class="qa"><p class="q"><span class="qtext"><span class="qmark">Q.</span> Why does <code>for...in</code> sometimes iterate more keys than <code>Object.keys()</code> returns?</span><span class="plus">+</span></p><p class="a"><code>for...in</code> walks the full prototype chain and includes inherited enumerable properties, while <code>Object.keys()</code> only returns the object's own enumerable keys.</p></div>
+
+      </div>
+    </section>
+
+    <!-- 19 QUICK REF -->
+    <section class="topic" id="quickref">
+      <div class="topic-head"><span class="topic-num">19</span><h2>Quick Reference</h2><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+      <div class="topic-body">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Syntax</th><th>What it does</th><th>Example</th></tr>
+            <tr><td><code>obj.key</code></td><td>Dot access</td><td><code>cfg.env → "staging"</code></td></tr>
+            <tr><td><code>obj["key"]</code></td><td>Bracket access (dynamic)</td><td><code>obj[varKey]</code></td></tr>
+            <tr><td><code>obj?.key</code></td><td>Optional chaining (safe)</td><td><code>body?.user?.name</code></td></tr>
+            <tr><td><code>val ?? def</code></td><td>Nullish fallback</td><td><code>x ?? "default"</code></td></tr>
+            <tr><td><code>delete obj.k</code></td><td>Remove property</td><td><code>delete cfg.port</code></td></tr>
+            <tr><td><code>"k" in obj</code></td><td>Check key exists (+ inherited)</td><td><code>"env" in cfg</code></td></tr>
+            <tr><td><code>{...obj}</code></td><td>Shallow clone/spread</td><td><code>{...base, env:"prod"}</code></td></tr>
+            <tr><td><code>const {k} = obj</code></td><td>Destructure</td><td><code>const {name} = user</code></td></tr>
+            <tr><td><code>const {k:alias} = obj</code></td><td>Rename destructure</td><td><code>const {name:n} = user</code></td></tr>
+            <tr><td><code>Object.keys(o)</code></td><td>Array of own keys</td><td><code>["env","timeout"]</code></td></tr>
+            <tr><td><code>Object.values(o)</code></td><td>Array of values</td><td><code>["staging",30000]</code></td></tr>
+            <tr><td><code>Object.entries(o)</code></td><td>Array of [k,v] pairs</td><td><code>[["env","staging"]]</code></td></tr>
+            <tr><td><code>Object.assign(t,s)</code></td><td>Merge (mutates target)</td><td><code>Object.assign({},a,b)</code></td></tr>
+            <tr><td><code>Object.freeze(o)</code></td><td>Make fully immutable</td><td><code>Object.freeze(ROUTES)</code></td></tr>
+            <tr><td><code>Object.seal(o)</code></td><td>No add/delete, can edit</td><td><code>Object.seal(cfg)</code></td></tr>
+            <tr><td><code>Object.create(p)</code></td><td>New object with prototype</td><td><code>Object.create(proto)</code></td></tr>
+            <tr><td><code>Object.is(a,b)</code></td><td>Strict equality (NaN-safe)</td><td><code>Object.is(NaN,NaN) → true</code></td></tr>
+            <tr><td><code>Object.hasOwn(o,k)</code></td><td>Own property check</td><td><code>Object.hasOwn(obj,"key")</code></td></tr>
+            <tr><td><code>structuredClone(o)</code></td><td>Deep clone</td><td><code>structuredClone(obj)</code></td></tr>
+            <tr><td><code>Object.defineProperty</code></td><td>Control property descriptor</td><td><code>writable / enumerable / configurable</code></td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>Learn With PMK71 — JavaScript Objects Complete Reference</span>
+  <span>Built for SDET &amp; Automation Engineers · Playwright · TypeScript · ES2024</span>
+</footer>
+
+<script>
+  // ---------- Scroll progress ----------
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  });
+
+  // ---------- Active nav highlighting ----------
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('section.topic');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.getAttribute('id');
+      const link = document.querySelector(`.nav-item[href="#${id}"]`);
+      if (entry.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => io.observe(s));
+
+  // ---------- Collapsible sections ----------
+  document.querySelectorAll('.topic-head').forEach(head => {
+    head.addEventListener('click', () => {
+      head.closest('.topic').classList.toggle('collapsed');
+    });
+  });
+  let allCollapsed = false;
+  document.getElementById('expandAllBtn').addEventListener('click', () => {
+    allCollapsed = !allCollapsed;
+    sections.forEach(s => s.classList.toggle('collapsed', allCollapsed));
+  });
+
+  // ---------- Copy buttons ----------
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const codeEl = btn.previousElementSibling;
+      const text = codeEl.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>';
+        setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
+      });
+    });
+  });
+
+  // ---------- Q&A accordion ----------
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.addEventListener('click', () => qa.classList.toggle('open'));
+  });
+
+  // ---------- Search / filter ----------
+  const searchInput = document.getElementById('searchInput');
+  const searchCount = document.getElementById('searchCount');
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.trim().toLowerCase();
+    let matchCount = 0;
+    sections.forEach(section => {
+      const cards = section.querySelectorAll('.card, .qa, tr');
+      let sectionHasMatch = term === '';
+      if (term === '') {
+        cards.forEach(c => c.classList.remove('hidden'));
+        section.classList.remove('hidden');
+        section.classList.remove('collapsed');
+        return;
+      }
+      cards.forEach(c => {
+        const text = c.innerText.toLowerCase();
+        const match = text.includes(term);
+        c.classList.toggle('hidden', !match);
+        if (match) { sectionHasMatch = true; matchCount++; }
+      });
+      section.classList.toggle('hidden', !sectionHasMatch);
+      if (sectionHasMatch) section.classList.remove('collapsed');
+    });
+    searchCount.textContent = term ? matchCount + ' match' + (matchCount !== 1 ? 'es' : '') : '';
+  });
+
+  // ---------- Live playground ----------
+  const pgCode = document.getElementById('pgCode');
+  const pgOutput = document.getElementById('pgOutput');
+  function runPlayground() {
+    const logs = [];
+    const fakeConsole = {
+      log: (...args) => logs.push(args.map(a => {
+        if (typeof a === 'object') { try { return JSON.stringify(a, null, 2); } catch(e){ return String(a); } }
+        return String(a);
+      }).join(' '))
+    };
+    pgOutput.classList.remove('err');
+    try {
+      const fn = new Function('console', pgCode.value);
+      fn(fakeConsole);
+      pgOutput.textContent = logs.join('\n');
+    } catch (err) {
+      pgOutput.classList.add('err');
+      pgOutput.textContent = '✘ ' + err.message;
+    }
+  }
+  document.getElementById('runBtn').addEventListener('click', runPlayground);
+  pgCode.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') runPlayground();
+  });
+  runPlayground();
+
+  // ---------- Print ----------
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  // ---------- Download as image ----------
+  document.getElementById('downloadBtn').addEventListener('click', async function () {
+    const btn = this;
+    const original = btn.innerHTML;
+    btn.classList.add('loading');
+    btn.innerHTML = 'Rendering…';
+    const wasCollapsed = [];
+    sections.forEach(s => { wasCollapsed.push(s.classList.contains('collapsed')); s.classList.remove('collapsed'); });
+    try {
+      const target = document.getElementById('capture');
+      const canvas = await html2canvas(target, {
+        backgroundColor: '#12141c',
+        scale: 2,
+        useCORS: true,
+        windowWidth: target.scrollWidth,
+        windowHeight: target.scrollHeight
+      });
+      const link = document.createElement('a');
+      link.download = 'javascript-objects-cheatsheet.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error(err);
+      alert('Could not generate image. Please try the Print option instead.');
+    } finally {
+      sections.forEach((s, i) => s.classList.toggle('collapsed', wasCollapsed[i]));
+      btn.classList.remove('loading');
+      btn.innerHTML = original;
+    }
+  });
+</script>
+
+</body>
+</html>

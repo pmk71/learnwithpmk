@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Premium offline study guide for SDET / QA Engineer roles covering manual testing, Playwright, API testing, SQL, CI/CD, AI-assisted testing, mobile, performance, and WebRTC." />
+  <title>MyYogaTeacher | SDET / QA Engineer Study Guide</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0f172b;
+      --surface: #172338;
+      --surface-2: #1d2e46;
+      --border: #2a3b55;
+      --text: #eaf2ff;
+      --muted: #93a4bf;
+      --accent: #7dd3fc;
+      --accent-2: #34d399;
+      --accent-3: #f59e0b;
+      --warning: #f87171;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+      --radius: 18px;
+    }
+
+    body[data-theme="light"] {
+      --bg: #f5f8ff;
+      --bg-2: #ffffff;
+      --surface: #f7fbff;
+      --surface-2: #eef5ff;
+      --border: #d8e5f4;
+      --text: #14233b;
+      --muted: #5d7192;
+      --accent: #2563eb;
+      --accent-2: #059669;
+      --accent-3: #d97706;
+      --warning: #dc2626;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); }
+    img { max-width: 100%; }
+    .page { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: linear-gradient(180deg, var(--bg-2), var(--surface));
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      overflow-y: auto;
+      transition: transform 0.25s ease;
+    }
+
+    .sidebar.collapsed { transform: translateX(-220px); }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .brand {
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+    }
+    .ghost-btn {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+
+    .toc-search {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 8px 10px;
+      margin: 6px 0;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: background 0.18s ease, color 0.18s ease;
+      font-size: 0.95rem;
+    }
+    .toc-link:hover, .toc-link.active { background: rgba(125, 211, 252, 0.16); color: var(--text); }
+    .sidebar .note { color: var(--muted); font-size: 0.85rem; margin-top: 12px; }
+
+    .main { padding: 24px clamp(18px, 3vw, 32px) 56px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 16px; margin-bottom: 24px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      position: sticky; top: 12px; z-index: 30;
+      backdrop-filter: blur(8px);
+    }
+    .topbar .title { font-weight: 700; }
+    .topbar .actions { display: flex; gap: 8px; }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(125, 211, 252, 0.2), rgba(52, 211, 153, 0.14));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+    .hero h1 { font-size: clamp(1.8rem, 3vw, 2.8rem); margin: 0 0 12px; line-height: 1.16; }
+    .eyebrow { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(125, 211, 252, 0.16); color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .hero p { font-size: 1rem; color: var(--muted); max-width: 900px; }
+    .hero-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 18px; }
+    .hero-card { border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; background: rgba(255,255,255,0.04); }
+    .hero-card strong { display: block; font-size: 1.05rem; }
+
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+    .section h2 { margin-top: 0; font-size: 1.4rem; }
+    .section p, .section li { color: var(--muted); }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+    .pill { display: inline-flex; gap: 6px; align-items: center; padding: 6px 10px; border-radius: 999px; background: rgba(125, 211, 252, 0.12); color: var(--accent); font-size: 0.84rem; font-weight: 600; }
+
+    .grid-2, .grid-3 { display: grid; gap: 14px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+    .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .card h3 { margin-top: 0; font-size: 1.02rem; }
+
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; margin-top: 10px; }
+    th, td { border: 1px solid var(--border); padding: 10px; text-align: left; font-size: 0.95rem; vertical-align: top; }
+    th { background: rgba(125, 211, 252, 0.12); color: var(--text); }
+
+    .timeline {
+      display: grid; gap: 12px;
+      margin-top: 14px;
+    }
+    .timeline-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+    }
+    .timeline-badge { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); margin-top: 8px; flex-shrink: 0; }
+
+    .flowchart { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); margin-top: 14px; }
+    .flowbox { border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--surface-2); text-align: center; font-weight: 600; }
+    .flowbox::after { content: "↓"; display: block; margin-top: 6px; color: var(--accent); }
+    .flowbox:last-child::after { content: ""; }
+
+    .compare { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .compare .card strong { display: block; margin-bottom: 8px; }
+
+    .code-block {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #020617;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-top: 10px;
+      font-family: Consolas, monospace;
+      font-size: 0.92rem;
+    }
+    body[data-theme="light"] .code-block { background: #0f172a; }
+    .token-keyword { color: #7dd3fc; }
+    .token-string { color: #86efac; }
+    .token-number { color: #f9a8d4; }
+    .token-comment { color: #94a3b8; }
+    .token-function { color: #fcd34d; }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      background: var(--bg-2);
+    }
+    details summary { cursor: pointer; font-weight: 700; }
+    details p { margin: 8px 0 0; }
+
+    .practice {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--accent-2);
+      background: rgba(52, 211, 153, 0.1);
+      border-radius: 0 12px 12px 0;
+    }
+    .practice strong { display: block; margin-bottom: 6px; }
+
+    .mini-project { margin-top: 16px; border: 1px dashed var(--border); border-radius: 14px; padding: 12px 14px; }
+    .warning { border-left: 4px solid var(--warning); background: rgba(248, 113, 113, 0.12); padding: 10px 12px; border-radius: 0 12px 12px 0; }
+    .list-inline { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 18px; }
+    .list-inline li { margin: 0; }
+
+    .faq-list { display: grid; gap: 10px; }
+    .faq-item { border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; background: var(--bg-2); }
+    .faq-item strong { display: block; margin-bottom: 6px; }
+
+    @media (max-width: 900px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .sidebar.collapsed { transform: none; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { border-radius: 18px; flex-wrap: wrap; }
+      .section { padding: 18px; }
+      .hero { padding: 20px; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="page">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">MyYogaTeacher QA Guide</div>
+        <button class="ghost-btn" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+      </div>
+      <input class="toc-search" id="tocSearch" type="search" placeholder="Search topics..." aria-label="Search topics" />
+      <nav id="tocNav">
+        <a class="toc-link active" href="#overview">1. Overview</a>
+        <a class="toc-link" href="#manual">2. Manual Testing</a>
+        <a class="toc-link" href="#javascript">3. JavaScript for Playwright</a>
+        <a class="toc-link" href="#playwright">4. Playwright</a>
+        <a class="toc-link" href="#api">5. API Testing</a>
+        <a class="toc-link" href="#sql">6. SQL for QA</a>
+        <a class="toc-link" href="#ai">7. AI-Assisted Testing</a>
+        <a class="toc-link" href="#cicd">8. CI/CD</a>
+        <a class="toc-link" href="#mobile">9. Mobile & Appium</a>
+        <a class="toc-link" href="#performance">10. Performance</a>
+        <a class="toc-link" href="#webrtc">11. WebRTC / Video</a>
+        <a class="toc-link" href="#agile">12. Agile & Release</a>
+        <a class="toc-link" href="#faq">13. Interview Q&A</a>
+      </nav>
+      <p class="note">Offline-ready study guide built with HTML, CSS, and vanilla JavaScript only.</p>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">SDET / QA Engineer Study Guide • 2–4 Years Experience</div>
+        <div class="actions">
+          <button class="ghost-btn" id="themeToggle" aria-label="Toggle theme">🌙/☀️</button>
+          <a class="ghost-btn" href="index.html" style="text-decoration:none;">← Home</a>
+        </div>
+      </div>
+
+      <section class="hero" id="overview">
+        <span class="eyebrow">Premium offline study guide</span>
+        <h1>MyYogaTeacher SDET / QA Engineer Master Guide</h1>
+        <p>This page is designed as a complete, self-contained revision resource for a mid-level QA engineer role covering manual testing, automation with Playwright, API validation, SQL, CI/CD, AI-assisted testing, mobile, performance, and real-time video/WebRTC validation. It moves from beginner to advanced concepts and includes interviews, exercises, debugging tips, and realistic scenarios.</p>
+        <div class="hero-grid">
+          <div class="hero-card"><strong>Beginner → Advanced</strong><span>Structured by skill level</span></div>
+          <div class="hero-card"><strong>Manual + Automation</strong><span>Balanced QA mindset</span></div>
+          <div class="hero-card"><strong>Playwright JS</strong><span>Modern automation stack</span></div>
+          <div class="hero-card"><strong>Interview Ready</strong><span>100+ Q&amp;A patterns</span></div>
+        </div>
+      </section>
+
+      <section class="section" id="manual">
+        <h2>1. Manual Testing: Strategy, Design, and Quality Thinking</h2>
+        <div class="pill-row">
+          <span class="pill">SDLC</span>
+          <span class="pill">STLC</span>
+          <span class="pill">Test Design</span>
+          <span class="pill">Exploratory Testing</span>
+          <span class="pill">Defect Lifecycle</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>SDLC vs STLC</h3>
+            <table>
+              <thead><tr><th>Area</th><th>SDLC</th><th>STLC</th></tr></thead>
+              <tbody>
+                <tr><td>Goal</td><td>Build software correctly</td><td>Validate software quality</td></tr>
+                <tr><td>Focus</td><td>Development lifecycle</td><td>Testing lifecycle</td></tr>
+                <tr><td>Activities</td><td>Planning, design, build, deploy, maintain</td><td>Requirement analysis, test planning, execution, closure</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Testing Types</h3>
+            <ul>
+              <li>Functional, non-functional, regression, smoke, sanity, integration, end-to-end, exploratory, usability, compatibility, accessibility, performance, security, recovery, localization.</li>
+              <li>Choose the right test type based on risk, release time, business impact, and user journey.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Test Design Techniques</h3>
+          <div class="compare">
+            <div class="card">
+              <strong>Equivalence Partitioning</strong>
+              <p>Group inputs into valid and invalid classes, then test representative values.</p>
+            </div>
+            <div class="card">
+              <strong>Boundary Value Analysis</strong>
+              <p>Focus on limit values such as min, max, just inside, just outside.</p>
+            </div>
+            <div class="card">
+              <strong>Decision Table</strong>
+              <p>Good for complex rules and multiple conditions with combinations.</p>
+            </div>
+            <div class="card">
+              <strong>Pairwise / Orthogonal</strong>
+              <p>Efficiently cover combinations across many parameters.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Bug Lifecycle</h3>
+          <div class="flowchart">
+            <div class="flowbox">New</div>
+            <div class="flowbox">Assigned</div>
+            <div class="flowbox">Open</div>
+            <div class="flowbox">Fixed</div>
+            <div class="flowbox">Retest</div>
+            <div class="flowbox">Closed</div>
+          </div>
+          <div class="warning" style="margin-top:12px;">A strong QA engineer adds severity, priority, steps to reproduce, expected vs actual results, and evidence to every defect.</div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Exploratory Testing Checklist</h3>
+          <ul>
+            <li>Test the happy path first, then break assumptions.</li>
+            <li>Try invalid inputs, rapid clicks, browser back/forward, refresh, offline/online states, different timezones, and permission denial.</li>
+            <li>Map user journeys from the perspective of a real user, not just the specification.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Impact Analysis</h3>
+          <table>
+            <thead><tr><th>Change</th><th>Likely Impact</th><th>What to Test</th></tr></thead>
+            <tbody>
+              <tr><td>Login flow update</td><td>Authentication, session, redirects</td><td>Happy path, invalid credentials, remember me, SSO</td></tr>
+              <tr><td>Checkout flow change</td><td>Payment, cart, coupon, address</td><td>Regression, API contract, error states</td></tr>
+              <tr><td>Notification service change</td><td>Delivery, retries, UI states</td><td>Queue behavior, duplicate mails, timezone handling</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Create a test plan for a “book a class” flow in a platform like MyYogaTeacher. Include positive cases, negative cases, boundary cases, and exploratory scenarios.
+        </div>
+      </section>
+
+      <section class="section" id="javascript">
+        <h2>2. JavaScript Essentials Required for Playwright</h2>
+        <div class="pill-row">
+          <span class="pill">ES6+</span>
+          <span class="pill">Promises</span>
+          <span class="pill">Async/Await</span>
+          <span class="pill">Closures</span>
+          <span class="pill">this</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Core Concepts</h3>
+            <ul>
+              <li><strong>Variables:</strong> let, const, var differences and block scoping.</li>
+              <li><strong>Arrow functions:</strong> concise syntax and lexical this.</li>
+              <li><strong>Promises:</strong> pending, fulfilled, rejected states.</li>
+              <li><strong>Async/Await:</strong> syntactic sugar for asynchronous code.</li>
+              <li><strong>Closures:</strong> inner functions retain access to outer scope.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Example</h3>
+            <pre class="code-block"><code><span class="token-keyword">const</span> <span class="token-function">loadData</span> = <span class="token-keyword">async</span> () =&gt; {
+  <span class="token-keyword">try</span> {
+    <span class="token-keyword">const</span> response = <span class="token-keyword">await</span> fetch(<span class="token-string">'/api/classes'</span>);
+    <span class="token-keyword">const</span> data = <span class="token-keyword">await</span> response.json();
+    <span class="token-keyword">return</span> data;
+  } <span class="token-keyword">catch</span> (error) {
+    console.error(error);
+  }
+};</code></pre>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Important Patterns</h3>
+          <div class="grid-2">
+            <div>
+              <ul>
+                <li><strong>Array methods:</strong> map, filter, reduce, find, some, every.</li>
+                <li><strong>Set:</strong> unique values.</li>
+                <li><strong>Objects:</strong> spread, destructuring, shorthand.</li>
+              </ul>
+            </div>
+            <div>
+              <ul>
+                <li><strong>Execution context:</strong> global, function, module.</li>
+                <li><strong>Hoisting:</strong> function and var declarations are moved to the top.</li>
+                <li><strong>this:</strong> depends on call-site and arrow functions.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Event Loop Mental Model</h3>
+          <div class="timeline">
+            <div class="timeline-item"><span class="timeline-badge"></span><div><strong>Call Stack</strong> Executes synchronous code immediately.</div></div>
+            <div class="timeline-item"><span class="timeline-badge"></span><div><strong>Web APIs / Browser APIs</strong> Handle timers, fetch, events, and network I/O.</div></div>
+            <div class="timeline-item"><span class="timeline-badge"></span><div><strong>Task Queue</strong> Stores callbacks that are ready to run.</div></div>
+            <div class="timeline-item"><span class="timeline-badge"></span><div><strong>Event Loop</strong> Moves tasks from the queue to the stack when it is free.</div></div>
+          </div>
+        </div>
+
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Write a small helper that fetches classes, filters only upcoming classes, and maps them to a display-friendly array.
+        </div>
+      </section>
+
+      <section class="section" id="playwright">
+        <h2>3. Playwright (JavaScript) from Basics to Advanced</h2>
+        <div class="pill-row">
+          <span class="pill">Fixtures</span>
+          <span class="pill">Hooks</span>
+          <span class="pill">Tracing</span>
+          <span class="pill">Reporting</span>
+          <span class="pill">Framework Design</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Playwright Basics</h3>
+            <pre class="code-block"><code><span class="token-keyword">const</span> { test, expect } = require(<span class="token-string">'@playwright/test'</span>);
+
+test(<span class="token-string">'login page opens'</span>, <span class="token-keyword">async</span> ({ page }) =&gt; {
+  <span class="token-keyword">await</span> page.goto(<span class="token-string">'https://example.com/login'</span>);
+  <span class="token-keyword">await</span> expect(page).toHaveTitle(/Login/);
+});</code></pre>
+          </div>
+          <div class="card">
+            <h3>What to Learn First</h3>
+            <ul>
+              <li>Selectors, locators, assertions, waits, screenshots, traces.</li>
+              <li>Page object model, fixtures, test data management, environment configs.</li>
+              <li>Parallel execution, retries, tags, markers, and CI-safe test design.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Advanced Topics</h3>
+          <ul>
+            <li><strong>Fixtures:</strong> shared setup, browser context, login state, test data.</li>
+            <li><strong>Hooks:</strong> beforeEach / afterEach / beforeAll / afterAll for cross-cutting behavior.</li>
+            <li><strong>Network interception:</strong> mock APIs, simulate latency, block requests, modify payloads.</li>
+            <li><strong>API testing:</strong> use Playwright request API for direct backend checks.</li>
+            <li><strong>Authentication:</strong> storage state, token injection, session reuse.</li>
+            <li><strong>Tracing & reporting:</strong> trace.zip, HTML report, screenshot/video on failure.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Framework Design Patterns</h3>
+          <table>
+            <thead><tr><th>Pattern</th><th>Use When</th><th>Benefit</th></tr></thead>
+            <tbody>
+              <tr><td>Page Object Model</td><td>UI flows repeat across tests</td><td>Reusability and maintainability</td></tr>
+              <tr><td>Fixture-based setup</td><td>Tests need common environment</td><td>Less duplication</td></tr>
+              <tr><td>Utility layer</td><td>Shared API helpers, wait logic</td><td>Consistency</td></tr>
+              <tr><td>Data-driven tests</td><td>Same scenario across many data rows</td><td>Broader coverage</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Common Interview Questions</h3>
+          <details>
+            <summary>Why use Playwright instead of Selenium?</summary>
+            <p>Playwright offers a better developer experience with auto-waiting, robust selectors, parallel execution, traceability, and first-class browser support across Chromium, Firefox, and WebKit.</p>
+          </details>
+          <details>
+            <summary>How do you handle flaky tests?</summary>
+            <p>Use explicit waits, reduce dependencies, isolate shared state, add retries carefully, and inspect traces/screenshots to understand the root cause.</p>
+          </details>
+        </div>
+
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Build a mini framework for a class-booking app with a login page object, a booking page object, and a fixture that creates authenticated sessions.
+        </div>
+      </section>
+
+      <section class="section" id="api">
+        <h2>4. API Testing with Postman and Playwright</h2>
+        <div class="pill-row">
+          <span class="pill">REST</span>
+          <span class="pill">Headers</span>
+          <span class="pill">OAuth</span>
+          <span class="pill">JWT</span>
+          <span class="pill">Contract Testing</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>REST Essentials</h3>
+            <ul>
+              <li>GET for reading, POST for creating, PUT/PATCH for updates, DELETE for deletion.</li>
+              <li>Use status codes intentionally: 200, 201, 204, 400, 401, 403, 404, 409, 422, 500.</li>
+              <li>Validate body, headers, timing, and schema.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Authentication Examples</h3>
+            <pre class="code-block"><code><span class="token-keyword">const</span> token = <span class="token-string">'Bearer '</span> + process.env.TOKEN;
+<span class="token-keyword">await</span> request.get(<span class="token-string">'/api/classes'</span>, {
+  headers: { Authorization: token }
+});</code></pre>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Best Practices</h3>
+          <ul>
+            <li>Use Postman collections and environments for exploratory testing and smoke runs.</li>
+            <li>Use Playwright request fixtures for automation with less setup overhead.</li>
+            <li>Validate response schema with JSON Schema, examples, and contract expectations.</li>
+            <li>Test negative paths, invalid tokens, unauthorized access, timeouts, and malformed payloads.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h3>Performance basics</h3>
+          <p>For APIs, inspect response time, payload size, concurrency behavior, and error rate. A short API test may also monitor latency under load with k6 or JMeter.</p>
+        </div>
+
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Create a Postman collection covering class booking: auth, list classes, book a class, cancel booking, and error cases.
+        </div>
+      </section>
+
+      <section class="section" id="sql">
+        <h2>5. SQL for QA Engineers: From Basics to Advanced</h2>
+        <div class="pill-row">
+          <span class="pill">Joins</span>
+          <span class="pill">CTEs</span>
+          <span class="pill">Window Functions</span>
+          <span class="pill">Transactions</span>
+          <span class="pill">Indexes</span>
+        </div>
+        <div class="card">
+          <h3>Essential SQL Examples</h3>
+          <pre class="code-block"><code><span class="token-keyword">SELECT</span> u.name, c.title
+<span class="token-keyword">FROM</span> users u
+<span class="token-keyword">JOIN</span> bookings b <span class="token-keyword">ON</span> u.id = b.user_id
+<span class="token-keyword">JOIN</span> classes c <span class="token-keyword">ON</span> b.class_id = c.id
+<span class="token-keyword">WHERE</span> b.status = <span class="token-string">'confirmed'</span>;
+
+<span class="token-keyword">SELECT</span> user_id, COUNT(*) <span class="token-keyword">AS</span> bookings
+<span class="token-keyword">FROM</span> bookings
+<span class="token-keyword">GROUP</span> <span class="token-keyword">BY</span> user_id
+<span class="token-keyword">HAVING</span> COUNT(*) &gt; 1;</code></pre>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Advanced Topics</h3>
+          <ul>
+            <li><strong>Joins:</strong> inner, left, right, full, cross.</li>
+            <li><strong>Subqueries:</strong> nested queries and correlated logic.</li>
+            <li><strong>CTEs:</strong> reusable intermediate result sets.</li>
+            <li><strong>Window Functions:</strong> row_number, rank, dense_rank, lag, lead, sum over partition.</li>
+            <li><strong>Indexes:</strong> improve read performance but cost write operations.</li>
+            <li><strong>Transactions:</strong> begin, commit, rollback, isolation.</li>
+            <li><strong>Views:</strong> logical abstraction over complex data.</li>
+          </ul>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Write a query to identify users who booked more than three classes in the last 30 days and rank them by booking count.
+        </div>
+      </section>
+
+      <section class="section" id="ai">
+        <h2>6. AI-Assisted Testing Workflows</h2>
+        <div class="pill-row">
+          <span class="pill">ChatGPT</span>
+          <span class="pill">Claude</span>
+          <span class="pill">GitHub Copilot</span>
+          <span class="pill">Cursor</span>
+          <span class="pill">Windsurf</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Practical Use Cases</h3>
+            <ul>
+              <li>Generate test cases from user stories and acceptance criteria.</li>
+              <li>Create edge-case data, negative scenarios, and boundary values.</li>
+              <li>Draft Playwright scripts, API test snippets, and SQL queries.</li>
+              <li>Debug failing test logs, analyze screenshots, and summarize RCA.</li>
+              <li>Summarize release risk, coverage gaps, and test evidence.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Prompt Pattern</h3>
+            <pre class="code-block"><code><span class="token-comment">// Prompt example</span>
+Generate 15 regression test cases for a class booking workflow.
+Include happy path, edge cases, negative scenarios, and expected results.
+Mention assumptions and missing requirements.</code></pre>
+          </div>
+        </div>
+        <div class="practice">
+          <strong>Practical Scenario</strong>
+          Use AI to generate a full regression suite for a “reschedule class” feature and then validate the suggested cases against the real product requirement.
+        </div>
+      </section>
+
+      <section class="section" id="cicd">
+        <h2>7. CI/CD Concepts for QA Automation</h2>
+        <div class="pill-row">
+          <span class="pill">Jenkins</span>
+          <span class="pill">GitHub Actions</span>
+          <span class="pill">GitLab CI</span>
+          <span class="pill">Quality Gates</span>
+        </div>
+        <div class="card">
+          <h3>Pipeline Checklist</h3>
+          <ul>
+            <li>Install dependencies and browsers.</li>
+            <li>Run linting and unit checks.</li>
+            <li>Execute smoke tests and regression suites.</li>
+            <li>Publish reports, screenshots, and traces.</li>
+            <li>Fail fast on critical defects and quality gate violations.</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Quality Gate Example</h3>
+          <table>
+            <thead><tr><th>Gate</th><th>Condition</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Smoke suite</td><td>All critical tests pass</td><td>Proceed</td></tr>
+              <tr><td>Test coverage</td><td>Threshold above 80%</td><td>Block if below</td></tr>
+              <tr><td>Flakiness</td><td>Flaky rate below 5%</td><td>Investigate</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Design a GitHub Actions workflow that runs Playwright tests on pull requests and publishes a report artifact.
+        </div>
+      </section>
+
+      <section class="section" id="mobile">
+        <h2>8. Mobile Application Testing Fundamentals + Appium Overview</h2>
+        <div class="pill-row">
+          <span class="pill">Appium</span>
+          <span class="pill">Mobile UI</span>
+          <span class="pill">Device Matrix</span>
+          <span class="pill">OS Versions</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>What to Cover</h3>
+            <ul>
+              <li>Native, hybrid, and web app testing differences.</li>
+              <li>Orientation changes, gestures, app permissions, notifications, offline mode.</li>
+              <li>Device and OS compatibility, screen sizes, memory constraints.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Appium Notes</h3>
+            <p>Appium uses the WebDriver protocol to automate mobile apps. It can be used for native and hybrid mobile automation, often alongside real devices or emulators.</p>
+          </div>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Prepare a mobile test matrix for a yoga class booking app across Android/iOS and offline/online states.
+        </div>
+      </section>
+
+      <section class="section" id="performance">
+        <h2>9. Performance Testing Fundamentals</h2>
+        <div class="pill-row">
+          <span class="pill">JMeter</span>
+          <span class="pill">k6</span>
+          <span class="pill">Latency</span>
+          <span class="pill">Throughput</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Core Metrics</h3>
+            <ul>
+              <li>Response time, throughput, error rate, CPU, memory, and concurrent users.</li>
+              <li>Baseline test, stress test, spike test, soak test, and endurance test.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Tool Notes</h3>
+            <p>JMeter is strong for protocol-level testing and GUI-heavy configuration, while k6 is lightweight and developer-friendly for scripting and CI pipelines.</p>
+          </div>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Create a simple k6 script for checking booking API latency under 20 virtual users.
+        </div>
+      </section>
+
+      <section class="section" id="webrtc">
+        <h2>10. Real-Time Video / WebRTC Testing</h2>
+        <div class="pill-row">
+          <span class="pill">Camera</span>
+          <span class="pill">Microphone</span>
+          <span class="pill">Permissions</span>
+          <span class="pill">Bandwidth</span>
+          <span class="pill">Reconnection</span>
+        </div>
+        <div class="card">
+          <h3>What to Validate</h3>
+          <ul>
+            <li>Camera and microphone permission prompts and fallback flows.</li>
+            <li>Audio/video quality, lag, frozen frames, and low bandwidth handling.</li>
+            <li>Reconnection after network drop, scheduler and timezone behavior, and session join/leave states.</li>
+          </ul>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Design a test matrix for a video class session covering poor bandwidth, microphone mute/unmute, and browser permission denial.</n>
+        </div>
+      </section>
+
+      <section class="section" id="agile">
+        <h2>11. Agile, Scrum, QA Ownership, and Release Quality</h2>
+        <div class="pill-row">
+          <span class="pill">Scrum Ceremonies</span>
+          <span class="pill">RCA</span>
+          <span class="pill">Defect Triage</span>
+          <span class="pill">Release Sign-off</span>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>QA Responsibilities in Agile</h3>
+            <ul>
+              <li>Participate in backlog refinement, story review, planning, and retrospectives.</li>
+              <li>Clarify requirements, challenge assumptions, and raise risks early.</li>
+              <li>Collaborate with developers, PMs, and designers to protect quality.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Release Sign-off</h3>
+            <p>Release readiness should be based on test evidence, critical defect status, regression health, known issues, and business risk decision-making — not just “the build is green”.</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>Quality Metrics</h3>
+          <table>
+            <thead><tr><th>Metric</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr><td>Defect leakage</td><td>Shows how many issues escaped to production</td></tr>
+              <tr><td>Automation pass rate</td><td>Indicates suite stability</td></tr>
+              <tr><td>Mean time to detect</td><td>Measures speed of finding issues</td></tr>
+              <tr><td>Blocked test percentage</td><td>Signals operational risk</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="practice">
+          <strong>Practice Exercise</strong>
+          Prepare a release readiness checklist for a new class-scheduling feature with known limitations and rollback options.
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <h2>12. Interview Q&amp;A: Expandable Answers</h2>
+        <details>
+          <summary>What is the difference between verification and validation?</summary>
+          <p>Verification checks whether the product is built according to requirements; validation checks whether it satisfies user needs and business expectations.</p>
+        </details>
+        <details>
+          <summary>How do you prioritize testing when time is limited?</summary>
+          <p>Start with business-critical flows, high-risk changes, recent code changes, impacted modules, and customer-facing workflows.</p>
+        </details>
+        <details>
+          <summary>How do you handle a defect that is not reproducible?</summary>
+          <p>Collect logs, environment details, steps, screenshots, timing, and try to reproduce under similar conditions. If still unclear, escalate with evidence and ask for a clearer scenario.</p>
+        </details>
+        <details>
+          <summary>How do you make automation reliable?</summary>
+          <p>Use explicit waits, isolate test state, avoid brittle selectors, keep pages small and modular, and add meaningful assertions that validate business behavior.</p>
+        </details>
+        <details>
+          <summary>What is the difference between smoke and regression testing?</summary>
+          <p>Smoke testing is a quick high-level sanity check after build, while regression testing ensures recent changes did not break existing functionality.</p>
+        </details>
+
+        <h3 style="margin-top: 18px;">13. 100+ Frequently Asked SDET Interview Questions</h3>
+        <div class="faq-list" id="faqList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const tocSearch = document.getElementById('tocSearch');
+    const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+
+    const savedTheme = localStorage.getItem('myyoga-theme') || 'dark';
+    document.body.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('myyoga-theme', next);
+      themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+    });
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+
+    tocSearch.addEventListener('input', (event) => {
+      const value = event.target.value.toLowerCase();
+      tocLinks.forEach((link) => {
+        const text = link.textContent.toLowerCase();
+        const match = text.includes(value);
+        link.style.display = match ? 'block' : 'none';
+      });
+    });
+
+    const faqItems = [
+      { q: 'What is the difference between QA and QC?', a: 'QA focuses on preventive quality processes, while QC focuses on detecting defects through testing and review.' },
+      { q: 'What is the purpose of test planning?', a: 'It defines scope, objectives, strategy, environment, risks, entry/exit criteria, and ownership for testing.' },
+      { q: 'What is a test case?', a: 'A test case is a set of steps, inputs, and expected results used to verify a requirement or behavior.' },
+      { q: 'What is the difference between a bug and a defect?', a: 'A defect is a mismatch between expected and actual behavior; a bug is a fault in the software that causes the defect.' },
+      { q: 'What is regression testing?', a: 'It checks that previous functionality still works after a change.' },
+      { q: 'What is the difference between smoke and sanity testing?', a: 'Smoke testing is a shallow build check; sanity testing is a targeted confirmation of a specific change.' },
+      { q: 'What is boundary value analysis?', a: 'It tests values at the boundaries of valid and invalid ranges because bugs often occur at edges.' },
+      { q: 'What is equivalence partitioning?', a: 'It divides input data into classes and tests one representative value from each class.' },
+      { q: 'What is exploratory testing?', a: 'It is unscripted, experience-based testing that discovers issues beyond planned scenarios.' },
+      { q: 'How do you write a good bug report?', a: 'Include title, environment, steps to reproduce, expected result, actual result, severity, priority, and evidence.' },
+      { q: 'What is severity?', a: 'Severity describes the impact of a defect on the system or business process.' },
+      { q: 'What is priority?', a: 'Priority describes the urgency of fixing a defect relative to release timelines.' },
+      { q: 'What is a test strategy?', a: 'It is the high-level approach to testing across the project, including scope, tools, risks, and resources.' },
+      { q: 'What is a test plan?', a: 'It is a document that specifies what to test, when, how, and by whom.' },
+      { q: 'What is traceability?', a: 'It links requirements to test cases, defects, and coverage so you can verify completeness.' },
+      { q: 'What is the purpose of STLC?', a: 'It provides a structured process for planning, designing, executing, and closing testing activities.' },
+      { q: 'What is the difference between SDLC and STLC?', a: 'SDLC covers the full software development lifecycle, while STLC focuses on the test lifecycle.' },
+      { q: 'What is impact analysis?', a: 'It estimates the parts of the system affected by a change before testing begins.' },
+      { q: 'What is a test pyramid?', a: 'It recommends more unit tests, fewer integration tests, and the fewest end-to-end tests.' },
+      { q: 'What is a flaky test?', a: 'A flaky test produces inconsistent results without corresponding code changes.' },
+      { q: 'How do you handle flaky tests?', a: 'Investigate timing, dependencies, shared state, environmental instability, and test data issues.' },
+      { q: 'What is a page object model?', a: 'It encapsulates UI interactions in reusable classes to reduce duplication and improve maintenance.' },
+      { q: 'What is the difference between implicit and explicit waits?', a: 'Implicit waits apply globally; explicit waits apply to a specific condition and are more reliable.' },
+      { q: 'What is auto-waiting in Playwright?', a: 'Playwright automatically waits for elements and conditions to become actionable before interacting.' },
+      { q: 'How do you test authentication flows?', a: 'Verify valid login, invalid credentials, password reset, session persistence, token expiry, and logout behavior.' },
+      { q: 'What is a fixture in Playwright?', a: 'A fixture provides reusable test setup such as browser context, user session, or test data.' },
+      { q: 'What is the role of hooks in Playwright?', a: 'Hooks run setup or teardown logic before or after tests, such as logging in or cleaning state.' },
+      { q: 'How do you mock network calls in Playwright?', a: 'Use route interception to intercept requests and respond with custom data or failure scenarios.' },
+      { q: 'Why is tracing useful?', a: 'Tracing helps diagnose failures with screenshots, DOM snapshots, network logs, and execution timeline details.' },
+      { q: 'What is a storage state file?', a: 'It stores authentication state so tests can reuse logged-in sessions without repeated login steps.' },
+      { q: 'What is the difference between API testing and UI testing?', a: 'API testing validates backend behavior and contracts; UI testing verifies the user experience and rendering.' },
+      { q: 'What is contract testing?', a: 'It verifies that the API contract between service providers and consumers remains consistent.' },
+      { q: 'What is schema validation?', a: 'It checks that API responses match an expected structure and data types.' },
+      { q: 'What are common HTTP status codes?', a: '200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 422 Unprocessable, 500 Server Error.' },
+      { q: 'What is JWT?', a: 'JWT is a compact token format used for stateless authentication and authorization.' },
+      { q: 'What is OAuth?', a: 'OAuth is an authorization framework that allows third-party apps to access data with delegated permissions.' },
+      { q: 'How do you test negative API cases?', a: 'Pass invalid data, missing headers, wrong tokens, malformed payloads, and unexpected methods.' },
+      { q: 'What is chaining in API testing?', a: 'It uses the output of one request as input for the next, such as token retrieval followed by authenticated calls.' },
+      { q: 'What is the importance of SQL for QA?', a: 'It helps validate backend data, verify business logic, inspect edge-case states, and investigate defects.' },
+      { q: 'What is a JOIN?', a: 'A JOIN combines rows from two or more tables based on a related column.' },
+      { q: 'What is the difference between LEFT JOIN and INNER JOIN?', a: 'LEFT JOIN returns all rows from the left table and matching rows from the right; INNER JOIN returns only matches.' },
+      { q: 'What is a subquery?', a: 'A subquery is a query nested inside another query.' },
+      { q: 'What is a CTE?', a: 'A CTE is a temporary named result set used to simplify and structure complex queries.' },
+      { q: 'What are window functions?', a: 'They perform calculations across a set of rows related to the current row, such as ranking or running totals.' },
+      { q: 'Why are indexes important?', a: 'Indexes speed up reads by reducing the amount of data scanned.' },
+      { q: 'What is a transaction?', a: 'A transaction groups multiple database operations so they succeed or fail together.' },
+      { q: 'What is a view?', a: 'A view is a stored query that acts like a virtual table.' },
+      { q: 'How can AI help in testing?', a: 'It can help generate test cases, make test data, write scripts, summarize logs, and identify root causes more quickly.' },
+      { q: 'How do you use Copilot or ChatGPT responsibly in testing?', a: 'Use them to accelerate work, but verify each suggestion against the actual requirements, code, and business logic.' },
+      { q: 'What is a quality gate?', a: 'A quality gate is a rule or threshold that must be met before a release can proceed.' },
+      { q: 'What is CI?', a: 'Continuous Integration automatically integrates and validates code changes frequently.' },
+      { q: 'What is CD?', a: 'Continuous Delivery or Deployment automates the release pipeline after tests and validations pass.' },
+      { q: 'Why is reporting important in CI?', a: 'Reports give visibility into failures, flaky tests, coverage, performance trends, and release quality.' },
+      { q: 'What are common mobile testing risks?', a: 'Device fragmentation, OS versions, permissions, network variability, touch interactions, and memory constraints.' },
+      { q: 'What is Appium?', a: 'Appium is an open-source tool for automating native, hybrid, and mobile web applications.' },
+      { q: 'What is performance testing?', a: 'It validates how a system behaves under expected and peak loads.' },
+      { q: 'What is load testing?', a: 'It measures system behavior under expected user load.' },
+      { q: 'What is stress testing?', a: 'It pushes the system beyond normal capacity to see how it fails and recovers.' },
+      { q: 'What is soak testing?', a: 'It checks stability over a long period under sustained load.' },
+      { q: 'What is WebRTC?', a: 'WebRTC enables real-time audio, video, and data communication directly between browsers or devices.' },
+      { q: 'How do you test camera and microphone permissions?', a: 'Verify prompts appear correctly, rejected permissions degrade gracefully, and accepted permissions enable media usage.' },
+      { q: 'How do you test bandwidth issues in real-time video?', a: 'Simulate low bandwidth, high latency, packet loss, and reconnection scenarios and verify graceful behavior.' },
+      { q: 'Why is timezone handling important in scheduling tests?', a: 'Users in different time zones may see different times for the same class or event.' },
+      { q: 'What is defect triage?', a: 'It is a review process to prioritize defects based on severity, impact, and release risk.' },
+      { q: 'What is root cause analysis?', a: 'It identifies the underlying reason a defect occurred so future similar bugs can be prevented.' },
+      { q: 'What is release sign-off?', a: 'It is the approval decision to release based on test evidence, known issues, and business readiness.' },
+      { q: 'How do you collaborate with developers?', a: 'By clarifying requirements, sharing test evidence, discussing risks early, and participating in design and bug triage.' },
+      { q: 'How do you collaborate with product managers?', a: 'By helping define acceptance criteria, surface edge cases, and translate business goals into testable requirements.' },
+      { q: 'How do you collaborate with designers?', a: 'By validating usability, accessibility, inconsistent states, and visual regressions in user flows.' },
+      { q: 'What is a test data strategy?', a: 'It defines how realistic, secure, and representative data is created and managed for testing.' },
+      { q: 'What is a negative test?', a: 'It validates that invalid or unexpected input is handled correctly.' },
+      { q: 'What is a positive test?', a: 'It confirms the intended behavior works under expected conditions.' },
+      { q: 'How do you test accessibility?', a: 'Use keyboard navigation, contrast checks, screen-reader testing, and semantic HTML validation.' },
+      { q: 'How do you test localization?', a: 'Validate translations, date/time formats, currencies, and layout expansion with different languages.' },
+      { q: 'What is a reusable test component?', a: 'It is a shared helper or page-object part that reduces duplication and improves consistency.' },
+      { q: 'What is a test environment?', a: 'It is the setup of hardware, software, data, network, and tools used to run tests.' },
+      { q: 'What is a test oracle?', a: 'It is a source of expected results used to judge whether the observed outcome is correct.' },
+      { q: 'What is the difference between unit and integration testing?', a: 'Unit tests validate small components in isolation; integration tests validate interactions between components.' },
+      { q: 'What is end-to-end testing?', a: 'It validates a complete user journey across multiple layers of the application.' },
+      { q: 'What is test coverage?', a: 'It measures how much of the application or requirement surface has been exercised by tests.' },
+      { q: 'How do you reduce test maintenance effort?', a: 'Use robust selectors, avoid hard-coded waits, centralize common steps, and keep tests small.' },
+      { q: 'What is the difference between deterministic and nondeterministic tests?', a: 'Deterministic tests always produce the same result given the same input; nondeterministic tests may vary because of environment or timing.' },
+      { q: 'What is a critical path?', a: 'It is the most important user journey whose failure would significantly harm the business or user experience.' },
+      { q: 'What is a risk-based testing approach?', a: 'It focuses testing effort on areas with higher risk, business impact, or recent change.' },
+      { q: 'How do you verify a bug is fixed?', a: 'Retest the original scenario, add regression coverage, and check related flows for collateral issues.' },
+      { q: 'What is the difference between a bug and a risk?', a: 'A bug is a known defect; a risk is a potential future problem that may or may not occur.' },
+      { q: 'Why are logs useful during debugging?', a: 'They provide context about state changes, request/response behavior, and failure timing.' },
+      { q: 'How would you debug a failing Playwright test?', a: 'Review the trace, inspect screenshots, compare selectors, and verify timing and network behavior.' },
+      { q: 'How would you debug an API test that fails randomly?', a: 'Check response times, dependency services, authentication expiry, environment drift, and test data reuse.' },
+      { q: 'What is a known issue?', a: 'A known issue is a defect that has been accepted as unresolved, usually with a workaround or planned fix.' },
+      { q: 'What is a release note?', a: 'It summarizes what changed, what was tested, and any known issues in a release.' },
+      { q: 'How do you identify high-risk areas?', a: 'Analyze recent changes, business-critical flows, customer impact, and past defect history.' },
+      { q: 'What is a defect clustering?', a: 'It is the pattern where defects repeatedly occur in the same modules or areas.' },
+      { q: 'How do you report quality to stakeholders?', a: 'Use clear metrics, status summaries, risks, test evidence, and a recommendation for release readiness.' },
+      { q: 'What is a sanity check?', a: 'A quick verification of a small change or fix area to confirm it behaves as expected.' },
+      { q: 'How do you test file uploads?', a: 'Validate supported formats, size limits, error handling, and success states with valid and invalid files.' },
+      { q: 'How do you test pagination?', a: 'Verify first, middle, last, and empty pages plus navigation and sorting behavior.' },
+      { q: 'How do you test sorting?', a: 'Check ascending, descending, and mixed data cases plus edge cases like null values and duplicates.' },
+      { q: 'What is a canary release?', a: 'A limited rollout to a small audience to monitor quality and usage before full release.' },
+      { q: 'What is a rollback plan?', a: 'A plan to revert or disable a release if critical defects are found after deployment.' },
+      { q: 'How do you test search functionality?', a: 'Validate basic search, partial matches, case sensitivity, special characters, zero results, and performance.' },
+      { q: 'How do you test offline behavior?', a: 'Check whether the app handles connectivity loss gracefully, caches data correctly, and resumes cleanly.' },
+      { q: 'How do you test accessibility in forms?', a: 'Check labels, focus order, keyboard navigation, error announcements, and contrast.' },
+      { q: 'What is the purpose of a retest?', a: 'It verifies that a previously reported defect has been fixed.' },
+      { q: 'What is a defect age?', a: 'It is the amount of time a defect has remained unresolved since its discovery.' },
+      { q: 'How do you ensure automation does not become brittle?', a: 'Use stable locators, avoid over-asserting, keep tests independent, and refactor duplication.' },
+      { q: 'Why is collaboration important for QA?', a: 'Because quality depends on shared understanding of requirements, architecture, and risks across the team.' }
+    ];
+
+    const faqList = document.getElementById('faqList');
+    faqList.innerHTML = faqItems.map((item, index) => `
+      <div class="faq-item">
+        <strong>${index + 1}. ${item.q}</strong>
+        <div>${item.a}</div>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>
