@@ -301,13 +301,32 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
   color:var(--accent);background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.2)
 }
 .featured-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block}
-
-/* soon card */
-.card.soon{opacity:.5;border-style:dashed;cursor:default}
-.card.soon:hover{transform:none;border-color:var(--border);box-shadow:none}
-.card.soon:hover::before{opacity:0}
-.card.soon .card-icon{background:var(--bg3);border-color:var(--border)}
-
+.card.super-card{background:linear-gradient(135deg,rgba(210,168,255,.08),rgba(88,166,255,.08));border-color:rgba(210,168,255,.28);}
+.card.super-card .card-icon{background:linear-gradient(135deg,rgba(210,168,255,.18),rgba(88,166,255,.14));border-color:rgba(210,168,255,.3);}
+.card.super-card .card-topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin-top:4px;}
+.topic-card{
+  position:relative;z-index:1;min-height:86px;padding:12px;border-radius:8px;
+  display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--text);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);
+  transition:transform .15s,background .15s,border-color .15s,box-shadow .15s;
+}
+.topic-card:hover,.topic-card:focus-visible{
+  background:rgba(88,166,255,.12);transform:translateY(-2px);
+  border-color:rgba(88,166,255,.38);box-shadow:0 12px 26px -18px rgba(88,166,255,.5);
+}
+.topic-card strong{font-size:13px;font-weight:700;line-height:1.2}
+.topic-card span{font-size:11px;color:var(--text2);line-height:1.35}
+.topic-card em{margin-top:auto;font-size:10px;font-style:normal;color:var(--accent);font-weight:700}
+.topic-preview{
+  display:none;margin-top:16px;padding:16px;border:1px solid rgba(88,166,255,.2);
+  border-radius:8px;background:rgba(13,17,23,.45);color:var(--text2);font-size:13px;line-height:1.7;
+}
+.topic-preview.visible{display:block;}
+.topic-preview .preview-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.topic-preview strong{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+.topic-preview p{font-size:13px;margin:0;color:var(--text2);line-height:1.65}
+.topic-preview .preview-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.topic-preview .preview-meta span{font-size:10px;padding:2px 8px;border-radius:999px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 /* ── FEATURES ── */
 .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:8px}
 .feature{
@@ -603,44 +622,58 @@ footer{
       <div class="card-cta">Open guide <span class="arrow">→</span></div>
     </a>
 
-    <a class="card" href="./guides/javascript-object-sheet.html">
+    <div class="card super-card" data-key="javascript-concepts" data-difficulty="beginner">
       <div class="card-accent-bar"></div>
-      <div class="card-icon">📘</div>
+      <span class="featured-badge">JS Concepts</span>
+      <div class="card-icon">🧠</div>
       <div class="card-meta">
-        <span>Object Sheet</span><span class="sep">·</span>
-        <span>JavaScript</span><span class="sep">·</span>
-        <span>QA Notes</span>
+        <span>Core Concepts</span><span class="sep">·</span>
+        <span>Beginner</span><span class="sep">·</span>
+        <span class="read-time">45 min</span>
       </div>
-      <h3>JavaScript Object Sheet — Complete Reference</h3>
-      <p>Downloadable and interactive JavaScript object notes for testers: creation, access patterns, destructuring, and prototype fundamentals.</p>
+      <h3>JavaScript Concepts — Super Card</h3>
+      <p>A super summary of essential JavaScript concepts for testers, with quick access to topics that matter most in automation and QA.</p>
+      <div class="card-topics">
+        <a class="topic-card" data-topic="strings" href="./guides/javascript-string-complete-reference.html">
+          <strong>Strings</strong>
+          <span>Text, search, slicing, assertions</span>
+          <em>Open page</em>
+        </a>
+        <a class="topic-card" data-topic="arrays" href="./guides/javascript-arrays-complete-reference.html">
+          <strong>Arrays</strong>
+          <span>Lists, transforms, test data</span>
+          <em>Open page</em>
+        </a>
+        <a class="topic-card" data-topic="objects" href="./guides/javascript-object-sheet.html">
+          <strong>Objects</strong>
+          <span>Properties, payloads, fixtures</span>
+          <em>Open page</em>
+        </a>
+        <a class="topic-card" data-topic="functions" href="./guides/typescript-playwright-guide.html#s2">
+          <strong>Functions</strong>
+          <span>Helpers, callbacks, reusable flows</span>
+          <em>Open page</em>
+        </a>
+        <a class="topic-card" data-topic="async" href="./guides/typescript-playwright-guide.html#s5">
+          <strong>Async</strong>
+          <span>Promises, waits, event loop</span>
+          <em>Open page</em>
+        </a>
+        <a class="topic-card" data-topic="regex" href="./guides/javascript-string-complete-reference.html#regex">
+          <strong>Regex</strong>
+          <span>Patterns, locators, validation</span>
+          <em>Open page</em>
+        </a>
+      </div>
+      <div class="topic-preview" aria-live="polite" aria-hidden="true"></div>
       <div class="card-tags">
         <span class="tag">JavaScript</span>
-        <span class="tag">Objects</span>
-        <span class="tag">Selectors</span>
-        <span class="tag">Download</span>
+        <span class="tag">Concepts</span>
+        <span class="tag">Core</span>
+        <span class="tag">QA</span>
       </div>
-      <div class="card-cta">Open guide <span class="arrow">→</span></div>
-    </a>
-
-    <a class="card" href="./guides/javascript-arrays-complete-reference.html">
-      <div class="card-accent-bar"></div>
-      <div class="card-icon">📊</div>
-      <div class="card-meta">
-        <span>Array Methods</span><span class="sep">·</span>
-        <span>ES2023+</span><span class="sep">·</span>
-        <span class="difficulty-badge intermediate">Intermediate</span><span class="sep">·</span>
-        <span class="read-time">60 min</span>
-      </div>
-      <h3>JavaScript Arrays — Complete Reference</h3>
-      <p>Master array creation, access patterns, mutating vs immutable methods, spread/rest, destructuring, performance Big-O, common pitfalls, and Playwright-specific patterns.</p>
-      <div class="card-tags">
-        <span class="tag">JavaScript</span>
-        <span class="tag">Arrays</span>
-        <span class="tag">Methods</span>
-        <span class="tag">Reference</span>
-      </div>
-      <div class="card-cta">Open guide <span class="arrow">→</span></div>
-    </a>
+      <div class="card-cta">Explore topics <span class="arrow">→</span></div>
+    </div>
 
   </div>
 </section>
@@ -805,12 +838,12 @@ const cardData = {
   'typescript-playwright': { difficulty: 'advanced', tags: ['typescript', 'playwright', 'sdet', 'interview'] },
   'api-testing': { difficulty: 'intermediate', tags: ['api testing', 'rest', 'playwright', 'auth'] },
   'network-interception': { difficulty: 'advanced', tags: ['playwright', 'network', 'mocking', 'interviews'] },
-  'javascript-arrays': { difficulty: 'intermediate', tags: ['javascript', 'arrays', 'methods', 'reference'] }
+  'javascript-concepts': { difficulty: 'beginner', tags: ['javascript', 'strings', 'arrays', 'objects', 'functions', 'async', 'regex', 'concepts'] }
 };
 
-function getCardDifficulty(href) {
+function getCardDifficulty(card) {
   for (const [key, data] of Object.entries(cardData)) {
-    if (href.includes(key)) return data.difficulty;
+    if ((card.href && card.href.includes(key)) || card.dataset.key === key) return data.difficulty;
   }
   return null;
 }
@@ -823,7 +856,7 @@ function filterGuides() {
     const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
     const description = card.querySelector('p')?.textContent.toLowerCase() || '';
     const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase());
-    const difficulty = getCardDifficulty(card.href || '');
+    const difficulty = getCardDifficulty(card);
 
     const matchesSearch = searchTerm === '' || 
       title.includes(searchTerm) || 
@@ -845,6 +878,102 @@ filterTabs.forEach(tab => {
     filterGuides();
   });
 });
+
+// JS Concepts sub-card hover preview
+const topicPreview = document.querySelector('.topic-preview');
+const topicCards = document.querySelectorAll('.topic-card');
+const topicMeta = {
+  strings: {
+    title: 'Strings',
+    description: 'Full JS string reference for immutability, search, slicing, text locators, and automation assertions.',
+    coverage: 'String methods, Unicode, parsing, Playwright locators',
+    level: 'Beginner',
+    time: '35 min'
+  },
+  arrays: {
+    title: 'Arrays',
+    description: 'Array construction, spread/rest, mutating vs immutable methods, and Playwright-ready data patterns.',
+    coverage: 'Creation, map/filter/reduce, sorting, test data',
+    level: 'Beginner',
+    time: '40 min'
+  },
+  objects: {
+    title: 'Objects',
+    description: 'Object creation, property access, destructuring, and payload patterns used in QA scripts.',
+    coverage: 'Properties, cloning, destructuring, API payloads',
+    level: 'Beginner',
+    time: '30 min'
+  },
+  functions: {
+    title: 'Functions',
+    description: 'Reusable helpers, callbacks, higher-order functions, closures, and async function patterns.',
+    coverage: 'Declarations, arrows, callbacks, closures, helpers',
+    level: 'Core',
+    time: '25 min'
+  },
+  async: {
+    title: 'Async',
+    description: 'Promises, async/await, and event-loop behavior that makes automation code reliable.',
+    coverage: 'Event loop, promises, awaits, race conditions',
+    level: 'Core',
+    time: '30 min'
+  },
+  regex: {
+    title: 'Regex',
+    description: 'Pattern matching for locators, assertions, email checks, URL checks, and validations.',
+    coverage: 'Patterns, flags, match/test, locator regex',
+    level: 'Core',
+    time: '20 min'
+  }
+};
+
+let previewHideTimeout;
+
+function showTopicPreview(topic) {
+  const metadata = topicMeta[topic];
+  if (!metadata) return;
+  topicPreview.innerHTML = `
+    <div class="preview-kicker">Super card info</div>
+    <strong>${metadata.title}</strong>
+    <p>${metadata.description}</p>
+    <div class="preview-meta">
+      <span>${metadata.coverage}</span>
+      <span>${metadata.level}</span>
+      <span>${metadata.time}</span>
+      <span>Click sub-card to open</span>
+    </div>
+  `;
+  topicPreview.classList.add('visible');
+  topicPreview.setAttribute('aria-hidden', 'false');
+}
+
+function hideTopicPreview() {
+  previewHideTimeout = setTimeout(() => {
+    topicPreview.classList.remove('visible');
+    topicPreview.setAttribute('aria-hidden', 'true');
+  }, 150);
+}
+
+function cancelHideTopicPreview() {
+  clearTimeout(previewHideTimeout);
+}
+
+topicCards.forEach(card => {
+  const topic = card.dataset.topic;
+  card.addEventListener('mouseenter', () => {
+    cancelHideTopicPreview();
+    showTopicPreview(topic);
+  });
+  card.addEventListener('focus', () => {
+    cancelHideTopicPreview();
+    showTopicPreview(topic);
+  });
+  card.addEventListener('mouseleave', hideTopicPreview);
+  card.addEventListener('blur', hideTopicPreview);
+});
+
+topicPreview.addEventListener('mouseenter', cancelHideTopicPreview);
+topicPreview.addEventListener('mouseleave', hideTopicPreview);
 </script>
 </body>
 </html>

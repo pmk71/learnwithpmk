@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript String — Complete Reference | Prashanth M K</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e17;
+  --bg-panel:#111827;
+  --bg-card:#141b2d;
+  --bg-elevated:#1a2338;
+  --border:#243049;
+  --border-soft:#1c2740;
+  --text:#e7ecf7;
+  --text-dim:#9aa7c2;
+  --text-faint:#5f6c88;
+  --indigo:#7c8cff;
+  --violet:#b98bff;
+  --cyan:#5fd8e0;
+  --green:#4ade80;
+  --pink:#ff7ab3;
+  --amber:#ffb84d;
+  --red:#ff6b6b;
+  --code-string:#a6e3a1;
+  --code-comment:#5f6c88;
+  --code-key:#7c8cff;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(124,140,255,.10), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(185,139,255,.08), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:'IBM Plex Sans', sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+code, pre, .mono{font-family:'IBM Plex Mono', monospace;}
+
+/* ---------- Layout ---------- */
+.shell{display:flex; max-width:1500px; margin:0 auto;}
+.sidebar{
+  width:260px; flex-shrink:0; position:sticky; top:0; height:100vh; overflow-y:auto;
+  padding:22px 16px 40px; border-right:1px solid var(--border-soft);
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.sidebar::-webkit-scrollbar{width:6px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px;}
+.brand{padding:6px 10px 18px; border-bottom:1px solid var(--border-soft); margin-bottom:14px;}
+.brand-title{font-weight:800; font-size:15px; letter-spacing:.02em; background:linear-gradient(90deg,var(--indigo),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.brand-sub{font-size:11px; color:var(--text-faint); margin-top:4px; letter-spacing:.04em; text-transform:uppercase;}
+.search-wrap{position:relative; margin:0 6px 16px;}
+#search{
+  width:100%; padding:9px 12px 9px 32px; border-radius:10px; border:1px solid var(--border);
+  background:var(--bg-panel); color:var(--text); font-size:13px; font-family:inherit;
+}
+#search:focus{outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(124,140,255,.15);}
+.search-icon{position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-faint); font-size:13px;}
+.progress-wrap{margin:0 6px 16px; padding:10px 12px; background:var(--bg-panel); border:1px solid var(--border-soft); border-radius:10px;}
+.progress-label{font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; display:flex; justify-content:space-between; margin-bottom:6px;}
+.progress-bar{height:5px; border-radius:4px; background:var(--bg-elevated); overflow:hidden;}
+.progress-fill{height:100%; width:0%; background:linear-gradient(90deg,var(--indigo),var(--cyan)); transition:width .25s ease;}
+nav.toc a{
+  display:flex; align-items:center; gap:8px; padding:7px 10px; margin:1px 4px; border-radius:8px;
+  color:var(--text-dim); text-decoration:none; font-size:13px; transition:.15s;
+}
+nav.toc a:hover{background:var(--bg-panel); color:var(--text);}
+nav.toc a.active{background:var(--bg-elevated); color:var(--indigo); font-weight:600;}
+nav.toc .dot{width:6px; height:6px; border-radius:50%; background:var(--text-faint); flex-shrink:0;}
+nav.toc a.active .dot{background:var(--indigo);}
+.toc-group-label{font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; padding:14px 10px 4px;}
+
+.main{flex:1; min-width:0; padding:28px 40px 80px;}
+header.hero{margin-bottom:28px;}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 10px;}
+.badge{
+  font-size:10.5px; font-weight:700; letter-spacing:.04em; padding:5px 11px; border-radius:20px;
+  border:1px solid var(--border); color:var(--text-dim); background:var(--bg-panel);
+}
+.badge.utility{color:var(--indigo); border-color:rgba(124,140,255,.35);}
+.badge.playwright{color:var(--cyan); border-color:rgba(95,216,224,.35);}
+.badge.assertion{color:var(--green); border-color:rgba(74,222,128,.35);}
+.badge.regex{color:var(--pink); border-color:rgba(255,122,179,.35);}
+.badge.core{color:var(--violet); border-color:rgba(185,139,255,.35);}
+.badge.caution{color:var(--amber); border-color:rgba(255,184,77,.35);}
+h1.title{font-size:30px; font-weight:800; margin:0; letter-spacing:-.01em;}
+.title .accent{background:linear-gradient(90deg,var(--indigo),var(--violet),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.subtitle{color:var(--text-dim); font-size:13.5px; margin-top:6px;}
+.author-line{display:flex; align-items:center; gap:10px; margin-top:16px; font-size:12.5px; color:var(--text-faint);}
+.author-line .pill{background:var(--bg-panel); border:1px solid var(--border-soft); padding:5px 12px; border-radius:20px; color:var(--text-dim);}
+.author-line strong{color:var(--indigo);}
+
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-size:11.5px; color:var(--text-faint); padding:10px 0 20px; border-bottom:1px solid var(--border-soft); margin-bottom:26px;}
+.legend span{display:flex; align-items:center; gap:6px;}
+.sw{width:9px; height:9px; border-radius:2px; display:inline-block;}
+
+section.chapter{margin-bottom:44px; scroll-margin-top:20px;}
+.chapter-head{display:flex; align-items:baseline; gap:12px; margin-bottom:14px;}
+.chapter-num{font-family:'IBM Plex Mono'; font-size:12px; color:var(--text-faint); font-weight:600;}
+h2.chapter-title{font-size:19px; font-weight:700; margin:0; color:var(--text);}
+.chapter-desc{color:var(--text-dim); font-size:13px; margin:-6px 0 16px;}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:16px;}
+.grid.g2{grid-template-columns:repeat(2,1fr);}
+.grid.g3{grid-template-columns:repeat(3,1fr);}
+@media (max-width:900px){.grid.g2,.grid.g3{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--bg-card); border:1px solid var(--border-soft); border-radius:var(--radius);
+  padding:16px 18px; position:relative; transition:border-color .15s, transform .15s;
+}
+.card:hover{border-color:var(--border);}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;}
+.card-title{font-weight:700; font-size:14px; display:flex; align-items:center; gap:8px;}
+.tag{font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:5px; letter-spacing:.03em;}
+.tag.utility{background:rgba(124,140,255,.15); color:var(--indigo);}
+.tag.playwright{background:rgba(95,216,224,.15); color:var(--cyan);}
+.tag.assertion{background:rgba(74,222,128,.15); color:var(--green);}
+.tag.regex{background:rgba(255,122,179,.15); color:var(--pink);}
+.tag.core{background:rgba(185,139,255,.15); color:var(--violet);}
+.tag.caution{background:rgba(255,184,77,.15); color:var(--amber);}
+.card-note{font-size:12.5px; color:var(--text-dim); margin:0 0 10px;}
+
+pre.code{
+  background:#080b13; border:1px solid var(--border-soft); border-radius:10px;
+  padding:12px 14px; font-size:12.3px; overflow-x:auto; margin:0; position:relative;
+  line-height:1.65;
+}
+pre.code .c{color:var(--code-comment); font-style:italic;}
+pre.code .s{color:var(--code-string);}
+pre.code .k{color:var(--code-key);}
+pre.code .n{color:var(--amber);}
+pre.code .arrow{color:var(--cyan);}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:var(--bg-elevated); border:1px solid var(--border);
+  color:var(--text-faint); font-size:10.5px; padding:4px 9px; border-radius:6px; cursor:pointer;
+  font-family:'IBM Plex Sans'; opacity:0; transition:opacity .15s;
+}
+.card:hover .copy-btn, .code-wrap:hover .copy-btn{opacity:1;}
+.copy-btn:hover{color:var(--text); border-color:var(--indigo);}
+.copy-btn.copied{color:var(--green); border-color:var(--green); opacity:1;}
+.code-wrap{position:relative;}
+
+.callout{border-radius:10px; padding:12px 14px; font-size:12.5px; margin-bottom:14px; border:1px solid; display:flex; gap:10px;}
+.callout.info{background:rgba(124,140,255,.06); border-color:rgba(124,140,255,.25); color:var(--text-dim);}
+.callout.warn{background:rgba(255,184,77,.06); border-color:rgba(255,184,77,.3); color:var(--text-dim);}
+.callout .ic{flex-shrink:0;}
+
+table.ref{width:100%; border-collapse:collapse; font-size:12.5px;}
+table.ref th{
+  text-align:left; padding:8px 10px; color:var(--text-faint); font-weight:600; font-size:10.5px;
+  text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid var(--border);
+}
+table.ref td{padding:8px 10px; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+table.ref td code{color:var(--indigo); font-size:12px;}
+table.ref tr:hover td{background:var(--bg-elevated);}
+.table-wrap{overflow-x:auto; border:1px solid var(--border-soft); border-radius:var(--radius); background:var(--bg-card);}
+
+/* Accordion (interview Q&A) */
+.qa{border:1px solid var(--border-soft); border-radius:10px; margin-bottom:8px; background:var(--bg-card); overflow:hidden;}
+.qa summary{
+  cursor:pointer; padding:13px 16px; font-size:13.3px; font-weight:600; list-style:none;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.qa summary::-webkit-details-marker{display:none;}
+.qa summary .plus{color:var(--indigo); font-size:16px; transition:transform .2s; flex-shrink:0;}
+.qa[open] summary .plus{transform:rotate(45deg);}
+.qa .ans{padding:0 16px 15px; color:var(--text-dim); font-size:13px; border-top:1px solid var(--border-soft); padding-top:12px;}
+.qa .ans pre.code{margin-top:8px;}
+
+.flow{display:grid; grid-template-columns:repeat(5,1fr); gap:12px;}
+@media (max-width:1100px){.flow{grid-template-columns:repeat(2,1fr);}}
+.flow-step{background:var(--bg-card); border:1px solid var(--border-soft); border-radius:12px; padding:14px;}
+.flow-step .fnum{font-size:10px; color:var(--indigo); font-weight:700; letter-spacing:.05em;}
+.flow-step h4{margin:6px 0 8px; font-size:13px;}
+
+footer{border-top:1px solid var(--border-soft); margin-top:50px; padding-top:24px; color:var(--text-faint); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+.hidden{display:none !important;}
+mark{background:rgba(124,140,255,.35); color:var(--text); border-radius:3px; padding:0 2px;}
+
+.back-top{position:fixed; bottom:24px; right:24px; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-dim); width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:0; pointer-events:none; transition:opacity .2s; font-size:16px;}
+.back-top.show{opacity:1; pointer-events:auto;}
+
+@media (max-width:960px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-title">JS String — Complete Reference</div>
+      <div class="brand-sub">Automation · QA · Playwright</div>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="search" type="text" placeholder="Search methods, concepts…">
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Read progress</span><span id="progressPct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <nav class="toc" id="toc">
+      <div class="toc-group-label">Foundations</div>
+      <a href="#what-is-string"><span class="dot"></span>What is a String</a>
+      <a href="#creation"><span class="dot"></span>Creation & Immutability</a>
+      <a href="#properties"><span class="dot"></span>Properties & Escapes</a>
+      <a href="#unicode"><span class="dot"></span>Unicode & UTF-16</a>
+
+      <div class="toc-group-label">Core Methods</div>
+      <a href="#search-methods"><span class="dot"></span>Search Methods</a>
+      <a href="#case"><span class="dot"></span>Case Conversion</a>
+      <a href="#slice"><span class="dot"></span>Slice & Extract</a>
+      <a href="#transform"><span class="dot"></span>Transform & Mutate</a>
+      <a href="#advanced-core"><span class="dot"></span>Advanced Core Methods</a>
+
+      <div class="toc-group-label">Patterns</div>
+      <a href="#regex"><span class="dot"></span>Regular Expressions</a>
+      <a href="#parsing"><span class="dot"></span>Parsing Numbers</a>
+      <a href="#comparison"><span class="dot"></span>Comparison & Misc</a>
+      <a href="#pitfalls"><span class="dot"></span>Common Pitfalls</a>
+
+      <div class="toc-group-label">Playwright / Automation</div>
+      <a href="#locators"><span class="dot"></span>Text Locators</a>
+      <a href="#matchers"><span class="dot"></span>Matchers / Assertions</a>
+      <a href="#reading"><span class="dot"></span>Reading Text From Page</a>
+      <a href="#assert-patterns"><span class="dot"></span>JS Assertion Patterns</a>
+      <a href="#flow"><span class="dot"></span>Program Flow Example</a>
+
+      <div class="toc-group-label">Reference</div>
+      <a href="#es2024"><span class="dot"></span>ES2024+ Features</a>
+      <a href="#qa"><span class="dot"></span>Interview Q&A</a>
+      <a href="#quickref"><span class="dot"></span>Quick Reference Table</a>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="hero">
+      <h1 class="title">JavaScript <span class="accent">String</span> — Complete Reference</h1>
+      <p class="subtitle">Automation Test Engineering Edition · Playwright · Basic → Advanced</p>
+      <div class="badges">
+        <span class="badge utility">● UTILITY</span>
+        <span class="badge playwright">● PLAYWRIGHT</span>
+        <span class="badge assertion">● ASSERTION</span>
+        <span class="badge regex">● REGEX</span>
+        <span class="badge core">● CORE</span>
+        <span class="badge caution">● CAUTION</span>
+      </div>
+      <div class="author-line">
+        <span class="pill">Author: <strong>Prashanth M K</strong></span>
+        <span class="pill">Learn With PMK71</span>
+        <span class="pill">learnwithpmk.github.io</span>
+      </div>
+    </header>
+
+    <div class="legend">
+      <span><span class="sw" style="background:var(--code-comment)"></span>// comment = return value</span>
+      <span><span class="sw" style="background:var(--code-string)"></span>green = output</span>
+      <span><span class="sw" style="background:var(--code-key)"></span>blue = keyword / method</span>
+      <span><span class="sw" style="background:var(--amber)"></span>amber = caution</span>
+      <span>Type <kbd>/</kbd> or click search to filter every card live</span>
+    </div>
+
+    <!-- ================= WHAT IS A STRING ================= -->
+    <section class="chapter" id="what-is-string">
+      <div class="chapter-head"><span class="chapter-num">01</span><h2 class="chapter-title">What is a String?</h2></div>
+      <p class="chapter-desc">The foundation every method below builds on.</p>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Definition <span class="tag core">CORE</span></div></div>
+          <p class="card-note">A <strong>String</strong> is an immutable sequence of UTF-16 code units representing text. In JS, strings are <strong>primitive values</strong> — they can't be changed in place. Every method that "modifies" a string actually returns a brand-new string.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">typeof</span> <span class="s">"hello"</span>  <span class="c">// → "string"</span>
+<span class="k">typeof</span> <span class="s">''</span>       <span class="c">// → "string"</span>
+<span class="k">typeof</span> String(<span class="n">5</span>)  <span class="c">// → "string"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Primitive vs String Object <span class="tag caution">CAUTION</span></div></div>
+          <p class="card-note">Avoid <code>new String()</code> in real code — it creates a wrapper object, not a primitive, and breaks strict equality.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">let</span> s = <span class="s">"hi"</span>;
+s[<span class="n">0</span>] = <span class="s">"H"</span>;        <span class="c">// assignment silently fails</span>
+s               <span class="c">// → "hi" (unchanged, still primitive)</span>
+
+<span class="k">const</span> obj = <span class="k">new</span> String(<span class="s">"hi"</span>);
+obj === <span class="s">"hi"</span>       <span class="c">// → false ⚠</span>
+<span class="k">typeof</span> obj       <span class="c">// → "object" ⚠</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CREATION ================= -->
+    <section class="chapter" id="creation">
+      <div class="chapter-head"><span class="chapter-num">02</span><h2 class="chapter-title">String Creation</h2></div>
+      <p class="chapter-desc">4 ways to create strings, plus tagged templates for advanced use.</p>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Literals & Templates <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// 1. Single quotes</span>
+<span class="k">const</span> s1 = <span class="s">'click login button'</span>;
+
+<span class="c">// 2. Double quotes</span>
+<span class="k">const</span> s2 = <span class="s">"enter email address"</span>;
+
+<span class="c">// 3. Template literals (preferred in tests)</span>
+<span class="k">const</span> user = <span class="s">"admin"</span>;
+<span class="k">const</span> msg = <span class="s">`login as ${user}`</span>;
+<span class="c">// → "login as admin"</span>
+
+<span class="c">// 4. String() constructor (safe cast)</span>
+<span class="k">const</span> s4 = String(<span class="n">42</span>);        <span class="c">// → "42"</span>
+<span class="k">const</span> s5 = String(<span class="k">null</span>);      <span class="c">// → "null"</span>
+<span class="k">const</span> s6 = String(<span class="k">undefined</span>); <span class="c">// → "undefined"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Tagged Templates & Multiline <span class="tag core">CORE</span></div></div>
+          <p class="card-note">Tagged templates let a function pre-process a template literal — useful for building safe query builders or custom loggers.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">function</span> highlight(strings, ...values) {
+  <span class="k">return</span> strings.reduce((acc, s, i) =>
+    acc + s + (values[i] ? <span class="s">`[${values[i]}]`</span> : <span class="s">''</span>), <span class="s">''</span>);
+}
+<span class="k">const</span> role = <span class="s">"admin"</span>;
+highlight<span class="s">`user role: ${role}`</span>
+<span class="c">// → "user role: [admin]"</span>
+
+<span class="c">// Multiline strings</span>
+<span class="k">const</span> block = <span class="s">`line one
+line two`</span>;</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PROPERTIES & ESCAPES ================= -->
+    <section class="chapter" id="properties">
+      <div class="chapter-head"><span class="chapter-num">03</span><h2 class="chapter-title">Properties & Escape Sequences</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Length & Index Access <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"automation"</span>.length   <span class="c">// → 10</span>
+<span class="s">""</span>.length             <span class="c">// → 0</span>
+
+<span class="c">// Index access (read-only)</span>
+<span class="k">const</span> url = <span class="s">"https://app.com"</span>;
+url[<span class="n">0</span>]              <span class="c">// → "h"</span>
+url.at(-<span class="n">1</span>)          <span class="c">// → "m" (last char)</span>
+url.charAt(<span class="n">8</span>)       <span class="c">// → "a"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Escape Sequences <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"\n"</span>   <span class="c">// newline</span>
+<span class="s">"\t"</span>   <span class="c">// tab</span>
+<span class="s">"\\"</span>   <span class="c">// backslash → \</span>
+<span class="s">"\""</span>   <span class="c">// double quote → "</span>
+<span class="s">'\''</span>   <span class="c">// single quote → '</span>
+<span class="s">"\r"</span>   <span class="c">// carriage return</span>
+<span class="s">"\u00e9"</span> <span class="c">// unicode escape → é</span>
+<span class="s">"\u{1F600}"</span> <span class="c">// unicode code point → 😀</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= UNICODE ================= -->
+    <section class="chapter" id="unicode">
+      <div class="chapter-head"><span class="chapter-num">04</span><h2 class="chapter-title">Unicode & UTF-16 (Advanced)</h2></div>
+      <p class="chapter-desc">Where string bugs hide with emojis, accented text, and non-Latin scripts.</p>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Surrogate Pairs <span class="tag caution">CAUTION</span></div></div>
+          <p class="card-note">Characters outside the Basic Multilingual Plane (emojis, some CJK) are stored as <em>two</em> UTF-16 code units, so <code>.length</code> and <code>[i]</code> can split them.</p>
+          <div class="code-wrap"><pre class="code"><span class="s">"😀"</span>.length         <span class="c">// → 2 ⚠ (not 1!)</span>
+[...<span class="s">"😀"</span>].length     <span class="c">// → 1 ✓ (spread respects code points)</span>
+<span class="s">"😀"</span>.codePointAt(<span class="n">0</span>) <span class="c">// → 128512</span>
+
+<span class="c">// Iterate correctly with for...of</span>
+<span class="k">for</span> (<span class="k">const</span> ch <span class="k">of</span> <span class="s">"a😀b"</span>) console.log(ch);
+<span class="c">// → "a", "😀", "b"  (3 iterations, not 4)</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">normalize() <span class="tag core">CORE</span></div></div>
+          <p class="card-note">The same visible character can be encoded two different ways. <code>normalize()</code> makes comparisons reliable — critical when comparing text scraped from a UI.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> a = <span class="s">"café"</span>;              <span class="c">// é as one code point</span>
+<span class="k">const</span> b = <span class="s">"cafe\u0301"</span>;       <span class="c">// e + combining accent</span>
+a === b                     <span class="c">// → false ⚠</span>
+a.normalize() === b.normalize() <span class="c">// → true ✓</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SEARCH METHODS ================= -->
+    <section class="chapter" id="search-methods">
+      <div class="chapter-head"><span class="chapter-num">05</span><h2 class="chapter-title">Search Methods</h2></div>
+      <p class="chapter-desc">6+ ways to find text inside a string.</p>
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-head"><div class="card-title">.includes()<span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"login successful"</span>
+  .includes(<span class="s">"success"</span>)
+<span class="c">// → true</span>
+
+<span class="c">// case-sensitive!</span>
+<span class="s">"login successful"</span>
+  .includes(<span class="s">"Success"</span>)
+<span class="c">// → false</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.startsWith() / .endsWith()<span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code">url.startsWith(<span class="s">"https"</span>)
+<span class="c">// → true</span>
+
+file.endsWith(<span class="s">".pdf"</span>)
+<span class="c">// → true</span>
+
+<span class="c">// position param</span>
+s.startsWith(<span class="s">"app"</span>, <span class="n">8</span>)</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.indexOf() / .lastIndexOf()<span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code">log.indexOf(<span class="s">"ERROR"</span>)
+<span class="c">// → 0 (found)</span>
+log.indexOf(<span class="s">"WARN"</span>)
+<span class="c">// → -1 (not found)</span>
+
+log.lastIndexOf(<span class="s">"ERROR"</span>)
+<span class="c">// → last occurrence</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.search()<span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"order #123"</span>
+  .search(/\d+/)
+<span class="c">// → 7 (index)</span>
+
+<span class="s">"no match"</span>
+  .search(/\d+/)
+<span class="c">// → -1</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.match() / .matchAll()<span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"a1 b2"</span>.match(/\d/g)
+<span class="c">// → ["1","2"]</span>
+
+<span class="k">const</span> re = /(\w+)=(\w+)/g;
+[...<span class="s">"a=1"</span>.matchAll(re)]
+<span class="c">// → array of groups</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.at() — negative index<span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"session-token"</span>.at(-<span class="n">1</span>)
+<span class="c">// → "n"</span>
+
+<span class="s">"hi"</span>.at(<span class="n">5</span>)
+<span class="c">// → undefined (no error)</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CASE ================= -->
+    <section class="chapter" id="case">
+      <div class="chapter-head"><span class="chapter-num">06</span><h2 class="chapter-title">Case Conversion</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Basic Conversion <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> status = <span class="s">"ACTIVE"</span>;
+
+<span class="c">// Normalize for comparison</span>
+status.toLowerCase() === <span class="s">"active"</span>
+<span class="c">// → true ✓ (always safe)</span>
+
+status.toUpperCase()
+<span class="c">// → "ACTIVE"</span>
+
+<span class="c">// Common in QA: compare API response</span>
+apiResponse.status.toLowerCase()
+  === <span class="s">"success"</span>
+<span class="c">// → true</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Locale-Aware Case <span class="tag caution">CAUTION</span></div></div>
+          <p class="card-note">Turkish "İ/i" is the classic gotcha — <code>toLowerCase()</code> can behave unexpectedly across locales.</p>
+          <div class="code-wrap"><pre class="code"><span class="s">"İstanbul"</span>.toLowerCase()
+<span class="c">// → "i̇stanbul" (extra dot combining mark)</span>
+
+<span class="s">"İstanbul"</span>.toLocaleLowerCase(<span class="s">"tr"</span>)
+<span class="c">// → "istanbul" ✓ correct for Turkish locale</span>
+
+<span class="c">// Case-insensitive includes:</span>
+body.toLowerCase().includes(<span class="s">"dashboard"</span>)
+<span class="c">// Or use regex /i flag:</span>
+/dashboard/i.test(body)</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SLICE ================= -->
+    <section class="chapter" id="slice">
+      <div class="chapter-head"><span class="chapter-num">07</span><h2 class="chapter-title">Slice & Extract</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">.slice(start, end) <span class="tag core">CORE</span></div></div>
+          <p class="card-note">Supports negative indices — counts from the end. Most flexible extraction method.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> path = <span class="s">"/dashboard/users"</span>;
+
+path.slice(<span class="n">1</span>)          <span class="c">// → "dashboard/users"</span>
+path.slice(<span class="n">1</span>,<span class="n">10</span>)       <span class="c">// → "dashboard"</span>
+path.slice(-<span class="n">5</span>)         <span class="c">// → "users"</span>
+path.slice(<span class="n">1</span>,-<span class="n">6</span>)       <span class="c">// → "dashboard"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.substring() vs .slice() <span class="tag caution">CAUTION</span></div></div>
+          <p class="card-note"><code>substring()</code> does NOT support negatives — it clamps them to 0 and swaps args if start > end.</p>
+          <div class="code-wrap"><pre class="code">path.substring(<span class="n">1</span>,<span class="n">10</span>) <span class="c">// → "dashboard" (same)</span>
+path.substring(-<span class="n">5</span>)   <span class="c">// → whole string ⚠ (clamped to 0)</span>
+path.substring(<span class="n">10</span>,<span class="n">1</span>)  <span class="c">// → "dashboard" ⚠ (args swapped)</span>
+
+<span class="c">// split — very common in QA</span>
+<span class="s">"smoke,regression,e2e"</span>.split(<span class="s">","</span>)
+<span class="c">// → ["smoke","regression","e2e"]</span>
+<span class="s">"key=value"</span>.split(<span class="s">"="</span>)[<span class="n">1</span>]
+<span class="c">// → "value"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TRANSFORM ================= -->
+    <section class="chapter" id="transform">
+      <div class="chapter-head"><span class="chapter-num">08</span><h2 class="chapter-title">Transform & Mutate <span style="font-weight:400;color:var(--text-faint);font-size:12px;">(all immutable — return new string)</span></h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">.trim() family <span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Clean scraped DOM text</span>
+<span class="s">"  submit  "</span>.trim()      <span class="c">// → "submit"</span>
+<span class="s">"  lead"</span>.trimStart()     <span class="c">// → "lead"</span>
+<span class="s">"end  "</span>.trimEnd()       <span class="c">// → "end"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.replace() / .replaceAll() <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"$1,234.56"</span>
+  .replace(/[$,]/g, <span class="s">""</span>)
+<span class="c">// → "1234.56"</span>
+
+<span class="s">"foo_bar_baz"</span>
+  .replaceAll(<span class="s">"_"</span>, <span class="s">"-"</span>)
+<span class="c">// → "foo-bar-baz"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.padStart() / .padEnd() <span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Zero-pad test case IDs</span>
+<span class="s">"42"</span>.padStart(<span class="n">5</span>, <span class="s">"0"</span>)
+<span class="c">// → "00042"</span>
+
+<span class="s">"PASS"</span>.padEnd(<span class="n">10</span>, <span class="s">"."</span>)
+<span class="c">// → "PASS......"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">.repeat() / .concat() <span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Test max-length fields</span>
+<span class="s">"a"</span>.repeat(<span class="n">256</span>)
+<span class="c">// → 256 char overflow string</span>
+
+[<span class="s">"step1"</span>,<span class="s">"step2"</span>].join(<span class="s">" → "</span>)
+<span class="c">// → "step1 → step2"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ADVANCED CORE ================= -->
+    <section class="chapter" id="advanced-core">
+      <div class="chapter-head"><span class="chapter-num">09</span><h2 class="chapter-title">Advanced Core Methods</h2></div>
+      <p class="chapter-desc">Char codes, code points, and comparison — the deeper API surface.</p>
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-head"><div class="card-title">charCodeAt / fromCharCode <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"A"</span>.charCodeAt(<span class="n">0</span>)   <span class="c">// → 65</span>
+String.fromCharCode(<span class="n">65</span>) <span class="c">// → "A"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">codePointAt / fromCodePoint <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"😀"</span>.codePointAt(<span class="n">0</span>)
+<span class="c">// → 128512</span>
+String.fromCodePoint(<span class="n">128512</span>)
+<span class="c">// → "😀"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">localeCompare() <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> arr = [<span class="s">"banana"</span>,<span class="s">"apple"</span>];
+arr.sort((a,b)=>a.localeCompare(b));
+<span class="c">// → ["apple","banana"]</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+      <div class="callout info" style="margin-top:14px;">
+        <span class="ic">ℹ</span>
+        <span><strong>String comparison operators:</strong> <code>"abc" === "abc"</code> → true · <code>"abc" == "abc"</code> → true · <code>"abc" === "ABC"</code> → false ⚠ — always normalize case before comparing UI text.</span>
+      </div>
+    </section>
+
+    <!-- ================= REGEX ================= -->
+    <section class="chapter" id="regex">
+      <div class="chapter-head"><span class="chapter-num">10</span><h2 class="chapter-title">Regular Expressions — Patterns, Methods & QA Usage</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">test() — boolean <span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code">/^\d+$/.test(<span class="s">"123"</span>)      <span class="c">// → true</span>
+/^\w+@\w+\.\w+$/.test(<span class="s">"a@b.com"</span>) <span class="c">// → true</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">match() — extract <span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="s">"order #98765"</span>.match(/#(\d+)/)[<span class="n">1</span>]
+<span class="c">// → "98765"</span>
+<span class="s">"1px 2px"</span>.match(/\d+/g)
+<span class="c">// → ["1","2"]</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">matchAll() — named groups <span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> re = /(?&lt;key&gt;\w+)=(?&lt;val&gt;\w+)/g;
+[...<span class="s">"a=1,b=2"</span>.matchAll(re)]
+  .map(m => m.groups.val)
+<span class="c">// → ["1","2"]</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Flags <span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code">/error/i   <span class="c">// case-insensitive</span>
+/\d+/g     <span class="c">// all matches</span>
+/^.*/m     <span class="c">// multiline</span>
+/./s       <span class="c">// dot matches newline too</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Common QA Patterns <span class="tag regex">REGEX</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+emailRegex.test(<span class="s">"a@b.com"</span>)  <span class="c">// → true</span>
+
+<span class="k">const</span> urlRegex = /^https?:\/\/.+/;
+urlRegex.test(<span class="s">"https://app.com"</span>) <span class="c">// → true</span>
+
+<span class="c">// MM/DD/YYYY</span>
+/^\d{2}\/\d{2}\/\d{4}$/</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Playwright Regex Locators <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code">page.getByText(/\$\d+\.\d{2}/)
+<span class="c">// matches "$29.99"</span>
+
+await expect(page)
+  .toHaveURL(/\/orders\/\d+/)</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PARSING ================= -->
+    <section class="chapter" id="parsing">
+      <div class="chapter-head"><span class="chapter-num">11</span><h2 class="chapter-title">Parsing Numbers From Text <span style="font-size:11px;font-weight:400;color:var(--text-faint);">QA essential</span></h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">parseFloat / parseInt <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Strip currency → parse float</span>
+<span class="k">const</span> raw = <span class="s">"$1,299.99"</span>;
+<span class="k">const</span> num = parseFloat(
+  raw.replace(/[$,]/g, <span class="s">""</span>)
+);  <span class="c">// → 1299.99</span>
+
+<span class="c">// Extract count from UI text</span>
+<span class="s">"42 items found"</span>.match(/\d+/)[<span class="n">0</span>]
+<span class="c">// → "42" (still string!)</span>
+<span class="k">const</span> count = parseInt(<span class="s">"42 items"</span>,<span class="n">10</span>);
+<span class="c">// → 42</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Number() vs parse*() <span class="tag caution">CAUTION</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Format for UI comparison</span>
+(<span class="n">29.9</span>).toFixed(<span class="n">2</span>)  <span class="c">// → "29.90"</span>
+
+Number(<span class="s">"123"</span>)    <span class="c">// → 123</span>
+Number(<span class="s">""</span>)       <span class="c">// → 0 ⚠</span>
+Number(<span class="s">"abc"</span>)    <span class="c">// → NaN ⚠</span>
+parseInt(<span class="s">"42px"</span>) <span class="c">// → 42 ✓ (parses leading digits)</span>
+Number(<span class="s">"42px"</span>)   <span class="c">// → NaN ⚠ (strict, whole string)</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= COMPARISON ================= -->
+    <section class="chapter" id="comparison">
+      <div class="chapter-head"><span class="chapter-num">12</span><h2 class="chapter-title">Comparison & Misc</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Nullish / Empty Checks <span class="tag utility">UTIL</span></div></div>
+          <div class="code-wrap"><pre class="code">val ?? <span class="s">"default"</span>      <span class="c">// nullish coalescing</span>
+val || <span class="s">"fallback"</span>     <span class="c">// falsy fallback</span>
+!val.trim()          <span class="c">// → true if blank</span>
+Boolean(val?.length) <span class="c">// safe truthy check</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Template Literal Tricks <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Conditional text</span>
+<span class="s">`Status: ${isActive ? "active" : "inactive"}`</span>
+
+<span class="c">// Expression embedding</span>
+<span class="s">`Total: $${(price * qty).toFixed(2)}`</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PITFALLS ================= -->
+    <section class="chapter" id="pitfalls">
+      <div class="chapter-head"><span class="chapter-num">13</span><h2 class="chapter-title">Common Pitfalls</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Case & Negative Index Traps <span class="tag caution">CAUTION</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// ⚠ Case-sensitive by default</span>
+<span class="s">"Hello"</span>.includes(<span class="s">"hello"</span>) <span class="c">// false</span>
+<span class="c">// Fix: .toLowerCase() first</span>
+
+<span class="c">// ⚠ substring(-n) ≠ slice(-n)</span>
+<span class="s">"hi"</span>.substring(-<span class="n">1</span>) <span class="c">// → "hi" (treats as 0)</span>
+<span class="s">"hi"</span>.slice(-<span class="n">1</span>)     <span class="c">// → "i" ✓</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">NaN, Coercion & match() null <span class="tag caution">CAUTION</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// ⚠ Number("") = 0, not NaN</span>
+Number(<span class="s">""</span>) === <span class="n">0</span>   <span class="c">// true</span>
+
+<span class="c">// ⚠ + operator concatenates</span>
+<span class="s">"5"</span> + <span class="n">3</span>  <span class="c">// → "53" not 8!</span>
+
+<span class="c">// ⚠ match() returns null if no match</span>
+<span class="s">"abc"</span>.match(/\d+/)   <span class="c">// → null</span>
+<span class="c">// Fix: optional chaining</span>
+<span class="s">"abc"</span>.match(/\d+/)?.[<span class="n">0</span>] ?? <span class="s">"none"</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LOCATORS ================= -->
+    <section class="chapter" id="locators">
+      <div class="chapter-head"><span class="chapter-num">14</span><h2 class="chapter-title">Playwright — Text Locators <span style="font-size:11px;font-weight:400;color:var(--text-faint);">auto-waits & retries built-in</span></h2></div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-head"><div class="card-title">getByText() <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// Exact (default)</span>
+page.getByText(<span class="s">"submit"</span>)
+
+<span class="c">// Partial match</span>
+page.getByText(<span class="s">"submit"</span>, { exact: <span class="k">false</span> })
+
+<span class="c">// Regex</span>
+page.getByText(/submit/i)</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">getByRole() <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code">page.getByRole(<span class="s">'button'</span>,
+  { name: <span class="s">'sign in'</span> })
+
+page.getByRole(<span class="s">'textbox'</span>,
+  { name: <span class="s">'email'</span> })</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">getByLabel / Placeholder <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code">page.getByLabel(<span class="s">"email"</span>)
+page.getByPlaceholder(<span class="s">"enter email"</span>)
+page.getByTestId(<span class="s">"login-btn"</span>)
+
+<span class="c">// Filter by text</span>
+page.locator(<span class="s">'tr'</span>).filter({ hasText: <span class="s">"john"</span> })</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MATCHERS ================= -->
+    <section class="chapter" id="matchers">
+      <div class="chapter-head"><span class="chapter-num">15</span><h2 class="chapter-title">Playwright Matchers — Text Assertions <span style="font-size:11px;font-weight:400;color:var(--text-faint);">all auto-wait</span></h2></div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="card-head"><div class="card-title">toHaveText() <span class="tag assertion">ASSERT</span></div></div>
+          <div class="code-wrap"><pre class="code">await expect(loc).toHaveText(<span class="s">"success"</span>);
+await expect(loc).toHaveText(/success/i);
+await expect(loc).toHaveText([<span class="s">"a"</span>,<span class="s">"b"</span>]);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">toContainText() <span class="tag assertion">ASSERT</span></div></div>
+          <div class="code-wrap"><pre class="code">await expect(loc)
+  .toContainText(<span class="s">"logged in"</span>);
+
+await expect(loc)
+  .not.toContainText(<span class="s">"fail"</span>);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">toHaveValue / URL / Attr <span class="tag assertion">ASSERT</span></div></div>
+          <div class="code-wrap"><pre class="code">await expect(loc).toHaveValue(<span class="s">"user@t.com"</span>);
+await expect(page).toHaveURL(/dashboard/);
+await expect(loc).toHaveAttribute(<span class="s">'type'</span>,<span class="s">'email'</span>);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= READING ================= -->
+    <section class="chapter" id="reading">
+      <div class="chapter-head"><span class="chapter-num">16</span><h2 class="chapter-title">Reading Text From Page</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">innerText / textContent <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// visible text only</span>
+<span class="k">const</span> label = <span class="k">await</span> page.innerText(<span class="s">'.price'</span>);
+<span class="c">// → "$29.99"</span>
+
+<span class="c">// ALL text incl. hidden</span>
+<span class="k">const</span> all = <span class="k">await</span> locator.textContent();</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Input Values & Collections <span class="tag playwright">PLAYWRIGHT</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> val = <span class="k">await</span> locator.inputValue();
+
+<span class="k">const</span> items = <span class="k">await</span>
+  page.locator(<span class="s">'li'</span>).allInnerTexts();
+<span class="c">// → ["item1","item2","item3"]</span>
+
+<span class="k">const</span> href = <span class="k">await</span>
+  page.locator(<span class="s">'a'</span>).getAttribute(<span class="s">'href'</span>);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ASSERT PATTERNS ================= -->
+    <section class="chapter" id="assert-patterns">
+      <div class="chapter-head"><span class="chapter-num">17</span><h2 class="chapter-title">JS Assertion Patterns</h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Exact / Contains / Regex <span class="tag assertion">ASSERT</span></div></div>
+          <div class="code-wrap"><pre class="code">expect(text.trim()).toBe(<span class="s">"welcome"</span>);
+expect(text.includes(<span class="s">"ok"</span>)).toBe(<span class="k">true</span>);
+expect(url.startsWith(<span class="s">"https"</span>)).toBe(<span class="k">true</span>);
+expect(url).toMatch(/https/);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Length Checks <span class="tag assertion">ASSERT</span></div></div>
+          <div class="code-wrap"><pre class="code">expect(pwd.length)
+  .toBeGreaterThanOrEqual(<span class="n">8</span>);
+expect(val.trim().length)
+  .toBeGreaterThan(<span class="n">0</span>);</pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FLOW ================= -->
+    <section class="chapter" id="flow">
+      <div class="chapter-head"><span class="chapter-num">18</span><h2 class="chapter-title">Automation Program Flow — String in Action</h2></div>
+      <div class="flow">
+        <div class="flow-step"><div class="fnum">STEP 1</div><h4>Build Test Data</h4><pre class="code" style="font-size:11px;"><span class="k">const</span> user =
+ <span class="s">`user_${Date.now()}`</span>;
+<span class="k">const</span> email =
+ <span class="s">`${user}@qa.com`</span>;
+<span class="k">const</span> pwd = <span class="s">"secure#"</span>+
+ <span class="s">"x"</span>.repeat(<span class="n">5</span>);</pre></div>
+        <div class="flow-step"><div class="fnum">STEP 2</div><h4>Navigate & Fill</h4><pre class="code" style="font-size:11px;"><span class="k">await</span> page.fill(
+ getByLabel(<span class="s">"email"</span>), email);
+<span class="k">await</span> page.fill(
+ getByLabel(<span class="s">"password"</span>), pwd);</pre></div>
+        <div class="flow-step"><div class="fnum">STEP 3</div><h4>Click & Extract</h4><pre class="code" style="font-size:11px;"><span class="k">await</span> page.getByText(
+ <span class="s">"login"</span>).click();
+<span class="k">const</span> raw = <span class="k">await</span> page
+ .locator(<span class="s">'.toast'</span>).innerText();</pre></div>
+        <div class="flow-step"><div class="fnum">STEP 4</div><h4>Assert</h4><pre class="code" style="font-size:11px;">expect(msg.includes(
+ <span class="s">"success"</span>)).toBe(<span class="k">true</span>);
+expect(page).toHaveURL(
+ /dashboard/);</pre></div>
+        <div class="flow-step"><div class="fnum">STEP 5</div><h4>Validate Data</h4><pre class="code" style="font-size:11px;"><span class="k">const</span> price = <span class="k">await</span>
+ loc.innerText();
+price.replace(/[$,]/g,<span class="s">""</span>);
+expect(num).toBeGreater...</pre></div>
+      </div>
+    </section>
+
+    <!-- ================= ES2024 ================= -->
+    <section class="chapter" id="es2024">
+      <div class="chapter-head"><span class="chapter-num">19</span><h2 class="chapter-title">ES2024+ Features <span style="font-size:11px;font-weight:400;color:var(--text-faint);">latest additions</span></h2></div>
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">isWellFormed() / toWellFormed() <span class="tag core">CORE</span></div></div>
+          <p class="card-note">ES2024 methods to detect and repair strings with invalid, "lone" surrogate characters — useful when validating text scraped from unreliable sources before sending to an API.</p>
+          <div class="code-wrap"><pre class="code"><span class="k">const</span> bad = <span class="s">"\uD800"</span>;    <span class="c">// lone surrogate</span>
+bad.isWellFormed()    <span class="c">// → false</span>
+bad.toWellFormed()    <span class="c">// → "�" (replaced)</span>
+
+<span class="s">"hello"</span>.isWellFormed() <span class="c">// → true</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Immutable Array Helpers (used with strings) <span class="tag core">CORE</span></div></div>
+          <div class="code-wrap"><pre class="code"><span class="c">// toSorted / toReversed don't mutate</span>
+[<span class="s">"c"</span>,<span class="s">"a"</span>,<span class="s">"b"</span>].toSorted()
+<span class="c">// → ["a","b","c"] (original unchanged)</span></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= QA / INTERVIEW ================= -->
+    <section class="chapter" id="qa">
+      <div class="chapter-head"><span class="chapter-num">20</span><h2 class="chapter-title">Interview Q&A</h2></div>
+      <p class="chapter-desc">Click to expand. Common questions asked in QA/SDET interviews.</p>
+
+      <details class="qa">
+        <summary>Why are strings immutable in JavaScript? <span class="plus">+</span></summary>
+        <div class="ans">Strings are primitive values, so every "mutation" method (replace, trim, slice…) returns a brand-new string rather than modifying the original in memory. This makes strings safe to pass around without side effects, but means you must always capture the return value — <code>str.trim()</code> alone does nothing unless assigned back.</div>
+      </details>
+
+      <details class="qa">
+        <summary>Difference between slice(), substring(), and substr()? <span class="plus">+</span></summary>
+        <div class="ans">
+          <code>slice(start, end)</code> supports negative indices (counts from the end) and is the recommended method.<br>
+          <code>substring(start, end)</code> clamps negative values to 0 and auto-swaps arguments if start &gt; end.<br>
+          <code>substr(start, length)</code> is deprecated — takes a length instead of an end index; avoid using it in new code.
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary>How would you validate an email format without a library? <span class="plus">+</span></summary>
+        <div class="ans">Use a regex test: <pre class="code">/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)</pre> For production-grade validation, prefer a maintained library or the HTML5 <code>type="email"</code> input's built-in constraint validation, since a fully RFC-5322-compliant regex is extremely complex.</div>
+      </details>
+
+      <details class="qa">
+        <summary>How do you compare two strings ignoring case and accents (e.g. "café" vs "CAFE")? <span class="plus">+</span></summary>
+        <div class="ans"><pre class="code">a.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .toLowerCase() ===
+b.normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .toLowerCase()</pre>Normalize first to unify accent encoding, strip combining diacritical marks, then lowercase both sides.</div>
+      </details>
+
+      <details class="qa">
+        <summary>What's the safest way to extract a numeric value from UI text like "Total: $1,234.56"? <span class="plus">+</span></summary>
+        <div class="ans">Strip non-numeric characters with regex, then parse: <pre class="code">parseFloat(text.replace(/[^0-9.-]/g, ""))</pre>Avoid plain <code>Number()</code> on unstripped text — it returns <code>NaN</code> the moment a currency symbol or comma is present.</div>
+      </details>
+
+      <details class="qa">
+        <summary>Why does <code>"5" + 3</code> give <code>"53"</code> but <code>"5" - 3</code> gives <code>2</code>? <span class="plus">+</span></summary>
+        <div class="ans">The <code>+</code> operator is overloaded — if either operand is a string, JS concatenates. Every other arithmetic operator (<code>-</code>, <code>*</code>, <code>/</code>) coerces both sides to numbers first. This is one of the most common sources of flaky assertions when comparing API response values that arrive as strings.</div>
+      </details>
+
+      <details class="qa">
+        <summary>How do you handle a locator's text that may contain leading/trailing whitespace or line breaks from the DOM? <span class="plus">+</span></summary>
+        <div class="ans">Always normalize before asserting: <pre class="code">const text = (await locator.innerText())
+  .replace(/\s+/g, " ").trim();</pre>This collapses multiple whitespace/newlines into a single space and trims the ends — makes assertions resilient to markup changes.</div>
+      </details>
+
+      <details class="qa">
+        <summary>What happens if <code>.match()</code> finds no match, and how do you guard against it? <span class="plus">+</span></summary>
+        <div class="ans"><code>.match()</code> returns <code>null</code> (not an empty array) when there's no match without the global flag. Accessing <code>.match(...)[0]</code> directly throws. Guard with optional chaining and a fallback: <pre class="code">text.match(/\d+/)?.[0] ?? "not found"</pre></div>
+      </details>
+    </section>
+
+    <!-- ================= QUICK REF ================= -->
+    <section class="chapter" id="quickref">
+      <div class="chapter-head"><span class="chapter-num">21</span><h2 class="chapter-title">Quick Reference — All String Methods at a Glance</h2></div>
+      <div class="table-wrap">
+        <table class="ref" id="refTable">
+          <thead><tr><th>Method</th><th>Description</th><th>Example</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>.length</code></td><td>char count</td><td><code>"hello".length</code></td><td>5</td></tr>
+            <tr><td><code>.charAt(i)</code></td><td>char at index</td><td><code>"hi".charAt(0)</code></td><td>"h"</td></tr>
+            <tr><td><code>.at(i)</code></td><td>supports negative</td><td><code>"hi".at(-1)</code></td><td>"i"</td></tr>
+            <tr><td><code>.indexOf(s)</code></td><td>first position</td><td><code>"ab".indexOf("b")</code></td><td>1</td></tr>
+            <tr><td><code>.lastIndexOf(s)</code></td><td>last position</td><td>returns -1 if not found</td><td>—</td></tr>
+            <tr><td><code>.includes(s)</code></td><td>boolean check</td><td><code>"hello".includes("ell")</code></td><td>true</td></tr>
+            <tr><td><code>.startsWith(s)</code></td><td>prefix check</td><td><code>"https".startsWith("h")</code></td><td>true</td></tr>
+            <tr><td><code>.endsWith(s)</code></td><td>suffix check</td><td><code>"doc.pdf".endsWith(".pdf")</code></td><td>true</td></tr>
+            <tr><td><code>.search(re)</code></td><td>regex index</td><td><code>"a1".search(/\d/)</code></td><td>1</td></tr>
+            <tr><td><code>.slice(s,e)</code></td><td>extract, neg ok</td><td><code>"hello".slice(1,3)</code></td><td>"el"</td></tr>
+            <tr><td><code>.substring(s,e)</code></td><td>extract, no neg</td><td><code>"hello".substring(1,3)</code></td><td>"el"</td></tr>
+            <tr><td><code>.split(sep)</code></td><td>string → array</td><td><code>"a,b".split(",")</code></td><td>["a","b"]</td></tr>
+            <tr><td><code>.trim()</code></td><td>strip both sides</td><td><code>" hi ".trim()</code></td><td>"hi"</td></tr>
+            <tr><td><code>.trimStart()</code></td><td>strip left</td><td><code>" hi".trimStart()</code></td><td>"hi"</td></tr>
+            <tr><td><code>.trimEnd()</code></td><td>strip right</td><td><code>"hi ".trimEnd()</code></td><td>"hi"</td></tr>
+            <tr><td><code>.toLowerCase()</code></td><td>to lowercase</td><td><code>"HI".toLowerCase()</code></td><td>"hi"</td></tr>
+            <tr><td><code>.toUpperCase()</code></td><td>to uppercase</td><td><code>"hi".toUpperCase()</code></td><td>"HI"</td></tr>
+            <tr><td><code>.replace(s,r)</code></td><td>replace first</td><td><code>"aab".replace("a","x")</code></td><td>"xab"</td></tr>
+            <tr><td><code>.replaceAll(s,r)</code></td><td>replace all</td><td><code>"aab".replaceAll("a","x")</code></td><td>"xxb"</td></tr>
+            <tr><td><code>.match(re)</code></td><td>regex extract</td><td><code>"a1".match(/\d/)</code></td><td>["1"]</td></tr>
+            <tr><td><code>.matchAll(re)</code></td><td>all + groups</td><td>iterator of all matches</td><td>—</td></tr>
+            <tr><td><code>.padStart(n,s)</code></td><td>pad left</td><td><code>"3".padStart(3,"0")</code></td><td>"003"</td></tr>
+            <tr><td><code>.padEnd(n,s)</code></td><td>pad right</td><td><code>"hi".padEnd(5,".")</code></td><td>"hi..."</td></tr>
+            <tr><td><code>.repeat(n)</code></td><td>repeat string</td><td><code>"ab".repeat(2)</code></td><td>"abab"</td></tr>
+            <tr><td><code>.concat(s)</code></td><td>join strings</td><td><code>"a".concat("b")</code></td><td>"ab"</td></tr>
+            <tr><td><code>.charCodeAt(i)</code></td><td>UTF-16 code</td><td><code>"A".charCodeAt(0)</code></td><td>65</td></tr>
+            <tr><td><code>.codePointAt(i)</code></td><td>unicode code point</td><td>handles emoji/surrogates</td><td>—</td></tr>
+            <tr><td><code>.localeCompare(s)</code></td><td>alphabetical cmp</td><td>used in <code>.sort()</code></td><td>—</td></tr>
+            <tr><td><code>.normalize()</code></td><td>unicode normalize</td><td>fixes accent mismatches</td><td>—</td></tr>
+            <tr><td><code>.isWellFormed()</code></td><td>valid UTF-16 check</td><td>ES2024</td><td>bool</td></tr>
+            <tr><td><code>.toWellFormed()</code></td><td>repair invalid chars</td><td>ES2024</td><td>string</td></tr>
+            <tr><td><code>String()</code></td><td>safe cast to string</td><td><code>String(42)</code></td><td>"42"</td></tr>
+            <tr><td><code>String.fromCharCode()</code></td><td>code → char</td><td><code>fromCharCode(65)</code></td><td>"A"</td></tr>
+            <tr><td><code>parseInt(s)</code></td><td>leading int</td><td><code>parseInt("42px")</code></td><td>42</td></tr>
+            <tr><td><code>parseFloat(s)</code></td><td>leading float</td><td><code>parseFloat("3.14x")</code></td><td>3.14</td></tr>
+            <tr><td><code>Number(s)</code></td><td>strict cast</td><td><code>Number("42px")</code></td><td>NaN</td></tr>
+            <tr><td><code>.toFixed(n)</code></td><td>fixed decimals</td><td><code>(29.9).toFixed(2)</code></td><td>"29.90"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <span>ES2024 · UTF-16 · Immutable Primitives</span>
+      <span>© <span id="year"></span> Prashanth M K — Learn With PMK71 · Free for QA community use</span>
+    </footer>
+  </main>
+</div>
+
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</div>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- Copy to clipboard ---------- */
+function copyCode(btn){
+  const pre = btn.previousElementSibling;
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const old = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = old; btn.classList.remove('copied'); }, 1400);
+  });
+}
+
+/* ---------- Search filter ---------- */
+const searchInput = document.getElementById('search');
+const cards = Array.from(document.querySelectorAll('.card'));
+const qaItems = Array.from(document.querySelectorAll('.qa'));
+const chapters = Array.from(document.querySelectorAll('section.chapter'));
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){
+    cards.forEach(c => c.classList.remove('hidden'));
+    qaItems.forEach(c => c.classList.remove('hidden'));
+    chapters.forEach(c => c.classList.remove('hidden'));
+    return;
+  }
+  chapters.forEach(chapter => {
+    let anyVisible = false;
+    chapter.querySelectorAll('.card').forEach(card => {
+      const match = card.textContent.toLowerCase().includes(q);
+      card.classList.toggle('hidden', !match);
+      if(match) anyVisible = true;
+    });
+    chapter.querySelectorAll('.qa').forEach(qa => {
+      const match = qa.textContent.toLowerCase().includes(q);
+      qa.classList.toggle('hidden', !match);
+      if(match) anyVisible = true;
+    });
+    // if chapter has no cards/qa (e.g. table/flow chapters), check own text
+    if(!chapter.querySelector('.card') && !chapter.querySelector('.qa')){
+      anyVisible = chapter.textContent.toLowerCase().includes(q);
+    }
+    chapter.classList.toggle('hidden', !anyVisible);
+  });
+});
+
+/* keyboard shortcut: / focuses search */
+document.addEventListener('keydown', (e) => {
+  if(e.key === '/' && document.activeElement !== searchInput){
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+/* ---------- Active nav + progress + back-to-top ---------- */
+const tocLinks = Array.from(document.querySelectorAll('nav.toc a'));
+const sections = tocLinks.map(a => document.querySelector(a.getAttribute('href')));
+
+function onScroll(){
+  const scrollY = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? Math.min(100, Math.round((scrollY/docHeight)*100)) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  document.getElementById('backTop').classList.toggle('show', scrollY > 600);
+
+  let currentIndex = 0;
+  sections.forEach((sec, i) => {
+    if(sec && sec.getBoundingClientRect().top - 100 <= 0) currentIndex = i;
+  });
+  tocLinks.forEach((a,i) => a.classList.toggle('active', i === currentIndex));
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+</script>
+</body>
+</html>
