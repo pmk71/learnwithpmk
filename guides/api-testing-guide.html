@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>API Testing with Playwright & TypeScript — Complete Study Guide</title>
+<meta name="description" content="Complete API testing guide for QA and SDET learners covering REST, authentication, schemas, chaining, mocks, CI/CD, and Playwright request API examples.">
+<meta name="author" content="Prashanth M K">
+<link rel="canonical" href="https://learnwithpmk71.com/guides/api-testing-guide.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@700;800&display=swap" rel="stylesheet">
@@ -53,6 +56,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:radial-gradient(circle at top,rgba(88,166,255,.08),transparent 30%),var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+.skip-link{position:absolute;left:16px;top:-80px;z-index:1000;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
+.skip-link:focus{top:16px}
 
 /* Layout */
 #sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:transform .3s}
@@ -247,6 +252,7 @@ tr:hover td{background:var(--bg2)}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 
 <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 

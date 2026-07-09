@@ -1,23 +1,37 @@
 # Learn With PMK71
 
-Learn QA Software Testing with PMK — Prashanth M K
+Free QA software testing and automation learning guides by Prashanth M K.
 
-## Structure
+## Pages
 
-```
-learn-with-pmk71/
-├── index.html              ← homepage (the cards/links page)
+```text
+learnwithpmk/
+├── index.html
 ├── guides/
-│   ├── typescript-playwright-guide.html   ← first guide
-│   └── api-testing-guide.html             ← API testing guide
-└── README.md
+│   ├── manual-testing-guide.html
+│   ├── typescript-playwright-guide.html
+│   ├── api-testing-guide.html
+│   ├── network-interception-guide.html
+│   ├── javascript-string-complete-reference.html
+│   ├── javascript-arrays-complete-reference.html
+│   └── javascript-object-sheet.html
+└── readme.md
 ```
 
-## Adding a new guide
+## Current Guides
 
-1. Drop your new guide `.html` file into `guides/`
-2. Open `index.html`, find the `<!-- TEMPLATE -->` comment block inside the `.grid` section
-3. Copy that commented block, uncomment it, and update:
-   - `href` → path to your new file in `guides/`
-   - emoji icon, title, description, tags
-4. Save and refresh — done.
+- Manual Testing - Complete Notes Guide
+- TypeScript & Playwright - Complete SDET Guide
+- API Testing - Complete Guide
+- Network Interception in Playwright - Study Guide
+- JavaScript String - Complete Reference
+- JavaScript Arrays - Complete Reference
+- JavaScript Objects - Complete Reference
+
+## Adding a New Guide
+
+1. Add the new `.html` file inside `guides/`.
+2. Add a new card in the `.grid` section of `index.html`.
+3. Include title, description, difficulty, read time, tags, and a working `href`.
+4. Add metadata to the guide page: `title`, `description`, `author`, and canonical URL.
+5. Verify the homepage search/filter data includes the new guide.
