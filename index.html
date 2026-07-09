@@ -5,7 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Learn With PMK71 — Learn QA Software Testing with PMK | Prashanth M K</title>
 <meta name="description" content="Learn QA Software Testing with PMK — Prashanth M K. Free, in-depth guides on TypeScript, Playwright, API testing, and SDET interview preparation.">
+<meta name="keywords" content="QA testing, Playwright, TypeScript, SDET, API testing, automation testing, software testing guides">
+<meta name="author" content="Prashanth M K">
 <meta name="theme-color" content="#0d1117">
+<link rel="canonical" href="https://learnwithpmk71.com/">
+
+<!-- Open Graph Tags for Social Sharing -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Learn QA Software Testing with PMK71 — Free SDET & Playwright Guides">
+<meta property="og:description" content="Free, comprehensive guides on TypeScript, Playwright automation, API testing, and SDET interview preparation with 500+ Q&As and code examples.">
+<meta property="og:url" content="https://learnwithpmk71.com/">
+<meta property="og:image" content="https://learnwithpmk71.com/og-image.png">
+<meta property="og:site_name" content="Learn With PMK71">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Learn QA Software Testing with PMK71">
+<meta name="twitter:description" content="Free guides on Playwright, TypeScript, API testing, and SDET interview prep.">
+<meta name="twitter:image" content="https://learnwithpmk71.com/og-image.png">
+<meta name="twitter:creator" content="@pmk71">
+
+<!-- Additional SEO Meta Tags -->
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Sora:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -15,10 +40,17 @@
   --text:#e6edf3; --text2:#8b949e; --text3:#c9d1d9;
   --radius:14px;
 }
+html[data-theme="light"]{
+  --bg:#f8f9fa; --bg2:#ffffff; --bg3:#f0f2f5; --border:#d8dee4;
+  --accent:#0969da; --accent2:#1a7f34; --accent3:#cf222e; --accent4:#7d4527; --accent5:#d68c2f;
+  --text:#24292f; --text2:#57606a; --text3:#424a53;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden}
 
+/* Accessibility improvements */
+a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .skip-link{position:absolute;left:0;top:0;transform:translateY(-120%);background:var(--bg2);color:var(--accent);padding:12px 16px;font-size:13px;font-weight:600;z-index:200;transition:transform .2s ease}
 .skip-link:focus{transform:translateY(0)}
 
@@ -38,6 +70,10 @@ header{
   background:rgba(13,17,23,.88);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid rgba(48,54,61,.6);
+}
+html[data-theme="light"] header{
+  background:rgba(248,249,250,.92);
+  border-bottom-color:rgba(208,215,222,.5);
 }
 nav{max-width:1140px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-weight:800;font-size:16px;color:var(--text);text-decoration:none}
@@ -60,6 +96,78 @@ nav{max-width:1140px;margin:0 auto;padding:14px 24px;display:flex;align-items:ce
 }
 .nav-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.card{animation:fadeInUp .4s ease-out forwards}
+.card:nth-child(1){animation-delay:.05s}
+.card:nth-child(2){animation-delay:.1s}
+.card:nth-child(3){animation-delay:.15s}
+.card:nth-child(4){animation-delay:.2s}
+.card:nth-child(5){animation-delay:.25s}
+.card:nth-child(6){animation-delay:.3s}
+
+/* Theme Toggle */
+.theme-toggle{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;font-size:16px;transition:background .2s,border-color .2s;color:var(--text2);
+}
+.theme-toggle:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:var(--text)}
+html[data-theme="light"] .theme-toggle{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.1)}
+html[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.15)}
+
+/* Guides Controls */
+.guides-controls{
+  display:flex;flex-wrap:wrap;gap:16px;align-items:center;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);
+}
+.search-box{
+  position:relative;flex:1;min-width:220px;
+  display:flex;align-items:center;
+}
+.search-box input{
+  width:100%;padding:8px 12px 8px 32px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:13.5px;font-family:inherit;
+  transition:border-color .2s,background .2s;
+}
+.search-box input:focus{outline:none;border-color:var(--accent);background:var(--bg2)}
+.search-box input::placeholder{color:var(--text2)}
+.search-icon{
+  position:absolute;left:8px;pointer-events:none;font-size:14px;opacity:.6;
+}
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.filter-tab{
+  padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;text-transform:capitalize;
+  transition:border-color .15s,background .15s,color .15s;font-family:inherit;
+}
+.filter-tab:hover{background:var(--bg2);color:var(--text)}
+.filter-tab.active{background:var(--accent);color:#0d1117;border-color:var(--accent)}
+
+/* Updates Section */
+.updates-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;
+}
+.update-item{
+  background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:20px;display:flex;flex-direction:column;gap:10px;
+  transition:transform .2s,border-color .2s,background .2s;
+}
+.update-item:hover{
+  transform:translateY(-2px);border-color:var(--accent);background:var(--bg2);
+}
+.update-date{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--accent);opacity:.8;
+}
+.update-item h4{
+  font-size:14px;font-weight:600;color:var(--text);margin-top:4px;
+}
+.update-item p{
+  font-size:12.5px;color:var(--text2);line-height:1.6;}
 
 /* ── HERO ── */
 .hero-wrap{
@@ -138,7 +246,7 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
   padding:28px;text-decoration:none;color:inherit;
   display:flex;flex-direction:column;gap:16px;
-  transition:transform .2s cubic-bezier(.22,1,.36,1),border-color .2s,box-shadow .2s;
+  transition:transform .2s cubic-bezier(.22,1,.36,1),border-color .2s,box-shadow .2s,background .2s;
   position:relative;overflow:hidden;
 }
 .card::before{
@@ -155,6 +263,15 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
 }
 .card-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
 .card-meta .sep{color:var(--border)}
+.difficulty-badge{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;
+  text-transform:capitalize;letter-spacing:.02em;flex-shrink:0;
+}
+.difficulty-badge.beginner{background:rgba(63,185,80,.15);color:var(--accent2);border:1px solid rgba(63,185,80,.3)}
+.difficulty-badge.intermediate{background:rgba(255,166,87,.15);color:var(--accent5);border:1px solid rgba(255,166,87,.3)}
+.difficulty-badge.advanced{background:rgba(255,122,104,.15);color:var(--accent3);border:1px solid rgba(255,122,104,.3)}
+.read-time{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);opacity:.8}
+.read-time::before{content:'⏱'}
 .card h3{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.3}
 .card p{font-size:13.5px;color:var(--text2);line-height:1.65;flex:1}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap}
@@ -255,8 +372,63 @@ footer{
   .stat-item + .stat-item{border-left:1px solid var(--border);border-top:none}
   .hero-stats{flex-direction:column;align-self:flex-start}
   .footer-inner{flex-direction:column;text-align:center}
+  .theme-toggle{display:none}
+  .grid{grid-template-columns:1fr}
+  h1{font-size:32px}
+  nav{padding:12px 16px;gap:8px}
+  .nav-links{flex-direction:column;gap:0}
 }
 </style>
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Learn With PMK71",
+  "description": "Free, in-depth guides on QA software testing, Playwright automation, TypeScript, and SDET interview preparation.",
+  "url": "https://learnwithpmk71.com/",
+  "creator": {
+    "@type": "Person",
+    "name": "Prashanth M K",
+    "url": "https://www.linkedin.com/in/pmk71",
+    "jobTitle": "SDET · Playwright Automation Engineer"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "QA Testing & Automation Guides",
+  "description": "5 comprehensive guides covering manual testing, TypeScript & Playwright, API testing, network interception, and JavaScript arrays.",
+  "url": "https://learnwithpmk71.com/",
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "Article",
+        "position": 1,
+        "headline": "Manual Testing — Complete Notes Guide",
+        "description": "Structured notes on SDLC models, testing fundamentals, test case design, defect lifecycle, STLC, and interview Q&As.",
+        "url": "https://learnwithpmk71.com/guides/manual-testing-guide.html",
+        "image": "https://learnwithpmk71.com/icon-manual.png",
+        "datePublished": "2024-01-01"
+      },
+      {
+        "@type": "Article",
+        "position": 2,
+        "headline": "TypeScript & Playwright — Complete SDET Guide",
+        "description": "20 chapters, 500+ Q&As on TypeScript fundamentals to advanced Playwright automation.",
+        "url": "https://learnwithpmk71.com/guides/typescript-playwright-guide.html",
+        "image": "https://learnwithpmk71.com/icon-playwright.png",
+        "datePublished": "2024-01-01"
+      }
+    ]
+  }
+}
+</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
@@ -274,6 +446,7 @@ footer{
       <li><a href="#about">About</a></li>
     </ul>
     <a href="./index.html" class="btn btn-secondary" style="font-size:13px;">🏠 Home</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light theme">🌙</button>
     <div class="nav-badge">Free &amp; Open</div>
   </nav>
 </header>
@@ -321,6 +494,19 @@ footer{
     <span class="section-sub">New content added regularly</span>
   </div>
 
+  <div class="guides-controls">
+    <div class="search-box">
+      <input type="text" id="searchGuides" placeholder="Search guides..." aria-label="Search guides by title or topic">
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All</button>
+      <button class="filter-tab" data-filter="beginner">Beginner</button>
+      <button class="filter-tab" data-filter="intermediate">Intermediate</button>
+      <button class="filter-tab" data-filter="advanced">Advanced</button>
+    </div>
+  </div>
+
   <div class="section-intro">
     <div class="intro-copy">
       <span class="intro-pill">✨ Featured Now</span>
@@ -343,7 +529,8 @@ footer{
       <div class="card-meta">
         <span>9 Topics</span><span class="sep">·</span>
         <span>SDLC + STLC</span><span class="sep">·</span>
-        <span>Beginner to Mid</span>
+        <span class="difficulty-badge beginner">Beginner</span><span class="sep">·</span>
+        <span class="read-time">15 min</span>
       </div>
       <h3>Manual Testing — Complete Notes Guide</h3>
       <p>Structured notes on SDLC models, testing fundamentals, test case design, defect lifecycle, STLC, and interview Q&amp;As — perfect for freshers and aspiring SDETs.</p>
@@ -362,7 +549,8 @@ footer{
       <div class="card-meta">
         <span>20 Chapters</span><span class="sep">·</span>
         <span>500+ Q&amp;As</span><span class="sep">·</span>
-        <span>0–6 Yrs</span>
+        <span class="difficulty-badge advanced">Advanced</span><span class="sep">·</span>
+        <span class="read-time">120 min</span>
       </div>
       <h3>TypeScript &amp; Playwright — Complete SDET Guide</h3>
       <p>From TypeScript fundamentals to advanced Playwright automation — framework design, JavaScript internals, CI/CD, real-world scenarios, and comprehensive interview preparation.</p>
@@ -381,7 +569,8 @@ footer{
       <div class="card-meta">
         <span>14 Chapters</span><span class="sep">·</span>
         <span>REST &amp; Auth</span><span class="sep">·</span>
-        <span>0–6 Yrs</span>
+        <span class="difficulty-badge intermediate">Intermediate</span><span class="sep">·</span>
+        <span class="read-time">75 min</span>
       </div>
       <h3>API Testing — Complete Guide</h3>
       <p>REST, GraphQL, authentication patterns, contract testing with Playwright request API, and Postman/Newman CI integration.</p>
@@ -400,7 +589,8 @@ footer{
       <div class="card-meta">
         <span>20 Chapters</span><span class="sep">·</span>
         <span>Basic to Advanced</span><span class="sep">·</span>
-        <span>3–8 Yrs</span>
+        <span class="difficulty-badge advanced">Advanced</span><span class="sep">·</span>
+        <span class="read-time">100 min</span>
       </div>
       <h3>Network Interception in Playwright — Study Guide</h3>
       <p>From the basics of intercepting requests to advanced mocking, request manipulation, failure simulation, and interview-ready examples for SDETs.</p>
@@ -432,32 +622,25 @@ footer{
       <div class="card-cta">Open guide <span class="arrow">→</span></div>
     </a>
 
-    <a class="card featured" href="./guides/MyYogateacher.html">
+    <a class="card" href="./guides/javascript-arrays-complete-reference.html">
       <div class="card-accent-bar"></div>
-      <span class="featured-badge">New • Premium</span>
-      <div class="card-icon">🧘</div>
+      <div class="card-icon">📊</div>
       <div class="card-meta">
-        <span>13 Chapters</span><span class="sep">·</span>
-        <span>Manual + Automation</span><span class="sep">·</span>
-        <span>2–4 Yrs</span>
+        <span>Array Methods</span><span class="sep">·</span>
+        <span>ES2023+</span><span class="sep">·</span>
+        <span class="difficulty-badge intermediate">Intermediate</span><span class="sep">·</span>
+        <span class="read-time">60 min</span>
       </div>
-      <h3>MyYogaTeacher — SDET / QA Engineer Study Guide</h3>
-      <p>A comprehensive, self-contained study guide covering manual testing, Playwright JavaScript, API testing, SQL, AI-assisted testing, CI/CD, mobile, performance, and WebRTC.</p>
+      <h3>JavaScript Arrays — Complete Reference</h3>
+      <p>Master array creation, access patterns, mutating vs immutable methods, spread/rest, destructuring, performance Big-O, common pitfalls, and Playwright-specific patterns.</p>
       <div class="card-tags">
-        <span class="tag">SDET</span>
-        <span class="tag">Playwright</span>
-        <span class="tag">API</span>
-        <span class="tag">SQL</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Arrays</span>
+        <span class="tag">Methods</span>
+        <span class="tag">Reference</span>
       </div>
       <div class="card-cta">Open guide <span class="arrow">→</span></div>
     </a>
-
-    <div class="card soon">
-      <div class="card-icon">⚡</div>
-      <h3>JavaScript Foundations for SDETs</h3>
-      <p>ES6+, promises, event loop, closures, and everything you need to write reliable automation code.</p>
-      <div class="card-tags"><span class="tag">Coming Soon</span></div>
-    </div>
 
   </div>
 </section>
@@ -526,6 +709,38 @@ footer{
     </div>
   </div>
 </section>
+
+<!-- ── LATEST UPDATES ── -->
+<section class="section" id="updates" style="padding-top:0">
+  <div class="section-head">
+    <div class="section-label">
+      <h2>📰 Latest Updates</h2>
+    </div>
+    <span class="section-sub">Recent additions and improvements</span>
+  </div>
+  <div class="updates-grid">
+    <div class="update-item">
+      <span class="update-date">Jan 2025</span>
+      <h4>JavaScript Arrays — Complete Reference</h4>
+      <p>Comprehensive guide on array creation, mutating vs immutable methods, spread/rest operators, and common pitfalls — essential for Playwright automation.</p>
+    </div>
+    <div class="update-item">
+      <span class="update-date">Dec 2024</span>
+      <h4>Dark/Light Theme Toggle</h4>
+      <p>Website now supports light and dark themes with persistent user preference. Respects system theme preference and includes accessibility improvements.</p>
+    </div>
+    <div class="update-item">
+      <span class="update-date">Nov 2024</span>
+      <h4>Search & Filter Guides</h4>
+      <p>Find guides quickly by difficulty level (Beginner/Intermediate/Advanced) or search by title and topic. Enhanced discoverability for all learners.</p>
+    </div>
+    <div class="update-item">
+      <span class="update-date">Oct 2024</span>
+      <h4>Difficulty Badges & Read Time</h4>
+      <p>All guides now display estimated read time and difficulty level to help you choose the right guide based on your experience level.</p>
+    </div>
+  </div>
+</section>
 </main>
 
 <!-- ── FOOTER ── -->
@@ -540,5 +755,96 @@ footer{
 document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
+<script>
+// Theme Toggle
+const themeToggle = document.getElementById('themeToggle');
+const html = document.documentElement;
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const systemTheme = prefersDark.matches ? 'dark' : 'light';
+  const theme = savedTheme || systemTheme;
+  
+  html.setAttribute('data-theme', theme);
+  updateThemeIcon(theme);
+}
+
+function updateThemeIcon(theme) {
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+  const currentTheme = html.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeIcon(newTheme);
+}
+
+themeToggle.addEventListener('click', toggleTheme);
+prefersDark.addEventListener('change', () => {
+  if (!localStorage.getItem('theme')) {
+    initTheme();
+  }
+});
+
+initTheme();
+</script>
+
+<script>
+// Search & Filter Guides
+const searchInput = document.getElementById('searchGuides');
+const filterTabs = document.querySelectorAll('.filter-tab');
+const cards = document.querySelectorAll('.grid > a.card, .grid > div.card');
+
+// Add data attributes to cards
+const cardData = {
+  'manual-testing': { difficulty: 'beginner', tags: ['manual testing', 'sdlc', 'test cases', 'defect'] },
+  'typescript-playwright': { difficulty: 'advanced', tags: ['typescript', 'playwright', 'sdet', 'interview'] },
+  'api-testing': { difficulty: 'intermediate', tags: ['api testing', 'rest', 'playwright', 'auth'] },
+  'network-interception': { difficulty: 'advanced', tags: ['playwright', 'network', 'mocking', 'interviews'] },
+  'javascript-arrays': { difficulty: 'intermediate', tags: ['javascript', 'arrays', 'methods', 'reference'] }
+};
+
+function getCardDifficulty(href) {
+  for (const [key, data] of Object.entries(cardData)) {
+    if (href.includes(key)) return data.difficulty;
+  }
+  return null;
+}
+
+function filterGuides() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const activeFilter = document.querySelector('.filter-tab.active')?.getAttribute('data-filter') || 'all';
+
+  cards.forEach(card => {
+    const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+    const description = card.querySelector('p')?.textContent.toLowerCase() || '';
+    const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase());
+    const difficulty = getCardDifficulty(card.href || '');
+
+    const matchesSearch = searchTerm === '' || 
+      title.includes(searchTerm) || 
+      description.includes(searchTerm) || 
+      tags.some(tag => tag.includes(searchTerm));
+
+    const matchesFilter = activeFilter === 'all' || difficulty === activeFilter;
+    
+    card.style.display = matchesSearch && matchesFilter ? '' : 'none';
+    card.style.opacity = matchesSearch && matchesFilter ? '1' : '0.3';
+  });
+}
+
+searchInput.addEventListener('input', filterGuides);
+filterTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    filterTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    filterGuides();
+  });
+});
+</script>
 </body>
 </html>

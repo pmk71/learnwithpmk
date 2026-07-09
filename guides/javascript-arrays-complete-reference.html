@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Arrays — Complete Reference | Prashanth M K</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#0b0f14;
+  --panel:#121821;
+  --panel-2:#161d28;
+  --border:#232c38;
+  --text:#dbe4ee;
+  --muted:#8b98a8;
+  --heading:#f2f6fa;
+  --mutate:#ff7a68;
+  --pure:#4ade80;
+  --output:#5fb0ff;
+  --comment:#8b98a8;
+  --accent:#7c8cff;
+  --accent-2:#c084fc;
+  --code-bg:#0e141c;
+  --radius:10px;
+}
+[data-theme="light"]{
+  --bg:#f5f6f8;
+  --panel:#ffffff;
+  --panel-2:#f0f2f5;
+  --border:#dde1e7;
+  --text:#1d2733;
+  --muted:#5b6675;
+  --heading:#0f1720;
+  --mutate:#d9432f;
+  --pure:#1e9e5a;
+  --output:#1868c9;
+  --comment:#7c8797;
+  --accent:#5b5bf5;
+  --accent-2:#9333ea;
+  --code-bg:#eef1f5;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  transition:background .2s,color .2s;
+}
+code, pre, .mono{font-family:'IBM Plex Mono',monospace;}
+
+/* ---------- Header ---------- */
+header.top{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  padding:14px 22px;
+  background:rgba(11,15,20,0.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+[data-theme="light"] header.top{background:rgba(255,255,255,0.92);}
+.brand{display:flex; flex-direction:column; gap:2px;}
+.brand h1{font-size:19px; margin:0; color:var(--heading); font-weight:700; letter-spacing:.2px;}
+.brand .sub{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px;}
+.top-actions{display:flex; align-items:center; gap:10px;}
+.icon-btn{
+  display:flex; align-items:center; gap:7px;
+  background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+  padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px; font-family:inherit;
+  transition:.15s;
+}
+.icon-btn:hover{border-color:var(--accent); color:var(--accent);}
+.icon-btn svg{width:15px; height:15px; flex:none;}
+#searchBox{
+  background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+  padding:8px 12px; border-radius:8px; font-size:13px; width:200px; font-family:inherit;
+}
+#searchBox:focus{outline:none; border-color:var(--accent);}
+
+/* ---------- Layout ---------- */
+.layout{display:flex; max-width:1500px; margin:0 auto;}
+nav.sidebar{
+  width:250px; flex:none; position:sticky; top:63px;
+  height:calc(100vh - 63px); overflow-y:auto;
+  padding:18px 10px 60px 18px; border-right:1px solid var(--border);
+}
+nav.sidebar::-webkit-scrollbar{width:6px;}
+nav.sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+nav.sidebar a{
+  display:block; color:var(--muted); text-decoration:none; font-size:13px;
+  padding:7px 10px; border-radius:7px; margin-bottom:2px; border-left:2px solid transparent;
+}
+nav.sidebar a:hover{background:var(--panel-2); color:var(--text);}
+nav.sidebar a.active{color:var(--accent); background:var(--panel-2); border-left:2px solid var(--accent);}
+nav.sidebar .group-label{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted);
+  margin:16px 0 6px 10px; opacity:.7;
+}
+nav.sidebar .group-label:first-child{margin-top:0;}
+
+main{flex:1; min-width:0; padding:26px 30px 100px;}
+
+.section{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  margin-bottom:22px; overflow:hidden; scroll-margin-top:75px;
+}
+.section-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:14px 20px; border-bottom:1px solid var(--border); background:var(--panel-2);
+}
+.section-head h2{margin:0; font-size:15.5px; color:var(--heading); font-weight:600;}
+.tag{
+  font-size:10px; text-transform:uppercase; letter-spacing:.5px; font-weight:600;
+  padding:3px 9px; border-radius:20px; white-space:nowrap;
+}
+.tag.mutate{background:rgba(255,122,104,.15); color:var(--mutate);}
+.tag.pure{background:rgba(74,222,128,.15); color:var(--pure);}
+.tag.warn{background:rgba(255,122,104,.15); color:var(--mutate);}
+.tag.info{background:rgba(95,176,255,.15); color:var(--output);}
+.tag.neutral{background:rgba(139,152,168,.15); color:var(--muted);}
+.section-body{padding:18px 20px;}
+.section p.desc{color:var(--muted); font-size:13.5px; margin:0 0 14px;}
+.definition{
+  background:var(--panel-2); border-left:3px solid var(--accent); border-radius:6px;
+  padding:10px 14px; font-size:13.5px; color:var(--text); margin-bottom:14px;
+}
+.definition b{color:var(--heading);}
+
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+.code-block{position:relative; margin-bottom:12px;}
+.code-block .label{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
+  margin-bottom:4px; display:flex; align-items:center; gap:6px;
+}
+pre{
+  background:var(--code-bg); border:1px solid var(--border); border-radius:8px;
+  padding:12px 14px; margin:0; overflow-x:auto; font-size:12.8px; line-height:1.65;
+}
+.copy-btn{
+  position:absolute; top:6px; right:6px; background:var(--panel-2); border:1px solid var(--border);
+  color:var(--muted); border-radius:6px; padding:4px 8px; font-size:10.5px; cursor:pointer;
+  opacity:0; transition:.15s;
+}
+.code-block:hover .copy-btn{opacity:1;}
+.copy-btn:hover{color:var(--accent); border-color:var(--accent);}
+.copy-btn.copied{color:var(--pure); border-color:var(--pure); opacity:1;}
+
+.tok-c{color:var(--comment);}
+.tok-out{color:var(--output);}
+.tok-mut{color:var(--mutate);}
+.tok-pure{color:var(--pure);}
+
+table{width:100%; border-collapse:collapse; font-size:12.8px; margin-top:6px;}
+th,td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+th{background:var(--panel-2); color:var(--heading); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.4px;}
+td.mono{font-family:'IBM Plex Mono',monospace; font-size:12.3px;}
+tr:hover td{background:var(--panel-2);}
+.small-note{font-size:12px; color:var(--muted); margin-top:8px;}
+
+.pitfall{border:1px solid rgba(255,122,104,.3); background:rgba(255,122,104,.06); border-radius:8px; padding:10px 14px; margin-bottom:10px;}
+.pitfall b{color:var(--mutate);}
+.tip{border:1px solid rgba(74,222,128,.3); background:rgba(74,222,128,.06); border-radius:8px; padding:10px 14px; margin-bottom:10px;}
+.tip b{color:var(--pure);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--border); border-radius:8px; margin-bottom:8px; overflow:hidden; background:var(--panel-2);}
+.accordion-q{
+  padding:12px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-size:13.5px; font-weight:500; color:var(--text);
+}
+.accordion-q:hover{color:var(--accent);}
+.accordion-q .chev{transition:transform .2s; color:var(--muted); flex:none; margin-left:10px;}
+.accordion-item.open .accordion-q .chev{transform:rotate(180deg);}
+.accordion-a{max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:13px; color:var(--muted);}
+.accordion-item.open .accordion-a{max-height:600px;}
+.accordion-a-inner{padding:0 16px 14px;}
+
+footer{
+  text-align:center; padding:30px 20px 50px; color:var(--muted); font-size:12.5px;
+  border-top:1px solid var(--border); margin-top:10px;
+}
+footer .author{color:var(--heading); font-weight:600;}
+
+mark{background:rgba(124,140,255,.35); color:inherit; border-radius:3px; padding:0 1px;}
+
+.hidden{display:none !important;}
+
+/* ---------- Reading progress bar ---------- */
+#progressBar{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  z-index:100; transition:width .1s linear;
+}
+
+/* ---------- Search meta ---------- */
+.search-wrap{position:relative; display:flex; align-items:center;}
+#searchCount{
+  font-size:10.5px; color:var(--muted); margin-left:8px; white-space:nowrap;
+  display:none;
+}
+#searchCount.show{display:inline;}
+kbd{
+  font-family:'IBM Plex Mono',monospace; font-size:10px; background:var(--panel-2);
+  border:1px solid var(--border); border-radius:4px; padding:1px 5px; color:var(--muted);
+}
+
+/* ---------- Font size controls ---------- */
+.font-ctrl{display:flex; align-items:center; gap:2px; background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:2px;}
+.font-ctrl button{
+  background:transparent; border:none; color:var(--muted); width:26px; height:26px; border-radius:6px;
+  cursor:pointer; font-size:13px; font-family:inherit;
+}
+.font-ctrl button:hover{background:var(--panel); color:var(--accent);}
+
+/* ---------- Section head extras ---------- */
+.section-head{gap:10px;}
+.section-head-left{display:flex; align-items:center; gap:8px; min-width:0;}
+.section-head-left h2{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.link-icon{
+  background:transparent; border:none; color:var(--muted); cursor:pointer; flex:none;
+  display:flex; align-items:center; padding:2px; border-radius:5px; opacity:.5;
+}
+.link-icon:hover{opacity:1; color:var(--accent);}
+.link-icon svg{width:13px; height:13px;}
+.link-icon.copied{color:var(--pure); opacity:1;}
+
+/* ---------- Reveal animation ---------- */
+.section{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
+.section.revealed{opacity:1; transform:translateY(0);}
+@media (prefers-reduced-motion: reduce){
+  .section{opacity:1; transform:none; transition:none;}
+}
+
+/* ---------- Back to top ---------- */
+#backToTop{
+  position:fixed; bottom:26px; right:26px; z-index:60;
+  width:42px; height:42px; border-radius:50%; border:1px solid var(--border);
+  background:var(--panel-2); color:var(--accent); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:.25s; box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+#backToTop.show{opacity:1; visibility:visible; transform:translateY(0);}
+#backToTop:hover{border-color:var(--accent);}
+#backToTop svg{width:17px; height:17px;}
+
+/* ---------- Accordion controls ---------- */
+.accordion-controls{display:flex; gap:8px; margin-bottom:12px;}
+.accordion-controls button{
+  background:var(--panel); border:1px solid var(--border); color:var(--muted);
+  padding:6px 12px; border-radius:7px; font-size:12px; cursor:pointer; font-family:inherit;
+}
+.accordion-controls button:hover{color:var(--accent); border-color:var(--accent);}
+
+/* ---------- Meta bar under header ---------- */
+.meta-bar{
+  display:flex; gap:18px; flex-wrap:wrap; padding:8px 20px; font-size:11.5px; color:var(--muted);
+  border-bottom:1px solid var(--border); background:var(--panel);
+}
+.meta-bar span b{color:var(--heading);}
+#scrollPct{color:var(--accent); font-weight:600;}
+
+/* ---------- Complexity badges (Big-O) ---------- */
+.bigo{
+  display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600;
+  padding:1px 7px; border-radius:5px; background:var(--panel-2); color:var(--accent-2); border:1px solid var(--border);
+}
+
+@media(max-width:820px){
+  .layout{flex-direction:column;}
+  nav.sidebar{width:100%; height:auto; position:relative; top:0; border-right:none; border-bottom:1px solid var(--border);}
+  #searchBox{width:120px;}
+  header.top{flex-wrap:wrap;}
+  main{padding:18px 14px 80px;}
+  .meta-bar{gap:10px; font-size:10.5px;}
+  #backToTop{bottom:16px; right:16px; width:38px; height:38px;}
+}
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+
+<header class="top">
+  <div class="brand">
+    <h1>JavaScript Arrays — Complete Reference</h1>
+    <span class="sub">Automation Test Engineering · Playwright · QA Programs · ES2024 · by Prashanth M K</span>
+  </div>
+  <div class="top-actions">
+    <div class="search-wrap">
+      <input id="searchBox" type="text" placeholder="Search topics... (press /)">
+      <span id="searchCount"></span>
+    </div>
+    <div class="font-ctrl" title="Adjust text size">
+      <button id="fontDown">A−</button>
+      <button id="fontReset">A</button>
+      <button id="fontUp">A+</button>
+    </div>
+    <button class="icon-btn" id="themeToggle" title="Toggle dark/light mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <span id="themeLabel">Light</span>
+    </button>
+    <button class="icon-btn" id="downloadImg" title="Download page as image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Download PNG</span>
+    </button>
+  </div>
+</header>
+
+<div class="meta-bar">
+  <span><b id="sectionCount">0</b> topics</span>
+  <span><b id="codeCount">0</b> code examples</span>
+  <span><b id="faqCount">0</b> interview Q&A</span>
+  <span>~<b id="readTime">0</b> min read</span>
+  <span>Scroll: <span id="scrollPct">0%</span></span>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="group-label">Foundations</div>
+    <a href="#what-is-array">What is an Array?</a>
+    <a href="#creation">Array Creation</a>
+    <a href="#access-index">Access & Index</a>
+    <a href="#spread-rest">Spread & Rest</a>
+    <a href="#destructuring">Destructuring</a>
+    <div class="group-label">Mutating vs Pure</div>
+    <a href="#mutating">Mutating Methods</a>
+    <a href="#immutable-variants">Immutable Variants (ES2023)</a>
+    <a href="#immutability">Freezing & Immutability</a>
+    <a href="#map">.map()</a>
+    <a href="#filter">.filter()</a>
+    <div class="group-label">Searching & Testing</div>
+    <a href="#search">Search Methods</a>
+    <a href="#boolean">some() / every()</a>
+    <div class="group-label">Transform & Combine</div>
+    <a href="#reduce">.reduce()</a>
+    <a href="#foreach-flat">forEach · flat · slice · concat</a>
+    <div class="group-label">Iteration & Structure</div>
+    <a href="#iteration">Iteration Patterns</a>
+    <a href="#multidim">2D / Multi-dimensional Arrays</a>
+    <a href="#grouping">Grouping (ES2024)</a>
+    <a href="#collections">Array vs Set vs Map</a>
+    <div class="group-label">Applied & Safety</div>
+    <a href="#async-arrays">Promises & Async Patterns</a>
+    <a href="#playwright">Playwright Patterns</a>
+    <a href="#sorting">Sorting — Safe vs Unsafe</a>
+    <a href="#type-checks">Type Checks & Array-likes</a>
+    <a href="#pitfalls">Common Pitfalls</a>
+    <div class="group-label">Reference</div>
+    <a href="#bigo">Big-O Performance Guide</a>
+    <a href="#quickref">Quick Reference Table</a>
+    <a href="#faq">Interview Q&A</a>
+  </nav>
+
+
+  <main id="mainContent">
+
+    <!-- WHAT IS AN ARRAY -->
+    <section class="section" id="what-is-array">
+      <div class="section-head"><h2>What is an Array?</h2><span class="tag neutral">Core Concept</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> An <b>Array</b> is an ordered, index-based collection of values (<i>elements</i>). In JavaScript, arrays are <b>zero-indexed</b> — the first element sits at index <code>0</code>. Arrays are <b>mutable</b> (can change after creation), <b>dynamic</b> (grow/shrink automatically), and can hold <b>mixed types</b> in a single array since JS arrays are not strictly typed.</div>
+        <p class="desc">Under the hood, a JS array is actually a specialized object whose keys are stringified indices (<code>"0"</code>, <code>"1"</code>, ...) plus a special <code>length</code> property that auto-updates.</p>
+        <div class="code-block">
+          <div class="label">Array anatomy — index 0, 4, length 5</div>
+          <pre><span class="tok-c">// ['click','fill','wait','assert','done']</span>
+<span class="tok-c">// index:  0        1       2       3        4</span>
+<span class="tok-c">// negative:-5      -4      -3      -2       -1</span></pre>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">typeof & Array checks</div>
+            <pre>typeof []               <span class="tok-c">// 'object'</span>
+Array.isArray([])       <span class="tok-c">// true — use this</span>
+[].length               <span class="tok-c">// 0</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Mixed types & length</div>
+            <pre>[1,2,3].length          <span class="tok-c">// 3</span>
+[1, <span class="tok-out">'hello'</span>, true, null, {name:<span class="tok-out">'qa'</span>}]
+<span class="tok-c">// arrays can hold ANY type together</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="tip"><b>Why it matters for automation:</b> Playwright's <code>locator.all()</code>, <code>page.$$()</code>, and API responses (<code>response.json()</code>) almost always return arrays — mastering array methods is core to writing clean assertions and data-driven tests.</div>
+      </div>
+    </section>
+
+    <!-- CREATION -->
+    <section class="section" id="creation">
+      <div class="section-head"><h2>Array Creation</h2><span class="tag neutral">5+ Ways</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Arrays can be created via a literal, the <code>Array</code> constructor, or by converting/generating from another iterable or array-like object.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">1 · Array literal — most common</div>
+            <pre><span class="tok-out">const</span> steps = [<span class="tok-out">'login'</span>, <span class="tok-out">'checkout'</span>, <span class="tok-out">'pay'</span>];</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">2 · Array constructor — supports negatives</div>
+            <pre><span class="tok-out">const</span> a = <span class="tok-out">new</span> Array(3)     <span class="tok-c">// [empty x 3]</span>
+Array(1,2,3)             <span class="tok-c">// [1, 2, 3]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">3 · Array.from() — from array-like / iterable</div>
+            <pre>Array.from(<span class="tok-out">'abc'</span>)        <span class="tok-c">// ['a','b','c']</span>
+Array.from({length:3}, (_,i) => i+1)
+<span class="tok-c">// [1, 2, 3]</span>
+Array.from(document.querySelectorAll(<span class="tok-out">'li'</span>))
+<span class="tok-c">// NodeList → real array</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">4 · Array.of() — always creates elements (unlike Array())</div>
+            <pre>Array.of(1,2,3)          <span class="tok-c">// [1, 2, 3]</span>
+Array.of(7)              <span class="tok-c">// [7]  (not empty x7!)</span>
+<span class="tok-out">new</span> Array(7)             <span class="tok-c">// [empty x 7] — different!</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">5 · Spread from another array / set / string</div>
+            <pre><span class="tok-out">const</span> copy = [...tests];    <span class="tok-c">// shallow copy</span>
+[...<span class="tok-out">new</span> Set([1,2,2,3])]  <span class="tok-c">// [1,2,3] dedupe</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">6 · fill() to seed values</div>
+            <pre><span class="tok-out">new</span> Array(3).fill(0)    <span class="tok-c">// [0, 0, 0]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Watch out:</b> <code>Array(7)</code> creates a sparse array of length 7 with no actual elements, so <code>.map()</code> silently skips it. Use <code>Array.from({length:7})</code> or <code>Array(7).fill(undefined)</code> when you need to iterate.</div>
+      </div>
+    </section>
+
+    <!-- ACCESS & INDEX -->
+    <section class="section" id="access-index">
+      <div class="section-head"><h2>Access & Index</h2><span class="tag pure">Read Elements</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Bracket notation</div>
+            <pre>tests[0]     <span class="tok-c">// 'login'</span>
+tests[1]     <span class="tok-c">// 'search'</span>
+tests[99]    <span class="tok-c">// undefined (no error)</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">.at() — supports negative indices (ES2022)</div>
+            <pre>tests.at(0)     <span class="tok-c">// 'login'</span>
+tests.at(-1)    <span class="tok-c">// 'checkout' (last)</span>
+tests.at(-2)    <span class="tok-c">// 'search'</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">length</div>
+            <pre>tests.length                    <span class="tok-c">// 3</span>
+tests[tests.length - 1]         <span class="tok-c">// 'checkout' (last)</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Destructuring access</div>
+            <pre><span class="tok-out">const</span> [first, second, ...rest] = tests;
+[first?.split(<span class="tok-out">' '</span>)[0] ?? <span class="tok-out">'checkout'</span>]</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Swap via destructuring</div>
+            <pre>[tests[0], tests[1]] = [tests[1], tests[0]];</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="definition"><b>Definition — array-like:</b> An object with numeric keys and a <code>length</code> property (e.g. <code>arguments</code>, a <code>NodeList</code>) that isn't a "true" array and lacks array methods until converted with <code>Array.from()</code> or spread.</div>
+      </div>
+    </section>
+
+    <!-- SPREAD & REST -->
+    <section class="section" id="spread-rest">
+      <div class="section-head"><h2>Spread & Rest</h2><span class="tag pure">Operator</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> The <code>...</code> syntax is <b>spread</b> when it expands an iterable into individual elements, and <b>rest</b> when it collects remaining elements into a new array. Same symbol, opposite direction.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Spread — expand arrays</div>
+            <pre><span class="tok-out">const</span> a = [1,2], b = [3,4];
+[...a, ...b]     <span class="tok-c">// [1, 2, 3, 4]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Clone (shallow copy)</div>
+            <pre><span class="tok-out">const</span> copy = [...a];</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Add items around existing ones</div>
+            <pre>[0, ...a, 3]      <span class="tok-c">// [0, 1, 2, 3]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Spread into function args</div>
+            <pre>Math.max(...[3,10,1])   <span class="tok-c">// 10</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Rest — collect remaining args</div>
+            <pre><span class="tok-out">const</span> [head, ...tail] = [1,2,3,4];
+head <span class="tok-c">// 1</span>, tail <span class="tok-c">// [2,3,4]</span>
+
+<span class="tok-out">function</span> logAll(...args){ <span class="tok-c">/* args is real array */</span> }</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Merge test suites / remove duplicates</div>
+            <pre><span class="tok-out">const</span> smoke = [<span class="tok-out">'login'</span>,<span class="tok-out">'home'</span>];
+<span class="tok-out">const</span> full = [...smoke, <span class="tok-out">'cart'</span>, <span class="tok-out">'pay'</span>];
+[...<span class="tok-out">new</span> Set([1,2,2,3])]   <span class="tok-c">// [1, 2, 3]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MUTATING METHODS -->
+    <section class="section" id="mutating">
+      <div class="section-head"><h2>Mutating Methods — Change the Original Array</h2><span class="tag mutate">⚠ Mutates</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> A <b>mutating method</b> changes the array it's called on <i>in place</i> and often returns something other than the new array (e.g. the removed item, or the new length) rather than the array itself.</div>
+        <div class="grid-3">
+          <div class="code-block">
+            <div class="label">push() / pop()</div>
+            <pre><span class="tok-out">const</span> steps = [<span class="tok-out">'login'</span>,<span class="tok-out">'cart'</span>];
+steps.push(<span class="tok-out">'checkout'</span>)
+<span class="tok-c">// 3 (new length)</span>
+steps.pop()
+<span class="tok-c">// 'checkout' (removed item)</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">shift() / unshift()</div>
+            <pre><span class="tok-out">const</span> q = [<span class="tok-out">'B'</span>,<span class="tok-out">'C'</span>];
+q.unshift(<span class="tok-out">'A'</span>)   <span class="tok-c">// 3 (new length)</span>
+q.shift()        <span class="tok-c">// 'A' (removed item)</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">splice(start, deleteCount, ...items)</div>
+            <pre><span class="tok-out">const</span> arr = [<span class="tok-out">'A'</span>,<span class="tok-out">'B'</span>,<span class="tok-out">'C'</span>,<span class="tok-out">'D'</span>];
+arr.splice(1,1)          <span class="tok-c">// ['B'] removed</span>
+arr.splice(1,0,<span class="tok-out">'X'</span>)     <span class="tok-c">// insert at 1</span>
+arr.splice(2,1,<span class="tok-out">'Y'</span>)     <span class="tok-c">// replace at 2</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">sort() / reverse() / fill()</div>
+            <pre><span class="tok-out">const</span> nums = [3,1,4,1,5];
+nums.sort()             <span class="tok-c">// lexical by default!</span>
+nums.sort((a,b)=>a-b)   <span class="tok-c">// numeric ascending</span>
+nums.reverse()          <span class="tok-c">// reverses in place</span>
+<span class="tok-out">new</span> Array(3).fill(0)    <span class="tok-c">// [0,0,0]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">copyWithin() — rarely used</div>
+            <pre>[1,2,3,4,5].copyWithin(0,3)
+<span class="tok-c">// [4,5,3,4,5] — copies slice within itself</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Queue pattern (FIFO)</div>
+            <pre>queue.push(<span class="tok-out">'test4'</span>)  <span class="tok-c">// enqueue</span>
+queue.shift()          <span class="tok-c">// dequeue</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Watch out:</b> <code>sort()</code> converts elements to strings by default, so <code>[10, 2, 1].sort()</code> gives <code>[1, 10, 2]</code>, not numeric order. Always pass a comparator for numbers.</div>
+      </div>
+    </section>
+
+    <!-- IMMUTABLE VARIANTS -->
+    <section class="section" id="immutable-variants">
+      <div class="section-head"><h2>Immutable Variants (ES2023)</h2><span class="tag pure">✓ Pure</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> ES2023 added non-mutating "copying" counterparts for the classic mutating methods. Each returns a <b>new array</b> and leaves the original untouched — safer for test data you reuse across specs.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">toSorted() / toReversed()</div>
+            <pre><span class="tok-out">const</span> original = [3,1,2];
+<span class="tok-out">const</span> sorted = original.toSorted((a,b)=>a-b);
+<span class="tok-c">// sorted: [1,2,3], original still [3,1,2]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">toSpliced()</div>
+            <pre><span class="tok-out">const</span> tests = [<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>,<span class="tok-out">'c'</span>];
+tests.toSpliced(1,1,<span class="tok-out">'x'</span>)
+<span class="tok-c">// ['a','x','c'] — original untouched</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">with(index, value) — copy + replace one item</div>
+            <pre>[<span class="tok-out">'login'</span>,<span class="tok-out">'cart'</span>,<span class="tok-out">'pay'</span>].with(1,<span class="tok-out">'checkout'</span>)
+<span class="tok-c">// ['login','checkout','pay']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="tip"><b>Why it matters:</b> In Playwright fixtures/data files, prefer <code>toSorted()</code>/<code>with()</code> over <code>sort()</code>/index assignment so shared test-data arrays aren't accidentally mutated by one spec and leaked into another.</div>
+        <div class="small-note">Browser/Node support: Chrome 110+, Node 20+. Check your CI runner's Node version before relying on these in a framework.</div>
+      </div>
+    </section>
+
+    <!-- IMMUTABILITY -->
+    <section class="section" id="immutability">
+      <div class="section-head"><h2>Freezing & Immutability</h2><span class="tag info">Defensive Coding</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> <code>Object.freeze()</code> makes an array's existing elements read-only at the top level — any mutating method call fails silently (or throws in strict mode) rather than changing the data. Useful for protecting shared fixtures from accidental mutation across test files.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Object.freeze() on arrays</div>
+            <pre><span class="tok-out">const</span> ROLES = Object.freeze([<span class="tok-out">'admin'</span>,<span class="tok-out">'user'</span>,<span class="tok-out">'guest'</span>]);
+ROLES.push(<span class="tok-out">'super'</span>)     <span class="tok-c">// fails silently (non-strict)</span>
+<span class="tok-out">'use strict'</span>;
+ROLES.push(<span class="tok-out">'super'</span>)     <span class="tok-c">// TypeError: Cannot add property</span>
+
+Object.isFrozen(ROLES)   <span class="tok-c">// true</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Shallow freeze — nested objects stay mutable</div>
+            <pre><span class="tok-out">const</span> data = Object.freeze([{name:<span class="tok-out">'Alice'</span>}]);
+data[0].name = <span class="tok-out">'Bob'</span>;    <span class="tok-c">// ✗ works! nested object not frozen</span>
+data[0]           <span class="tok-c">// {name: 'Bob'}</span>
+
+<span class="tok-c">// Deep-freeze helper for full protection</span>
+<span class="tok-out">function</span> deepFreeze(arr){
+  arr.forEach(item => <span class="tok-out">typeof</span> item === <span class="tok-out">'object'</span>
+    && item !== <span class="tok-out">null</span> && Object.freeze(item));
+  <span class="tok-out">return</span> Object.freeze(arr);
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="tip"><b>Test automation use case:</b> Freeze constant test-data arrays (role lists, environment configs, expected-value sets) at module load so an accidental <code>.push()</code>/<code>.sort()</code> in one spec can never leak state into another test file.</div>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section class="section" id="map">
+      <div class="section-head"><h2>.map() — Transform Every Element</h2><span class="tag pure">✓ Pure</span></div>
+
+      <div class="section-body">
+        <div class="definition">Returns a <b>new array</b> of the same length with each element <b>transformed</b> by the callback. Does NOT mutate original. Most used array method in automation for data transformation.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Syntax</div>
+            <pre><span class="tok-out">array</span>.map((element, index, array) => {...})
+
+<span class="tok-out">const</span> nums = [1, 2, 3];
+nums.map(n => n * 2)      <span class="tok-c">// [2, 4, 6]</span>
+nums.map(n => n.toString())
+<span class="tok-c">// ['1','2','3']</span>
+
+<span class="tok-c">// with index</span>
+nums.map((n, i) => `${i}:${n}`)
+<span class="tok-c">// ['0:1','1:2','2:3']</span>
+
+<span class="tok-c">// map objects</span>
+<span class="tok-out">const</span> users = [{name:<span class="tok-out">'Alice'</span>},{name:<span class="tok-out">'Bob'</span>}];
+users.map(u => u.name)   <span class="tok-c">// ['Alice','Bob']</span>
+
+<span class="tok-c">// chain map → filter</span>
+[1,2,3,4].map(n => n ** 2).filter(n => n > 4)
+<span class="tok-c">// [9, 16]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Playwright</div>
+            <pre><span class="tok-c">// Get text of all table rows</span>
+<span class="tok-out">const</span> rows = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'tbody tr'</span>)
+  .allInnerTexts();
+
+<span class="tok-c">// Map to extract column values</span>
+<span class="tok-out">const</span> names = rows.map(r =>
+  r.split(<span class="tok-out">'\t'</span>)[0]);
+
+<span class="tok-c">// Map prices to numbers</span>
+<span class="tok-out">const</span> prices = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'.price'</span>)
+  .allInnerTexts();
+<span class="tok-out">const</span> nums = prices.map(p =>
+  parseFloat(p.replace(<span class="tok-out">'$'</span>,<span class="tok-out">''</span>)));
+<span class="tok-c">// [29.99, 9.99, 49.0]</span>
+
+<span class="tok-c">// Build test data array</span>
+<span class="tok-out">const</span> emails = [<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>].map(u =>
+  `${u}@qa.com`);
+<span class="tok-c">// ['a@qa.com','b@qa.com']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILTER -->
+    <section class="section" id="filter">
+      <div class="section-head"><h2>.filter() — Keep Matching Elements</h2><span class="tag pure">✓ Pure</span></div>
+      <div class="section-body">
+        <div class="definition">Returns a <b>new array</b> with only elements where the callback returns <b>truthy</b>. Original is unchanged. Use to narrow down test data, filter passed/failed results, or find specific items.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Syntax</div>
+            <pre><span class="tok-out">const</span> scores = [45,82,60,91,38];
+scores.filter(s => s >= 60)
+<span class="tok-c">// [82, 60, 91]</span>
+scores.filter(s => s < 60)
+<span class="tok-c">// [45, 38]</span>
+
+<span class="tok-c">// filter objects</span>
+<span class="tok-out">const</span> tests = [
+  {name:<span class="tok-out">'login'</span>,   status:<span class="tok-out">'pass'</span>},
+  {name:<span class="tok-out">'search'</span>,  status:<span class="tok-out">'fail'</span>},
+  {name:<span class="tok-out">'checkout'</span>,status:<span class="tok-out">'pass'</span>},
+];
+tests.filter(t => t.status === <span class="tok-out">'fail'</span>)
+<span class="tok-c">// [{name:'search',status:'fail'}]</span>
+
+<span class="tok-c">// filter strings containing substring</span>
+[<span class="tok-out">'login'</span>,<span class="tok-out">'cart'</span>,<span class="tok-out">'logout'</span>]
+  .filter(s => s.includes(<span class="tok-out">'log'</span>))
+<span class="tok-c">// ['login','logout']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Playwright</div>
+            <pre><span class="tok-c">// Filter failed tests from results</span>
+<span class="tok-out">const</span> results = [
+  {test:<span class="tok-out">'login'</span>,   pass:<span class="tok-out">true</span>},
+  {test:<span class="tok-out">'register'</span>,pass:<span class="tok-out">false</span>},
+  {test:<span class="tok-out">'search'</span>,  pass:<span class="tok-out">true</span>},
+];
+results.filter(r => !r.pass)
+<span class="tok-c">// [{test:'register',pass:false}]</span>
+
+<span class="tok-c">// Filter visible elements only</span>
+<span class="tok-out">const</span> allTexts = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'.item'</span>)
+  .allInnerTexts();
+<span class="tok-out">const</span> nonEmpty = allTexts
+  .filter(t => t.trim() !== <span class="tok-out">''</span>)
+
+<span class="tok-c">// Filter test cases by tag</span>
+<span class="tok-out">const</span> smokeTests = testList
+  .filter(t => t.tags
+    .includes(<span class="tok-out">'@smoke'</span>))</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH METHODS -->
+    <section class="section" id="search">
+      <div class="section-head"><h2>Search Methods — find, findIndex, indexOf & more</h2><span class="tag pure">✓ Pure</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Search methods locate an element or its position without creating a full filtered copy. Choose based on whether you need the <i>value</i>, the <i>index</i>, or just a <i>yes/no</i> answer.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">find() — first match or undefined</div>
+            <pre><span class="tok-out">const</span> users = [
+  {id:1,name:<span class="tok-out">'Alice'</span>,role:<span class="tok-out">'admin'</span>},
+  {id:2,name:<span class="tok-out">'Bob'</span>,  role:<span class="tok-out">'user'</span>},
+];
+users.find(u => u.role===<span class="tok-out">'admin'</span>)
+<span class="tok-c">// {id:1,name:'Alice',role:'admin'}</span>
+users.find(u => u.id===99)
+<span class="tok-c">// undefined</span>
+
+<span class="tok-c">// findIndex — index of first match</span>
+users.findIndex(u => u.id===2)   <span class="tok-c">// 1</span>
+users.findIndex(u => u.id===99)  <span class="tok-c">// -1 (not found)</span>
+
+<span class="tok-c">// findLast / findLastIndex (ES2023)</span>
+users.findLast(u => u.role===<span class="tok-out">'user'</span>)
+users.findLastIndex(u => u.role===<span class="tok-out">'admin'</span>)</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">indexOf() / includes()</div>
+            <pre><span class="tok-out">const</span> steps = [<span class="tok-out">'login'</span>,<span class="tok-out">'cart'</span>,<span class="tok-out">'pay'</span>];
+steps.indexOf(<span class="tok-out">'cart'</span>)     <span class="tok-c">// 1 — primitive values</span>
+steps.indexOf(<span class="tok-out">'missing'</span>)  <span class="tok-c">// -1</span>
+steps.lastIndexOf(<span class="tok-out">'pay'</span>)  <span class="tok-c">// 2</span>
+
+steps.includes(<span class="tok-out">'cart'</span>)     <span class="tok-c">// true</span>
+steps.includes(<span class="tok-out">'nope'</span>)     <span class="tok-c">// false</span>
+
+<span class="tok-c">// indexOf/includes use ===</span>
+[{a:1}].includes({a:1})  <span class="tok-c">// false! (diff ref)</span>
+
+<span class="tok-c">// in automation: check step exists</span>
+expect(steps.includes(<span class="tok-out">'pay'</span>))
+  .toBe(<span class="tok-out">true</span>);</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="small-note"><b>find</b> returns the value, <b>findIndex</b> returns the position, <b>includes</b> returns a boolean, <b>indexOf</b> only works for primitive equality (not deep object comparison).</div>
+      </div>
+    </section>
+
+    <!-- BOOLEAN -->
+    <section class="section" id="boolean">
+      <div class="section-head"><h2>Boolean Checks — some() & every()</h2><span class="tag info">Returns Boolean</span></div>
+      <div class="section-body">
+        <div class="definition"><code>.some()</code> → true if <b>at least one</b> element passes. <code>.every()</code> → true if <b>all</b> elements pass. Both stop early (short-circuit) — essential for fast QA validation checks.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">some() — at least one</div>
+            <pre><span class="tok-out">const</span> results = [<span class="tok-out">'pass'</span>,<span class="tok-out">'fail'</span>,<span class="tok-out">'pass'</span>];
+results.some(r => r===<span class="tok-out">'fail'</span>)
+<span class="tok-c">// true (any fail?)</span>
+
+[1,2,3].some(n => n > 2)     <span class="tok-c">// true</span>
+[1,2,3].some(n => n > 9)     <span class="tok-c">// false</span>
+
+<span class="tok-c">// QA: any error at all?</span>
+errors.some(e =>
+  e.includes(<span class="tok-out">'critical'</span>))</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">every() — all must pass</div>
+            <pre><span class="tok-out">const</span> results = [<span class="tok-out">'pass'</span>,<span class="tok-out">'pass'</span>,<span class="tok-out">'pass'</span>];
+results.every(r => r===<span class="tok-out">'pass'</span>)
+<span class="tok-c">// true (all passed?)</span>
+
+[<span class="tok-out">'pass'</span>,<span class="tok-out">'fail'</span>].every(r=>r===<span class="tok-out">'pass'</span>)
+<span class="tok-c">// false</span>
+
+<span class="tok-c">// QA: all prices > 0?</span>
+prices.every(p => p > 0)     <span class="tok-c">// true</span>
+
+<span class="tok-c">// All required fields filled?</span>
+fields.every(f =>
+  f.trim() !== <span class="tok-out">''</span>)  <span class="tok-c">// true/false</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="small-note">Empty-array edge case: <code>[].every(fn)</code> is always <code>true</code> ("vacuous truth"); <code>[].some(fn)</code> is always <code>false</code>.</div>
+      </div>
+    </section>
+
+    <!-- REDUCE -->
+    <section class="section" id="reduce">
+      <div class="section-head"><h2>.reduce() — Accumulate to a Single Value</h2><span class="tag pure">✓ Pure</span></div>
+      <div class="section-body">
+        <div class="definition">Reduces an array to a <b>single value</b> (number, string, object, array) by running a callback with an accumulator. Most powerful array method — can replicate map & filter.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Syntax</div>
+            <pre><span class="tok-out">array</span>.reduce((acc, cur, idx, arr) => {...}, initial)
+
+<span class="tok-c">// Sum</span>
+[1,2,3,4].reduce((acc,n) => acc+n, 0)   <span class="tok-c">// 10</span>
+
+<span class="tok-c">// Max value</span>
+[3,1,4,1,5].reduce((max,n) =>
+  n > max ? n : max, -Infinity)          <span class="tok-c">// 5</span>
+
+<span class="tok-c">// Count occurrences</span>
+[<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>,<span class="tok-out">'a'</span>,<span class="tok-out">'c'</span>,<span class="tok-out">'a'</span>].reduce((acc,v)=>{
+  acc[v] = (acc[v]||0)+1; <span class="tok-out">return</span> acc;
+}, {})
+<span class="tok-c">// {a:3, b:1, c:1}</span>
+
+<span class="tok-c">// Flatten nested arrays</span>
+[[1,2],[3,4],[5]].reduce((acc,cur)=>
+  [...acc,...cur], [])
+<span class="tok-c">// [1,2,3,4,5]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Playwright QA</div>
+            <pre><span class="tok-c">// Sum all cart prices</span>
+<span class="tok-out">const</span> prices = [29.99, 9.99, 49.0];
+<span class="tok-out">const</span> total = prices.reduce(
+  (sum,p) => sum+p, 0)
+<span class="tok-c">// 88.98</span>
+
+<span class="tok-c">// Group results by status</span>
+results.reduce((acc,t) => {
+  (acc[t.status] ??= []).push(t.name);
+  <span class="tok-out">return</span> acc;
+}, {})
+<span class="tok-c">// {pass:['login'], fail:['pay']}</span>
+
+<span class="tok-c">// Count pass/fail test statuses</span>
+results.reduce((acc,r) => {
+  r.pass ? acc.pass++ : acc.fail++;
+  <span class="tok-out">return</span> acc;
+}, {pass:0, fail:0})
+<span class="tok-c">// {pass: 8, fail: 2}</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Watch out:</b> Forgetting to <code>return acc</code> inside the callback (when using a block body <code>{}</code>) silently breaks the accumulation on the next iteration.</div>
+      </div>
+    </section>
+
+    <!-- FOREACH / FLAT / SLICE / CONCAT -->
+    <section class="section" id="foreach-flat">
+      <div class="section-head"><h2>forEach · flat · flatMap · slice · concat · join</h2><span class="tag pure">✓ Pure (except forEach)</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">forEach — runs side effects, NO return</div>
+            <pre>[<span class="tok-out">'login'</span>,<span class="tok-out">'pay'</span>].forEach((step,i) => {
+  console.log(`Step ${i+1}: ${step}`)
+})
+
+<span class="tok-c">// Step 1: login / Step 2: pay</span>
+<span class="tok-c">// forEach returns undefined</span>
+<span class="tok-c">// Can't chain like .map()</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">flat / flatMap — flatten nested arrays</div>
+            <pre>[1,[2,3]].flat()          <span class="tok-c">// [1,2,3]</span>
+[1,[2,[3]]].flat()        <span class="tok-c">// [1,2,[3]]</span>
+[1,[2,[3]]].flat(Infinity) <span class="tok-c">// [1,2,3] all levels</span>
+
+<span class="tok-c">// flatMap = map + flat(1)</span>
+[<span class="tok-out">'a b'</span>,<span class="tok-out">'c'</span>].flatMap(s =>
+  s.split(<span class="tok-out">' '</span>))
+<span class="tok-c">// ['a','b','c']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">slice(start,end) — pure, non-mutating</div>
+            <pre><span class="tok-out">const</span> arr = [<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>,<span class="tok-out">'c'</span>,<span class="tok-out">'d'</span>,<span class="tok-out">'e'</span>];
+arr.slice(1,3)      <span class="tok-c">// ['b','c']</span>
+arr.slice(-2)       <span class="tok-c">// ['d','e']</span>
+arr.slice()         <span class="tok-c">// shallow copy</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">concat() / join()</div>
+            <pre>[1,2].concat([3,4])    <span class="tok-c">// [1,2,3,4]</span>
+[1].concat(2,[3,4])    <span class="tok-c">// [1,2,3,4]</span>
+
+[<span class="tok-out">'step1'</span>,<span class="tok-out">'step2'</span>].join(<span class="tok-out">' -> '</span>)
+<span class="tok-c">// 'step1 -> step2'</span>
+[<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>,<span class="tok-out">'c'</span>].join(<span class="tok-out">''</span>)   <span class="tok-c">// 'abc'</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="small-note"><b>splice vs slice:</b> <code>splice</code> mutates and removes/inserts in place; <code>slice</code> is pure and returns a new sub-array — easy to mix up in interviews.</div>
+      </div>
+    </section>
+
+    <!-- ITERATION -->
+    <section class="section" id="iteration">
+      <div class="section-head"><h2>Iteration — for, for...of, entries</h2><span class="tag neutral">Looping</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">for...of (preferred)</div>
+            <pre><span class="tok-out">const</span> urls = [<span class="tok-out">'/login'</span>,<span class="tok-out">'/home'</span>,<span class="tok-out">'/profile'</span>];
+<span class="tok-out">for</span> (<span class="tok-out">const</span> url <span class="tok-out">of</span> urls) {
+  console.log(url);
+}
+
+<span class="tok-c">// for...of = clean, readable</span>
+<span class="tok-out">for</span> (<span class="tok-out">const</span> [i, url] <span class="tok-out">of</span> urls.entries()) {
+  console.log(`${i}: ${url}`);
+}
+
+<span class="tok-c">// classic for loop (use index-based)</span>
+<span class="tok-out">for</span> (<span class="tok-out">let</span> i=0; i<urls.length; i++){
+  await page.goto(urls[i]);
+}
+
+<span class="tok-c">// while loop with queue.shift()</span>
+<span class="tok-out">while</span> (queue.length > 0) {
+  <span class="tok-out">const</span> task = queue.shift();
+  <span class="tok-out">await</span> runTask(task);
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Playwright async loop</div>
+            <pre><span class="tok-c">// This won't await properly!</span>
+urls.forEach(<span class="tok-out">async</span> url => {
+  <span class="tok-out">await</span> page.goto(url) <span class="tok-c">// wrong</span>
+})
+
+<span class="tok-c">// use for...of for sequential</span>
+<span class="tok-out">for</span> (<span class="tok-out">const</span> url <span class="tok-out">of</span> urls) {
+  <span class="tok-out">await</span> page.goto(url); <span class="tok-c">// correct</span>
+  <span class="tok-out">await</span> page.waitForLoadState();
+}
+
+<span class="tok-c">// Parallel — Promise.all() for speed</span>
+<span class="tok-out">await</span> Promise.all(
+  urls.map(url =>
+    context.newPage().then(p =>
+      p.goto(url)))
+)
+
+<span class="tok-c">// Loop over locators</span>
+<span class="tok-out">const</span> count = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'tr'</span>).count();
+<span class="tok-out">for</span> (<span class="tok-out">let</span> i=0; i<count; i++){
+  <span class="tok-out">const</span> cell = page.locator(<span class="tok-out">'tr'</span>).nth(i);
+  <span class="tok-out">await</span> expect(cell).toBeVisible();
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Watch out:</b> <code>array.forEach(async fn)</code> does NOT wait between iterations — all callbacks fire immediately without honoring internal <code>await</code>. Use a <code>for...of</code> loop for sequential async steps, or <code>Promise.all(arr.map(...))</code> for parallel ones.</div>
+      </div>
+    </section>
+
+    <!-- MULTI-DIMENSIONAL -->
+    <section class="section" id="multidim">
+      <div class="section-head"><h2>2D / Multi-dimensional Arrays</h2><span class="tag neutral">Nested Structures</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> JavaScript has no native matrix type — a "2D array" is simply an array whose elements are themselves arrays. Common for grid data, table snapshots, and seat/board-style test fixtures.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Creating a grid safely</div>
+            <pre><span class="tok-c">// ✗ WRONG — all rows share the same reference</span>
+<span class="tok-out">const</span> bad = <span class="tok-out">new</span> Array(3).fill([0,0,0]);
+bad[0][0] = 9;   <span class="tok-c">// changes ALL rows!</span>
+
+<span class="tok-c">// ✓ CORRECT — independent rows</span>
+<span class="tok-out">const</span> grid = Array.from({length:3}, () =>
+  <span class="tok-out">new</span> Array(3).fill(0));
+grid[0][0] = 9;  <span class="tok-c">// only row 0 changes</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Reading a table snapshot into a 2D array</div>
+            <pre><span class="tok-c">// Playwright: read an HTML table into rows/cols</span>
+<span class="tok-out">const</span> rows = <span class="tok-out">await</span> page.locator(<span class="tok-out">'table tr'</span>).all();
+<span class="tok-out">const</span> grid = [];
+<span class="tok-out">for</span> (<span class="tok-out">const</span> row <span class="tok-out">of</span> rows) {
+  <span class="tok-out">const</span> cells = <span class="tok-out">await</span> row.locator(<span class="tok-out">'td'</span>).allInnerTexts();
+  grid.push(cells);
+}
+<span class="tok-c">// [['Alice','Admin'], ['Bob','User']]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Flattening & transposing</div>
+            <pre><span class="tok-out">const</span> grid = [[1,2],[3,4],[5,6]];
+grid.flat()        <span class="tok-c">// [1,2,3,4,5,6]</span>
+
+<span class="tok-c">// Transpose rows ↔ columns</span>
+<span class="tok-out">const</span> transposed = grid[0].map((_, c) =>
+  grid.map(row => row[c]));
+<span class="tok-c">// [[1,3,5],[2,4,6]]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Iterating a 2D array</div>
+            <pre><span class="tok-out">for</span> (<span class="tok-out">const</span> row <span class="tok-out">of</span> grid) {
+  <span class="tok-out">for</span> (<span class="tok-out">const</span> cell <span class="tok-out">of</span> row) {
+    console.log(cell);
+  }
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Watch out:</b> <code>new Array(n).fill([])</code> gives every row a reference to the <i>same</i> inner array — mutating one row mutates them all. Always build rows with <code>Array.from({length:n}, () => [...])</code> so each row is independent.</div>
+      </div>
+    </section>
+
+    <!-- DESTRUCTURING -->
+    <section class="section" id="destructuring">
+      <div class="section-head"><h2>Destructuring — Keys, Values, Entries</h2><span class="tag neutral">Unpack</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Destructuring unpacks values from arrays (by position) or objects (by key) into individual variables in one statement.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Array destructuring</div>
+            <pre><span class="tok-out">const</span> [a, b, c] = [1, 2, 3];
+
+<span class="tok-c">// Skip elements with commas</span>
+<span class="tok-out">const</span> [first, , third] = [1,2,3];
+<span class="tok-c">// first=1 third=3</span>
+
+<span class="tok-c">// Default values</span>
+<span class="tok-out">const</span> [x=10, y=20] = [5];
+<span class="tok-c">// x=5 y=20</span>
+
+<span class="tok-c">// Rest into array</span>
+<span class="tok-out">const</span> [head, ...tail] = [1,2,3,4];
+
+<span class="tok-c">// Swap values</span>
+<span class="tok-out">let</span> p=1, q=2;
+[p, q] = [q, p];
+<span class="tok-c">// p=2 q=1</span>
+
+<span class="tok-c">// In function params</span>
+<span class="tok-out">function</span> first2([a, b]) {
+  <span class="tok-out">return</span> [a, b];
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Object key/values/entries unpack</div>
+            <pre><span class="tok-out">const</span> config = {
+  env: <span class="tok-out">'staging'</span>, timeout: 30000, retries: 3
+};
+
+Object.keys(config)
+<span class="tok-c">// ['env','timeout','retries']</span>
+Object.values(config)
+<span class="tok-c">// ['staging',30000,3]</span>
+Object.entries(config)
+<span class="tok-c">// [['env','staging'],['timeout',30000],['retries',3]]</span>
+
+<span class="tok-c">// Loop over object</span>
+<span class="tok-out">for</span> (<span class="tok-out">const</span> [key,val] <span class="tok-out">of</span>
+  Object.entries(config))
+  console.log(`${key}: ${val}`)
+
+<span class="tok-c">// Convert array back to object</span>
+Object.fromEntries([[<span class="tok-out">'a'</span>,1]])
+<span class="tok-c">// {a: 1}</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUPING ES2024 -->
+    <section class="section" id="grouping">
+      <div class="section-head"><h2>Grouping — Object.groupBy() / Map.groupBy() (ES2024)</h2><span class="tag pure">✓ Pure · New</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Groups elements of an iterable according to a callback's return value, producing an object (or a <code>Map</code>) whose keys are group names and values are arrays of matching items — replacing the manual <code>.reduce()</code> grouping pattern.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Object.groupBy()</div>
+            <pre><span class="tok-out">const</span> tests = [
+  {name:<span class="tok-out">'login'</span>, status:<span class="tok-out">'pass'</span>},
+  {name:<span class="tok-out">'pay'</span>,   status:<span class="tok-out">'fail'</span>},
+  {name:<span class="tok-out">'search'</span>,status:<span class="tok-out">'pass'</span>},
+];
+Object.groupBy(tests, t => t.status)
+<span class="tok-c">// { pass: [login, search], fail: [pay] }</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Map.groupBy() — keeps non-string keys</div>
+            <pre><span class="tok-out">const</span> groups = Map.groupBy(
+  [1,2,3,4,5], n => n % 2 === 0 ? <span class="tok-out">'even'</span> : <span class="tok-out">'odd'</span>
+);
+groups.get(<span class="tok-out">'even'</span>)   <span class="tok-c">// [2, 4]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="small-note">Requires a modern runtime (Node 21+ / evergreen browsers). Prior to this, the <code>.reduce()</code> pattern shown earlier is the standard fallback.</div>
+      </div>
+    </section>
+
+    <!-- ARRAY VS SET VS MAP -->
+    <section class="section" id="collections">
+      <div class="section-head"><h2>Array vs Set vs Map — Choosing the Right Structure</h2><span class="tag neutral">Decision Guide</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Array</b>: ordered, indexed, allows duplicates. <b>Set</b>: ordered, unique values only, no index access. <b>Map</b>: ordered key→value pairs where keys can be any type (unlike plain objects, which coerce keys to strings).</div>
+        <table>
+          <tr><th>Need</th><th>Best structure</th><th>Why</th></tr>
+          <tr><td>Ordered list of test steps</td><td class="mono">Array</td><td>Position/order matters, duplicates allowed</td></tr>
+          <tr><td>Unique tags or IDs, fast dedupe</td><td class="mono">Set</td><td><code>has()</code> is O(1); auto-dedupes on insert</td></tr>
+          <tr><td>Lookup table (id → user object)</td><td class="mono">Map</td><td><code>get()</code> is O(1) vs <code>.find()</code>'s O(n)</td></tr>
+          <tr><td>Non-string keys (objects, DOM nodes)</td><td class="mono">Map</td><td>Object keys always stringify; Map keeps the real type</td></tr>
+        </table>
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="code-block">
+            <div class="label">Set — uniqueness & fast membership checks</div>
+            <pre><span class="tok-out">const</span> seenIds = <span class="tok-out">new</span> Set();
+<span class="tok-out">for</span> (<span class="tok-out">const</span> row <span class="tok-out">of</span> apiRows) {
+  <span class="tok-out">if</span> (seenIds.has(row.id)) <span class="tok-out">continue</span>; <span class="tok-c">// skip dupes</span>
+  seenIds.add(row.id);
+}
+seenIds.size    <span class="tok-c">// unique count</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Map — O(1) lookups instead of .find()</div>
+            <pre><span class="tok-out">const</span> userById = <span class="tok-out">new</span> Map(
+  users.map(u => [u.id, u])
+);
+userById.get(2)      <span class="tok-c">// instant lookup</span>
+<span class="tok-c">// vs. users.find(u => u.id === 2) — O(n) scan</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASYNC / PROMISES -->
+    <section class="section" id="async-arrays">
+      <div class="section-head"><h2>Promises & Async Array Patterns</h2><span class="tag info">Playwright Essential</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> <code>Promise.all()</code>, <code>Promise.allSettled()</code>, and <code>Promise.race()</code> all take an <b>array of promises</b> and return a single promise — the standard way to run multiple async Playwright actions together.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Promise.all() — fails fast on first rejection</div>
+            <pre><span class="tok-c">// Run several independent async steps in parallel</span>
+<span class="tok-out">const</span> [homeText, aboutText] = <span class="tok-out">await</span> Promise.all([
+  page.locator(<span class="tok-out">'#home'</span>).innerText(),
+  page.locator(<span class="tok-out">'#about'</span>).innerText(),
+]);
+
+<span class="tok-c">// If ANY promise rejects, Promise.all rejects immediately</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Promise.allSettled() — waits for all, no fail-fast</div>
+            <pre><span class="tok-out">const</span> results = <span class="tok-out">await</span> Promise.allSettled(
+  urls.map(url => page.goto(url))
+);
+results.filter(r => r.status===<span class="tok-out">'rejected'</span>)
+<span class="tok-c">// collects every failure without stopping early</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Promise.race() — first to settle wins</div>
+            <pre><span class="tok-out">const</span> winner = <span class="tok-out">await</span> Promise.race([
+  page.waitForSelector(<span class="tok-out">'.success'</span>),
+  page.waitForSelector(<span class="tok-out">'.error'</span>),
+]);
+<span class="tok-c">// useful for "whichever toast appears first" checks</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Sequential vs parallel array processing</div>
+            <pre><span class="tok-c">// Sequential — one at a time, in order</span>
+<span class="tok-out">for</span> (<span class="tok-out">const</span> user <span class="tok-out">of</span> users) {
+  <span class="tok-out">await</span> createUser(user);
+}
+
+<span class="tok-c">// Parallel — all at once, order not guaranteed</span>
+<span class="tok-out">await</span> Promise.all(users.map(createUser));</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="tip"><b>Tip:</b> Use <code>Promise.all()</code> when every action must succeed for the test to be valid. Use <code>Promise.allSettled()</code> when you want a full report of which of many parallel checks passed or failed, without one failure hiding the rest.</div>
+      </div>
+    </section>
+
+    <!-- PLAYWRIGHT REAL WORLD -->
+    <section class="section" id="playwright">
+      <div class="section-head"><h2>Playwright — Arrays in Real Automation Tests</h2><span class="tag info">Real World Patterns</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">allTexts() / count() / assert on collections</div>
+            <pre><span class="tok-c">// Get ALL matching elements' text</span>
+<span class="tok-out">const</span> items = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'ul li'</span>).allInnerTexts();
+expect(items.length).toBe(3);
+
+<span class="tok-c">// Assert specific item exists</span>
+expect(items.includes(<span class="tok-out">'About'</span>))
+  .toBe(<span class="tok-out">true</span>);
+
+<span class="tok-c">// Assert order</span>
+expect(items[0]).toBe(<span class="tok-out">'Home'</span>);
+
+<span class="tok-c">// Filter then assert count</span>
+<span class="tok-out">const</span> active = items
+  .filter(i => i !== <span class="tok-out">'Disabled'</span>);
+expect(active.length).toBeGreaterThan(0);</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Data-driven / parameterized tests</div>
+            <pre><span class="tok-c">// Test multiple users</span>
+<span class="tok-out">const</span> users = [
+  {email:<span class="tok-out">'admin@t.com'</span>, role:<span class="tok-out">'admin'</span>},
+  {email:<span class="tok-out">'guest@t.com'</span>, role:<span class="tok-out">'guest'</span>},
+];
+
+<span class="tok-out">for</span> (<span class="tok-out">const</span> {email, role} <span class="tok-out">of</span> users) {
+  test(`login as ${role}`, <span class="tok-out">async</span> ({page}) => {
+    <span class="tok-out">await</span> loginPage.login(email, <span class="tok-out">'pw'</span>);
+    <span class="tok-out">await</span> expect(page).toHaveURL(`/${role}`);
+  });
+}</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Table / list validation</div>
+            <pre><span class="tok-c">// Validate table column values</span>
+<span class="tok-out">const</span> statuses = <span class="tok-out">await</span> page
+  .locator(<span class="tok-out">'td.status'</span>).allInnerTexts();
+
+<span class="tok-c">// All active?</span>
+expect(statuses.every(
+  s => s === <span class="tok-out">'Active'</span>)).toBe(<span class="tok-out">true</span>);
+
+<span class="tok-c">// Any error?</span>
+expect(statuses.some(
+  s => s === <span class="tok-out">'Error'</span>)).toBe(<span class="tok-out">false</span>);
+
+<span class="tok-c">// Count by status</span>
+<span class="tok-out">const</span> counts = statuses.reduce((acc,s)=>{
+  acc[s] = (acc[s]||0)+1; <span class="tok-out">return</span> acc;
+}, {});
+<span class="tok-c">// {Active:5, Pending:2}</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">API + array response validation</div>
+            <pre><span class="tok-c">// Validate API response array</span>
+<span class="tok-out">const</span> res = <span class="tok-out">await</span> request.get(<span class="tok-out">'/users'</span>);
+<span class="tok-out">const</span> body = <span class="tok-out">await</span> res.json();
+<span class="tok-out">expect</span>(body.length).toBeGreaterThan(0);
+
+<span class="tok-c">// Check specific admin exists</span>
+<span class="tok-out">const</span> admin = body.find(
+  u => u.role === <span class="tok-out">'admin'</span>);
+expect(admin).toBeDefined();
+
+<span class="tok-c">// All fields required?</span>
+expect(body.every(u =>
+  u.id && u.name && u.email)).toBe(<span class="tok-out">true</span>);
+
+<span class="tok-c">// Extract IDs</span>
+<span class="tok-out">const</span> ids = body.map(u => u.id);
+<span class="tok-c">// [1, 2, 3, ...]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SORTING -->
+    <section class="section" id="sorting">
+      <div class="section-head"><h2>Sorting — Safe vs Unsafe Patterns</h2><span class="tag mutate">⚠ Mutates Unless Noted</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">⚠ .sort() mutates original</div>
+            <pre><span class="tok-out">const</span> original = [3,1,2];
+<span class="tok-out">const</span> sorted = original.sort();
+<span class="tok-c">// original is now ALSO mutated!</span>
+
+<span class="tok-c">// Default: converts to strings, lex order</span>
+[10, 2, 1].sort()   <span class="tok-c">// [1, 10, 2] WRONG</span>
+
+<span class="tok-c">// Numeric ascending</span>
+nums.sort((a,b) => a-b)   <span class="tok-c">// [1, 10, 2] -> fixed</span>
+
+<span class="tok-c">// Numeric descending</span>
+nums.sort((a,b) => b-a)
+
+<span class="tok-c">// Sort strings</span>
+[<span class="tok-out">'banana'</span>,<span class="tok-out">'apple'</span>,<span class="tok-out">'cherry'</span>].sort()
+
+<span class="tok-c">// Locale-aware compare</span>
+[<span class="tok-out">'é'</span>,<span class="tok-out">'a'</span>,<span class="tok-out">'z'</span>].sort((a,b)=>
+  a.localeCompare(b))
+
+<span class="tok-c">// Sort objects by property</span>
+users.sort((a,b) =>
+  a.name.localeCompare(b.name))</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">✓ toSorted() — returns new, safe</div>
+            <pre><span class="tok-out">const</span> original = [3,1,2];
+<span class="tok-out">const</span> sorted = original.toSorted();
+<span class="tok-c">// sorted [1,2,3], original still [3,1,2]</span>
+
+<span class="tok-c">// toReversed() — returns new</span>
+<span class="tok-out">const</span> safeReversed =
+  [...original].sort((a,b)=>b-a);
+
+<span class="tok-c">// Safe pattern (pre-ES2023)</span>
+<span class="tok-out">const</span> safeSorted =
+  [...original].sort((a,b)=>a-b);
+
+<span class="tok-c">// toSpliced() — returns new</span>
+[<span class="tok-out">'a'</span>,<span class="tok-out">'b'</span>,<span class="tok-out">'c'</span>].toSpliced(1,1)
+<span class="tok-c">// ['a','c']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Best practice:</b> Never sort shared fixture/test data directly. Clone first with <code>[...arr]</code> (or use <code>toSorted()</code>) so parallel Playwright workers don't race on a mutated array.</div>
+      </div>
+    </section>
+
+    <!-- TYPE CHECKS -->
+    <section class="section" id="type-checks">
+      <div class="section-head"><h2>Type Checks & Array-likes</h2><span class="tag warn">Watch Out</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Because <code>typeof []</code> returns <code>'object'</code>, JS provides dedicated ways to reliably confirm something is a "real" array versus an array-like or plain object.</div>
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Array equality — always false</div>
+            <pre>[1,2] === [1,2]     <span class="tok-c">// false ✗</span>
+JSON.stringify(a) === JSON.stringify(b)
+<span class="tok-c">// true ✓ (deep-ish compare)</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">typeof [] vs Array.isArray()</div>
+            <pre>typeof []              <span class="tok-c">// 'object' ✗</span>
+Array.isArray([])      <span class="tok-c">// true ✓</span>
+Array.isArray({})      <span class="tok-c">// false</span>
+Array.isArray(<span class="tok-out">'abc'</span>)   <span class="tok-c">// false</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Sparse array pitfall</div>
+            <pre><span class="tok-out">const</span> a = [1, , 3];
+a.length      <span class="tok-c">// 3</span>
+a[1]          <span class="tok-c">// undefined</span>
+a.forEach(x => console.log(x))
+<span class="tok-c">// skips index 1 entirely!</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Array-like → real array</div>
+            <pre><span class="tok-c">// arguments, NodeList, string</span>
+<span class="tok-out">function</span> sum(){
+  <span class="tok-out">return</span> Array.from(arguments)
+    .reduce((a,b)=>a+b, 0);
+}
+Array.from(<span class="tok-out">'abc'</span>)   <span class="tok-c">// ['a','b','c']</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PITFALLS -->
+    <section class="section" id="pitfalls">
+      <div class="section-head"><h2>Common Pitfalls & Tips</h2><span class="tag warn">Watch Out</span></div>
+      <div class="section-body">
+        <div class="grid-2">
+          <div class="code-block">
+            <div class="label">Gotchas</div>
+            <pre><span class="tok-c">// Array equality — always false</span>
+[1,2] === [1,2]  <span class="tok-c">// false</span>
+JSON.stringify(a) === JSON.stringify(b)
+<span class="tok-c">// true (order-sensitive!)</span>
+
+<span class="tok-c">// typeof 'object' → not useful</span>
+typeof []              <span class="tok-c">// 'object'</span>
+Array.isArray([])      <span class="tok-c">// true ✓</span>
+
+<span class="tok-c">// A sparse array</span>
+<span class="tok-out">const</span> a = [1, , 3]
+a.length                <span class="tok-c">// 3</span>
+
+<span class="tok-c">// For each with async</span>
+<span class="tok-out">const</span> chunk = (arr, n) =>
+  Array.from({length: Math.ceil(arr.length/n)},
+    (_, i) => arr.slice(i*n, (i+1)*n));
+chunk([1,2,3,4], 2)   <span class="tok-c">// [[1,2],[3,4]]</span></pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <div class="code-block">
+            <div class="label">Best practices</div>
+            <pre><span class="tok-c">// Use Array.isArray(val) reliable</span>
+Array.isArray(val)
+
+<span class="tok-c">// Clone before mutating</span>
+<span class="tok-out">const</span> sorted = [...arr].sort(...)
+
+<span class="tok-c">// Use at(-1) for last element</span>
+arr.at(-1)  <span class="tok-c">// clean</span>
+
+<span class="tok-c">// Optional chaining on arrays</span>
+arr?.[0]?.name  <span class="tok-c">// safe</span>
+
+<span class="tok-c">// Deduplicate</span>
+[...<span class="tok-out">new</span> Set(arr)]
+
+<span class="tok-c">// Deep clone (no functions/symbols)</span>
+structuredClone(arr)</pre>
+            <button class="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="pitfall"><b>Reference vs value:</b> Arrays are reference types. <code>const b = a; b.push(1)</code> also changes <code>a</code>, because both variables point to the same array in memory. Use <code>[...a]</code>, <code>a.slice()</code>, or <code>structuredClone(a)</code> for an independent copy.</div>
+        <div class="tip"><b>Tip:</b> When comparing two arrays for equality in an assertion, prefer Playwright's <code>expect(arr).toEqual([...])</code> (deep equality) over <code>===</code> or manual <code>JSON.stringify</code> comparisons.</div>
+      </div>
+    </section>
+
+    <!-- BIG-O -->
+    <section class="section" id="bigo">
+      <div class="section-head"><h2>Big-O Performance Guide</h2><span class="tag neutral">Complexity</span></div>
+      <div class="section-body">
+        <div class="definition"><b>Definition:</b> Big-O notation describes how an operation's cost grows as array size <code>n</code> grows. Knowing which array methods are O(1), O(n), or O(n²) helps you avoid slow test suites when processing large datasets or API responses.</div>
+        <table>
+          <tr><th>Operation</th><th>Complexity</th><th>Notes</th></tr>
+          <tr><td class="mono">arr[i], .at(i), .length</td><td><span class="bigo">O(1)</span></td><td>Direct index access — constant time</td></tr>
+          <tr><td class="mono">.push() / .pop()</td><td><span class="bigo">O(1)</span></td><td>Operates on the end of the array</td></tr>
+          <tr><td class="mono">.unshift() / .shift()</td><td><span class="bigo">O(n)</span></td><td>Every remaining element must re-index</td></tr>
+          <tr><td class="mono">.splice() (middle)</td><td><span class="bigo">O(n)</span></td><td>Shifts all elements after the split point</td></tr>
+          <tr><td class="mono">.map / .filter / .forEach / .reduce</td><td><span class="bigo">O(n)</span></td><td>One pass through every element</td></tr>
+          <tr><td class="mono">.find / .indexOf / .includes</td><td><span class="bigo">O(n)</span></td><td>Linear scan — stops early on match</td></tr>
+          <tr><td class="mono">.sort()</td><td><span class="bigo">O(n log n)</span></td><td>V8 uses TimSort — stable since ES2019</td></tr>
+          <tr><td class="mono">Nested loops / nested .find()</td><td><span class="bigo">O(n²)</span></td><td>Common accidental slowdown — replace inner loop with a Map/Set lookup</td></tr>
+          <tr><td class="mono">Set.has() / Map.get()</td><td><span class="bigo">O(1)</span></td><td>Hash-based — why Set/Map beat Array for repeated lookups</td></tr>
+        </table>
+        <div class="pitfall" style="margin-top:12px;"><b>Common trap:</b> Doing <code>arr1.filter(a => arr2.find(b => b.id === a.id))</code> is O(n·m) — for large datasets, convert <code>arr2</code> to a <code>Map</code> or <code>Set</code> first so the lookup becomes O(1) per item, turning the whole operation into O(n).</div>
+      </div>
+    </section>
+
+    <!-- QUICK REFERENCE -->
+    <section class="section" id="quickref">
+      <div class="section-head"><h2>Quick Reference — All Array Methods at a Glance</h2><span class="tag neutral">Complete List</span></div>
+      <div class="section-body">
+        <div style="overflow-x:auto;">
+        <table>
+          <tr><th>Method</th><th>Returns</th><th>Mutates?</th><th>Example</th></tr>
+          <tr><td class="mono">.push(v)</td><td>new length</td><td>YES</td><td class="mono">[1,2].push(3) → 3</td></tr>
+          <tr><td class="mono">.pop()</td><td>removed item</td><td>YES</td><td class="mono">[1,2].pop() → 2</td></tr>
+          <tr><td class="mono">.shift()</td><td>removed item</td><td>YES</td><td class="mono">[1,2].shift() → 1</td></tr>
+          <tr><td class="mono">.unshift(v)</td><td>new length</td><td>YES</td><td class="mono">[2].unshift(1) → 2</td></tr>
+          <tr><td class="mono">.splice(i,d,...)</td><td>removed items</td><td>YES</td><td class="mono">[1,2,3].splice(1,1) → [2]</td></tr>
+          <tr><td class="mono">.sort(fn)</td><td>same array</td><td>YES</td><td class="mono">[3,1].sort() → [1,3]</td></tr>
+          <tr><td class="mono">.reverse()</td><td>same array</td><td>YES</td><td class="mono">[1,2].reverse() → [2,1]</td></tr>
+          <tr><td class="mono">.fill(v,s,e)</td><td>same array</td><td>YES</td><td class="mono">[0,0,0].fill(9,0,2)</td></tr>
+          <tr><td class="mono">.copyWithin(t,s)</td><td>same array</td><td>YES</td><td class="mono">[1,2,3].copyWithin(0,1)</td></tr>
+          <tr><td class="mono">.map(fn)</td><td>new array</td><td>Pure</td><td class="mono">[1,2].map(x=>x*2) → [2,4]</td></tr>
+          <tr><td class="mono">.filter(fn)</td><td>new array</td><td>Pure</td><td class="mono">[1,2,3].filter(x=>x>1) → [2,3]</td></tr>
+          <tr><td class="mono">.find(fn)</td><td>element/undefined</td><td>Pure</td><td class="mono">[1,2].find(x=>x>1) → 2</td></tr>
+          <tr><td class="mono">.findIndex(fn)</td><td>index or -1</td><td>Pure</td><td class="mono">[1,2].findIndex(x=>x>1) → 1</td></tr>
+          <tr><td class="mono">.findLast(fn) / .findLastIndex(fn)</td><td>element / index</td><td>Pure</td><td class="mono">ES2023</td></tr>
+          <tr><td class="mono">.indexOf(v)</td><td>index or -1</td><td>Pure</td><td class="mono">[1,2].indexOf(2) → 1</td></tr>
+          <tr><td class="mono">.lastIndexOf(v)</td><td>index or -1</td><td>Pure</td><td class="mono">[1,2,1].lastIndexOf(1) → 2</td></tr>
+          <tr><td class="mono">.includes(v)</td><td>boolean</td><td>Pure</td><td class="mono">[1,2].includes(2) → true</td></tr>
+          <tr><td class="mono">.some(fn)</td><td>boolean</td><td>Pure</td><td class="mono">[1,2].some(x=>x>1) → true</td></tr>
+          <tr><td class="mono">.every(fn)</td><td>boolean</td><td>Pure</td><td class="mono">[1,2].every(x=>x>0) → true</td></tr>
+          <tr><td class="mono">.reduce(fn,init)</td><td>accumulated value</td><td>Pure</td><td class="mono">[1,2,3].reduce((a,b)=>a+b,0) → 6</td></tr>
+          <tr><td class="mono">.reduceRight(fn,init)</td><td>accumulated value</td><td>Pure</td><td class="mono">reduces right→left</td></tr>
+          <tr><td class="mono">.forEach(fn)</td><td>undefined</td><td>Side effect</td><td class="mono">no chaining, no return</td></tr>
+          <tr><td class="mono">.slice(s,e)</td><td>new array</td><td>Pure</td><td class="mono">[1,2,3].slice(1) → [2,3]</td></tr>
+          <tr><td class="mono">.concat(...)</td><td>new array</td><td>Pure</td><td class="mono">[1].concat([2]) → [1,2]</td></tr>
+          <tr><td class="mono">.join(sep)</td><td>string</td><td>Pure</td><td class="mono">[1,2].join('-') → '1-2'</td></tr>
+          <tr><td class="mono">.flat(depth)</td><td>new array</td><td>Pure</td><td class="mono">[1,[2]].flat() → [1,2]</td></tr>
+          <tr><td class="mono">.flatMap(fn)</td><td>new array</td><td>Pure</td><td class="mono">map + flat(1)</td></tr>
+          <tr><td class="mono">.at(i)</td><td>element</td><td>Pure</td><td class="mono">[1,2].at(-1) → 2</td></tr>
+          <tr><td class="mono">.toSorted / toReversed / toSpliced / with()</td><td>new array</td><td>Pure</td><td class="mono">ES2023 copying variants</td></tr>
+          <tr><td class="mono">Array.from(x,fn)</td><td>new array</td><td>Pure</td><td class="mono">Array.from({length:3},(_,i)=>i)</td></tr>
+          <tr><td class="mono">Array.of(...)</td><td>new array</td><td>Pure</td><td class="mono">Array.of(7) → [7]</td></tr>
+          <tr><td class="mono">Array.isArray(x)</td><td>boolean</td><td>Pure</td><td class="mono">Array.isArray([]) → true</td></tr>
+          <tr><td class="mono">.keys() / .values() / .entries()</td><td>iterator</td><td>Pure</td><td class="mono">for...of loop support</td></tr>
+          <tr><td class="mono">Object.groupBy(arr,fn)</td><td>object of groups</td><td>Pure</td><td class="mono">ES2024</td></tr>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="section-head"><h2>Interview Q&A</h2><span class="tag neutral">Accordion</span></div>
+      <div class="section-body" id="accordionWrap">
+        <div class="accordion-controls">
+          <button id="expandAll">Expand all</button>
+          <button id="collapseAll">Collapse all</button>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">What is the difference between map() and forEach()?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>map()</code> returns a brand-new array built from the callback's return values and is chainable; <code>forEach()</code> always returns <code>undefined</code> and exists purely for side effects (like logging or pushing into an outside array).</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">Which array methods mutate the original array?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>push, pop, shift, unshift, splice, sort, reverse, fill, copyWithin</code> all mutate in place. Everything else (map, filter, slice, concat, reduce, the ES2023 to* methods, etc.) returns a new array or value and leaves the original untouched.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">Why does [10, 2, 1].sort() give [1, 10, 2]?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">Without a comparator, <code>sort()</code> converts every element to a string and compares them lexicographically (Unicode code point order), so <code>"10"</code> sorts before <code>"2"</code>. Always pass <code>(a,b) => a - b</code> for numeric sorting.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">How do you remove duplicates from an array?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">The idiomatic one-liner is <code>[...new Set(arr)]</code>, since a <code>Set</code> only stores unique values. For objects/arrays of objects, dedupe on a key with <code>reduce()</code> or a <code>Map</code> keyed by an identifying field.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">What's the difference between slice() and splice()?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>slice(start, end)</code> is pure — it returns a shallow copy of a portion without touching the original. <code>splice(start, deleteCount, ...items)</code> mutates the array in place to remove and/or insert elements, and returns the removed elements.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">Why does array.forEach(async fn) not wait for each iteration?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>forEach</code> ignores the promise returned by an async callback — it fires all callbacks immediately without waiting. For sequential async work, use a <code>for...of</code> loop; for parallel async work, use <code>Promise.all(arr.map(asyncFn))</code>.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">How do you check if a value is truly an array?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">Use <code>Array.isArray(value)</code> — never <code>typeof</code>, since <code>typeof []</code> returns <code>'object'</code>, the same as for plain objects.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">How would you flatten a deeply nested array?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>arr.flat(Infinity)</code> flattens all nesting levels in one call. For one level of nesting combined with a transform, use <code>flatMap()</code> instead of <code>map().flat()</code> for slightly better performance and clarity.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">When would you use a Map or Set instead of an array?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">Reach for a <code>Set</code> when you only care about unique membership (fast <code>has()</code> checks, auto-dedupe). Reach for a <code>Map</code> when you need repeated key-based lookups — <code>map.get(id)</code> is O(1) versus <code>array.find()</code>'s O(n) scan. Use an array when order and duplicates both matter.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">What's the difference between Promise.all() and Promise.allSettled()?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>Promise.all()</code> rejects immediately if any promise in the array rejects, discarding the other results. <code>Promise.allSettled()</code> always waits for every promise and returns a status for each one, so you can see every success and every failure instead of just the first error.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">In Playwright, how do you assert every element in a list meets a condition?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">Collect the values with <code>await locator.allInnerTexts()</code> (or <code>allTextContents()</code>), then run <code>.every()</code> on the resulting array and assert the boolean, e.g. <code>expect(statuses.every(s => s === 'Active')).toBe(true)</code>.</div></div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-q">What's the safest way to sort a shared test-data array without side effects?<span class="chev">▾</span></div>
+          <div class="accordion-a"><div class="accordion-a-inner">Clone before sorting: <code>[...arr].sort(cmp)</code>, or use the ES2023 non-mutating <code>arr.toSorted(cmp)</code>, so the original fixture isn't silently changed for other tests running in parallel.</div></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<button id="backToTop" title="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+</button>
+
+<footer>
+  JavaScript Arrays — Complete Reference · Automation Test Engineering · Playwright · QA Programs · ES2024<br>
+  Compiled by <span class="author">Prashanth M K</span>
+</footer>
+
+<script>
+// ---------- Theme toggle ----------
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+function applyTheme(t){
+  root.setAttribute('data-theme', t);
+  themeLabel.textContent = t === 'light' ? 'Dark' : 'Light';
+}
+applyTheme('dark');
+themeBtn.addEventListener('click', () => {
+  const cur = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  applyTheme(cur);
+});
+
+// ---------- Copy to clipboard ----------
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const pre = btn.parentElement.querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1400);
+    });
+  });
+});
+
+// ---------- Accordion ----------
+document.querySelectorAll('.accordion-q').forEach(q => {
+  q.addEventListener('click', () => {
+    q.parentElement.classList.toggle('open');
+  });
+});
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.accordion-item').forEach(i => i.classList.add('open'));
+});
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+});
+
+// ---------- Sections & counts ----------
+const sections = document.querySelectorAll('.section');
+document.getElementById('sectionCount').textContent = sections.length;
+document.getElementById('codeCount').textContent = document.querySelectorAll('.code-block').length;
+document.getElementById('faqCount').textContent = document.querySelectorAll('.accordion-item').length;
+const wordCount = document.getElementById('mainContent').innerText.trim().split(/\s+/).length;
+document.getElementById('readTime').textContent = Math.max(1, Math.round(wordCount / 200));
+
+// ---------- Section anchor "copy link" icons ----------
+sections.forEach(sec => {
+  const head = sec.querySelector('.section-head');
+  const h2 = head.querySelector('h2');
+  const wrap = document.createElement('div');
+  wrap.className = 'section-head-left';
+  const linkBtn = document.createElement('button');
+  linkBtn.className = 'link-icon';
+  linkBtn.title = 'Copy link to this section';
+  linkBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.49-1.49"/></svg>';
+  h2.parentNode.insertBefore(wrap, h2);
+  wrap.appendChild(h2);
+  wrap.appendChild(linkBtn);
+  linkBtn.addEventListener('click', () => {
+    const url = window.location.href.split('#')[0] + '#' + sec.id;
+    navigator.clipboard.writeText(url).then(() => {
+      linkBtn.classList.add('copied');
+      setTimeout(() => linkBtn.classList.remove('copied'), 1400);
+    });
+  });
+});
+
+// ---------- Live search with highlight + count ----------
+const searchBox = document.getElementById('searchBox');
+const searchCount = document.getElementById('searchCount');
+const originalHeadings = new Map();
+sections.forEach(sec => originalHeadings.set(sec.id, sec.querySelector('.section-head h2').textContent));
+
+function clearHighlights(){
+  sections.forEach(sec => {
+    const h2 = sec.querySelector('.section-head h2');
+    h2.textContent = originalHeadings.get(sec.id);
+  });
+}
+
+searchBox.addEventListener('input', () => {
+  const term = searchBox.value.trim().toLowerCase();
+  clearHighlights();
+  let matches = 0;
+  sections.forEach(sec => {
+    const text = sec.innerText.toLowerCase();
+    const isMatch = term.length === 0 || text.includes(term);
+    sec.classList.toggle('hidden', !isMatch);
+    if (isMatch && term.length > 0) {
+      matches++;
+      const h2 = sec.querySelector('.section-head h2');
+      const original = originalHeadings.get(sec.id);
+      const idx = original.toLowerCase().indexOf(term);
+      if (idx !== -1) {
+        h2.innerHTML = original.slice(0, idx) + '<mark>' + original.slice(idx, idx + term.length) + '</mark>' + original.slice(idx + term.length);
+      }
+    }
+  });
+  if (term.length > 0) {
+    searchCount.textContent = matches + ' match' + (matches === 1 ? '' : 'es');
+    searchCount.classList.add('show');
+  } else {
+    searchCount.classList.remove('show');
+  }
+});
+
+// Keyboard shortcut: "/" focuses search
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchBox && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    searchBox.focus();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchBox) {
+    searchBox.value = '';
+    searchBox.dispatchEvent(new Event('input'));
+    searchBox.blur();
+  }
+});
+
+// ---------- Font size controls (in-memory, no persistence) ----------
+let fontScale = 100;
+const mainContent = document.getElementById('mainContent');
+function applyFontScale(){
+  mainContent.style.fontSize = fontScale + '%';
+}
+document.getElementById('fontUp').addEventListener('click', () => {
+  fontScale = Math.min(130, fontScale + 10);
+  applyFontScale();
+});
+document.getElementById('fontDown').addEventListener('click', () => {
+  fontScale = Math.max(80, fontScale - 10);
+  applyFontScale();
+});
+document.getElementById('fontReset').addEventListener('click', () => {
+  fontScale = 100;
+  applyFontScale();
+});
+
+// ---------- Sidebar active link + reveal animation on scroll ----------
+const navLinks = document.querySelectorAll('nav.sidebar a');
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(sec => navObserver.observe(sec));
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
+sections.forEach(sec => revealObserver.observe(sec));
+
+// ---------- Reading progress bar + scroll % + back-to-top ----------
+const progressBar = document.getElementById('progressBar');
+const scrollPct = document.getElementById('scrollPct');
+const backToTop = document.getElementById('backToTop');
+function onScroll(){
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? Math.min(100, Math.round((scrollTop / docHeight) * 100)) : 0;
+  progressBar.style.width = pct + '%';
+  scrollPct.textContent = pct + '%';
+  backToTop.classList.toggle('show', scrollTop > 400);
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ---------- Download as PNG image ----------
+document.getElementById('downloadImg').addEventListener('click', async () => {
+  const btn = document.getElementById('downloadImg');
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span>Generating...</span>';
+  try {
+    const target = document.getElementById('mainContent');
+    const canvas = await html2canvas(target, {
+      backgroundColor: getComputedStyle(root).getPropertyValue('--bg').trim(),
+      scale: 2,
+      useCORS: true
+    });
+    const link = document.createElement('a');
+    link.download = 'js-arrays-complete-reference.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    alert('Could not generate image: ' + e.message);
+  } finally {
+    btn.innerHTML = originalHTML;
+  }
+});
+</script>
+</body>
+</html>
