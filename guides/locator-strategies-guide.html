@@ -304,40 +304,99 @@ td code, li code, p code{
 .accordion-item.open .accordion-a{max-height:600px;}
 
 /* cheat sheet */
-.cheat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 520px),1fr)); gap:0;}
+.cheat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 520px),1fr)); gap:16px;}
 .cheat-grid .col{padding:0;}
 @media(max-width:800px){.cheat-grid{grid-template-columns:1fr;}}
 .cheat-sheet-export{
-  padding:28px; background:linear-gradient(135deg,rgba(255,107,91,.08),rgba(79,209,197,.08));
+  padding:28px; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,107,91,.1),rgba(79,209,197,.1) 45%,rgba(181,150,255,.08));
   border:1px solid rgba(79,209,197,.32); border-radius:12px;
+}
+.cheat-sheet-export::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:5px;
+  background:linear-gradient(90deg,var(--accent-2),#67a9ff,var(--accent),var(--accent-3),#b596ff);
 }
 .cheat-sheet-export .export-brand{
   display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:20px;
-  padding-bottom:16px; border-bottom:1px solid var(--border);
+  padding-bottom:16px; padding-top:6px; border-bottom:1px solid var(--border);
 }
 .export-brand .eyebrow{margin:0 0 4px;}
-.export-brand h2{margin:0; font-size:27px; line-height:1.2;}
+.export-brand h2{margin:0; font-size:27px; line-height:1.2; color:var(--accent-2);}
 .export-brand .export-site{font-family:var(--font-mono); color:var(--accent-2); font-size:12px; white-space:nowrap;}
-.cheat-sheet-export .cheat-grid{gap:14px;}
-.cheat-sheet-export .code-block{margin:0; height:100%;}
+.cheat-sheet-export .cheat-grid{gap:16px;}
+.cheat-toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 14px; flex-wrap:wrap;}
+.cheat-filters{display:flex; gap:7px; flex-wrap:wrap;}
+.cheat-filter{border:1px solid var(--border); border-radius:999px; padding:6px 12px; background:var(--panel); color:var(--text-dim); font:600 11px var(--font-mono); cursor:pointer; transition:transform .18s ease, background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;}
+.cheat-filter:hover,.cheat-filter:focus-visible{transform:translateY(-1px); color:var(--text); border-color:var(--accent-2); outline:none;}
+.cheat-filter.active{background:var(--accent-2); border-color:var(--accent-2); color:#0b1b1d; box-shadow:0 4px 14px rgba(79,209,197,.35);}
+.cheat-filter[data-cheat-filter="css"].active{background:#67a9ff; border-color:#67a9ff; color:#071b33; box-shadow:0 4px 14px rgba(103,169,255,.4);}
+.cheat-filter[data-cheat-filter="xpath"].active{background:var(--accent); border-color:var(--accent); color:#2b0906; box-shadow:0 4px 14px rgba(255,107,91,.4);}
+.cheat-filter[data-cheat-filter="tool"].active{background:var(--accent-3); border-color:var(--accent-3); color:#332302; box-shadow:0 4px 14px rgba(247,185,85,.4);}
+.cheat-filter[data-cheat-filter="quality"].active{background:#b596ff; border-color:#b596ff; color:#1e1033; box-shadow:0 4px 14px rgba(181,150,255,.4);}
+.cheat-count{font:500 11px var(--font-mono); color:var(--text-dim);}
+.cheat-sheet-export .code-block{margin:0; height:100%; border-width:1px; border-left-width:5px; border-radius:10px; transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;}
+.cheat-sheet-export .code-block:hover{transform:translateY(-4px) scale(1.008);}
+.cheat-sheet-export .code-block[data-cheat-type="foundation"]{border-left-color:var(--accent-2); background:linear-gradient(150deg,rgba(79,209,197,.16),var(--code-bg) 42%);}
+.cheat-sheet-export .code-block[data-cheat-type="foundation"]:hover{box-shadow:0 14px 30px rgba(79,209,197,.22);}
+.cheat-sheet-export .code-block[data-cheat-type="foundation"] .label{background:linear-gradient(90deg,rgba(79,209,197,.22),rgba(79,209,197,.03));}
+.cheat-sheet-export .code-block[data-cheat-type="css"]{border-left-color:#67a9ff; background:linear-gradient(150deg,rgba(103,169,255,.17),var(--code-bg) 42%);}
+.cheat-sheet-export .code-block[data-cheat-type="css"]:hover{box-shadow:0 14px 30px rgba(103,169,255,.22);}
+.cheat-sheet-export .code-block[data-cheat-type="css"] .label{background:linear-gradient(90deg,rgba(103,169,255,.22),rgba(103,169,255,.03));}
+.cheat-sheet-export .code-block[data-cheat-type="xpath"]{border-left-color:var(--accent); background:linear-gradient(150deg,rgba(255,107,91,.17),var(--code-bg) 42%);}
+.cheat-sheet-export .code-block[data-cheat-type="xpath"]:hover{box-shadow:0 14px 30px rgba(255,107,91,.22);}
+.cheat-sheet-export .code-block[data-cheat-type="xpath"] .label{background:linear-gradient(90deg,rgba(255,107,91,.22),rgba(255,107,91,.03));}
+.cheat-sheet-export .code-block[data-cheat-type="tool"]{border-left-color:var(--accent-3); background:linear-gradient(150deg,rgba(247,185,85,.18),var(--code-bg) 42%);}
+.cheat-sheet-export .code-block[data-cheat-type="tool"]:hover{box-shadow:0 14px 30px rgba(247,185,85,.24);}
+.cheat-sheet-export .code-block[data-cheat-type="tool"] .label{background:linear-gradient(90deg,rgba(247,185,85,.24),rgba(247,185,85,.03));}
+.cheat-sheet-export .code-block[data-cheat-type="quality"]{border-left-color:#b596ff; background:linear-gradient(150deg,rgba(181,150,255,.17),var(--code-bg) 42%);}
+.cheat-sheet-export .code-block[data-cheat-type="quality"]:hover{box-shadow:0 14px 30px rgba(181,150,255,.24);}
+.cheat-sheet-export .code-block[data-cheat-type="quality"] .label{background:linear-gradient(90deg,rgba(181,150,255,.24),rgba(181,150,255,.03));}
+.cheat-sheet-export .code-block.is-hidden{display:none;}
 .cheat-sheet-export .code-block pre{white-space:pre-wrap; overflow:visible;}
-.cheat-sheet-export .code-block code{font-size:12.5px; line-height:1.65; white-space:pre-wrap; overflow-wrap:anywhere;}
+.cheat-sheet-export .code-block code{font-size:12.5px; line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere;}
+.sr-only-code{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; margin:-1px; padding:0; border:0;}
+.cheat-table{width:100%; border-collapse:collapse; font-family:var(--font-mono); font-size:12.8px;}
+.cheat-table td{padding:8px 16px; vertical-align:middle; border-bottom:1px solid rgba(255,255,255,.06);}
+.cheat-table tr:last-child td{border-bottom:none;}
+.cheat-table tr:hover td{background:rgba(103,169,255,.07);}
+.cheat-table td.sel{white-space:nowrap; padding-right:22px;}
+.cheat-table td.desc{color:var(--text-dim); width:100%;}
+[data-cheat-type="css"] .cheat-table td.sel{color:#a5d6ff;}
+[data-cheat-type="xpath"] .cheat-table td.sel{color:#ffb4a8;}
+.cheat-sheet-export .code-block .label{gap:8px; padding:9px 12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px;}
+.cheat-sheet-export .code-block .label > span:nth-child(2){flex:1;}
+.cheat-icon{font-size:14px; line-height:1;}
+.cheat-badge{
+  font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:.4px;
+  padding:2px 8px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+}
+[data-cheat-type="foundation"] .cheat-badge{background:rgba(79,209,197,.2); color:var(--accent-2); border:1px solid rgba(79,209,197,.5);}
+[data-cheat-type="css"] .cheat-badge{background:rgba(103,169,255,.2); color:#67a9ff; border:1px solid rgba(103,169,255,.5);}
+[data-cheat-type="xpath"] .cheat-badge{background:rgba(255,107,91,.2); color:var(--accent); border:1px solid rgba(255,107,91,.5);}
+[data-cheat-type="tool"] .cheat-badge{background:rgba(247,185,85,.22); color:var(--accent-3); border:1px solid rgba(247,185,85,.55);}
+[data-cheat-type="quality"] .cheat-badge{background:rgba(181,150,255,.22); color:#b596ff; border:1px solid rgba(181,150,255,.55);}
 .cheat-intro{display:grid; grid-template-columns:1.3fr .7fr; gap:14px; margin:0 0 14px;}
 .cheat-note,.cheat-rules{border:1px solid var(--border); border-radius:8px; padding:14px 16px; background:rgba(13,17,23,.28);}
+.cheat-note{background:linear-gradient(120deg,rgba(255,185,85,.14),rgba(13,17,23,.28) 55%); border-color:rgba(247,185,85,.4);}
 .cheat-note p{margin:4px 0 0; color:var(--text-dim); font-size:13px;}
-.cheat-note strong{color:var(--accent-2); font-family:var(--font-mono); font-size:12px; letter-spacing:.4px;}
+.cheat-note strong{color:var(--accent-3); font-family:var(--font-mono); font-size:12px; letter-spacing:.4px;}
+.cheat-note strong::before{content:"⚡ "; }
 .cheat-rules{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px;}
-.cheat-rule{border-radius:6px; padding:9px 10px; font-size:12px; font-family:var(--font-mono);}
-.cheat-rule.good{background:rgba(79,209,197,.12); color:var(--accent-2);}
-.cheat-rule.bad{background:rgba(255,107,91,.12); color:var(--accent);}
+.cheat-rule{border-radius:6px; padding:9px 10px; font-size:12px; font-family:var(--font-mono); font-weight:600; border:1px solid transparent;}
+.cheat-rule.good{background:rgba(79,209,197,.14); color:var(--accent-2); border-color:rgba(79,209,197,.35);}
+.cheat-rule.bad{background:rgba(255,107,91,.14); color:var(--accent); border-color:rgba(255,107,91,.35);}
 .exporting .copy-btn{visibility:hidden;}
+.exporting .cheat-toolbar{display:none;}
+.cheat-sheet-export.exporting .code-block.is-hidden{display:block;}
 .exporting{width:1200px; max-width:none; padding:36px;}
 .exporting .cheat-grid{grid-template-columns:1fr 1fr;}
 .exporting .code-block code{font-size:14px; line-height:1.72;}
+.exporting .cheat-table{font-size:14px;}
 @media(max-width:800px){
   .cheat-sheet-export{padding:18px;}
   .cheat-sheet-export .export-brand{align-items:flex-start; flex-direction:column;}
   .cheat-intro{grid-template-columns:1fr;}
+  .cheat-toolbar{align-items:flex-start; flex-direction:column;}
 }
 
 footer{
@@ -873,8 +932,19 @@ page.locator("tr:nth-child(3)").click();</code></pre></div>
           <div class="cheat-rule bad">× Indexes on dynamic lists</div>
         </div>
       </div>
+      <div class="cheat-toolbar" aria-label="Cheat sheet filters">
+        <div class="cheat-filters" role="group" aria-label="Filter cheat sheet topics">
+          <button class="cheat-filter active" type="button" data-cheat-filter="all" aria-pressed="true">All</button>
+          <button class="cheat-filter" type="button" data-cheat-filter="foundation" aria-pressed="false">Start here</button>
+          <button class="cheat-filter" type="button" data-cheat-filter="css" aria-pressed="false">CSS</button>
+          <button class="cheat-filter" type="button" data-cheat-filter="xpath" aria-pressed="false">XPath</button>
+          <button class="cheat-filter" type="button" data-cheat-filter="tool" aria-pressed="false">Tools</button>
+          <button class="cheat-filter" type="button" data-cheat-filter="quality" aria-pressed="false">Quality</button>
+        </div>
+        <span class="cheat-count" aria-live="polite">Showing all 8 quick references</span>
+      </div>
       <div class="cheat-grid">
-        <div class="code-block"><div class="label"><span>locator priority — prefer top to bottom</span><button class="copy-btn">Copy</button></div><pre><code>1. getByRole() / accessible name
+        <div class="code-block"><div class="label"><span class="cheat-icon">🎯</span><span>locator priority — prefer top to bottom</span><span class="cheat-badge">Start here</span><button class="copy-btn">Copy</button></div><pre><code>1. getByRole() / accessible name
 2. getByLabel() / getByPlaceholder()
 3. getByTestId() / data-testid
 4. Stable id or data-* attribute
@@ -882,25 +952,45 @@ page.locator("tr:nth-child(3)").click();</code></pre></div>
 6. XPath for text or DOM traversal
 
 Avoid: generated ids, long chains, raw indexes</code></pre></div>
-        <div class="code-block"><div class="label"><span>css selectors</span><button class="copy-btn">Copy</button></div><pre><code>#login                         id
+        <div class="code-block"><div class="label"><span class="cheat-icon">🎨</span><span>css selectors</span><span class="cheat-badge">CSS</span><button class="copy-btn">Copy</button></div><table class="cheat-table"><tbody>
+<tr><td class="sel">#login</td><td class="desc">id</td></tr>
+<tr><td class="sel">[data-testid="submit"]</td><td class="desc">test hook</td></tr>
+<tr><td class="sel">input[name="email"]</td><td class="desc">attribute</td></tr>
+<tr><td class="sel">button.primary</td><td class="desc">class (only if stable)</td></tr>
+<tr><td class="sel">form &gt; button</td><td class="desc">direct child</td></tr>
+<tr><td class="sel">.card .title</td><td class="desc">descendant</td></tr>
+<tr><td class="sel">input[type="text"]:not(:disabled)</td><td class="desc">not disabled</td></tr>
+<tr><td class="sel">li:nth-of-type(2)</td><td class="desc">position, use sparingly</td></tr>
+<tr><td class="sel">[class^="btn-"]</td><td class="desc">starts with</td></tr>
+<tr><td class="sel">[data-id*="user-"]</td><td class="desc">contains</td></tr>
+</tbody></table><pre class="sr-only-code"><code>#login                          id
 [data-testid="submit"]         test hook
 input[name="email"]            attribute
-button.primary                  class (only if stable)
-form > button                   direct child
-.card .title                    descendant
-input[type="text"]:not(:disabled)
+button.primary                 class (only if stable)
+form &gt; button                  direct child
+.card .title                   descendant
+input[type="text"]:not(:disabled)  not disabled
 li:nth-of-type(2)               position, use sparingly
-[class^="btn-"]                starts with
-[data-id*="user-"]             contains</code></pre></div>
-        <div class="code-block"><div class="label"><span>xpath essentials</span><button class="copy-btn">Copy</button></div><pre><code>//tag[@attr='value']           attribute match
-//tag[contains(@a,'value')]    partial attribute
-//tag[starts-with(@a,'value')] prefix
-//button[normalize-space()='Save']
-//tag[contains(normalize-space(),'Save')]
-(//button)[2]                   nth across the document
-//tr[.//td[normalize-space()='PMK']]
-//a[@x] | //button[@y]          union</code></pre></div>
-        <div class="code-block"><div class="label"><span>xpath axes</span><button class="copy-btn">Copy</button></div><pre><code>//label[.='Email']/following::input[1]
+[class^="btn-"]                 starts with
+[data-id*="user-"]              contains</code></pre></div>
+        <div class="code-block"><div class="label"><span class="cheat-icon">🧭</span><span>xpath essentials</span><span class="cheat-badge">XPath</span><button class="copy-btn">Copy</button></div><table class="cheat-table"><tbody>
+<tr><td class="sel">//tag[@attr='value']</td><td class="desc">attribute match</td></tr>
+<tr><td class="sel">//tag[contains(@a,'value')]</td><td class="desc">partial attribute</td></tr>
+<tr><td class="sel">//tag[starts-with(@a,'value')]</td><td class="desc">prefix</td></tr>
+<tr><td class="sel">//button[normalize-space()='Save']</td><td class="desc">exact text match</td></tr>
+<tr><td class="sel">//tag[contains(normalize-space(),'Save')]</td><td class="desc">partial text match</td></tr>
+<tr><td class="sel">(//button)[2]</td><td class="desc">nth across the document</td></tr>
+<tr><td class="sel">//tr[.//td[normalize-space()='PMK']]</td><td class="desc">row containing matching cell</td></tr>
+<tr><td class="sel">//a[@x] | //button[@y]</td><td class="desc">union</td></tr>
+</tbody></table><pre class="sr-only-code"><code>//tag[@attr='value']               attribute match
+//tag[contains(@a,'value')]        partial attribute
+//tag[starts-with(@a,'value')]     prefix
+//button[normalize-space()='Save']            exact text match
+//tag[contains(normalize-space(),'Save')]     partial text match
+(//button)[2]                      nth across the document
+//tr[.//td[normalize-space()='PMK']]          row containing matching cell
+//a[@x] | //button[@y]             union</code></pre></div>
+        <div class="code-block"><div class="label"><span class="cheat-icon">🔀</span><span>xpath axes</span><span class="cheat-badge">XPath</span><button class="copy-btn">Copy</button></div><pre><code>//label[.='Email']/following::input[1]
 //input[@id='email']/parent::div
 //button/ancestor::form
 //label[.='Email']/following-sibling::input
@@ -908,7 +998,7 @@ li:nth-of-type(2)               position, use sparingly
 //section[@aria-label='Profile']//button
 
 Use relative XPath. Never start with /html/body.</code></pre></div>
-        <div class="code-block"><div class="label"><span>playwright locators</span><button class="copy-btn">Copy</button></div><pre><code>page.getByRole('button', { name: 'Save' })
+        <div class="code-block"><div class="label"><span class="cheat-icon">🎭</span><span>playwright locators</span><span class="cheat-badge">Tools</span><button class="copy-btn">Copy</button></div><pre><code>page.getByRole('button', { name: 'Save' })
 page.getByLabel('Email').fill('a@b.com')
 page.getByText('Order confirmed', { exact: true })
 page.getByPlaceholder('Search')
@@ -917,7 +1007,7 @@ page.locator('.card').filter({ hasText: 'Pro' })
 page.getByRole('row').filter({ hasText: 'PMK' })
 page.frameLocator('#payment').getByLabel('Card')
 locator.first() / last() / nth(0)</code></pre></div>
-        <div class="code-block"><div class="label"><span>selenium, frames, and shadow DOM</span><button class="copy-btn">Copy</button></div><pre><code>By.id('login')
+        <div class="code-block"><div class="label"><span class="cheat-icon">🕸️</span><span>selenium, frames, and shadow DOM</span><span class="cheat-badge">Tools</span><button class="copy-btn">Copy</button></div><pre><code>By.id('login')
 By.cssSelector('[data-testid="login"]')
 By.xpath("//button[normalize-space()='Save']")
 By.name('email')
@@ -928,7 +1018,7 @@ driver.switchTo().defaultContent()
 
 Playwright CSS locators pierce open shadow roots.
 Closed shadow roots need an exposed test hook.</code></pre></div>
-        <div class="code-block"><div class="label"><span>stability checklist</span><button class="copy-btn">Copy</button></div><pre><code>✓ Unique in its component scope
+        <div class="code-block"><div class="label"><span class="cheat-icon">✅</span><span>stability checklist</span><span class="cheat-badge">Quality</span><button class="copy-btn">Copy</button></div><pre><code>✓ Unique in its component scope
 ✓ Uses role, label, testid, or stable attribute
 ✓ Describes intent, not styling
 ✓ Survives copy and layout changes
@@ -938,7 +1028,7 @@ Closed shadow roots need an exposed test hook.</code></pre></div>
 ✗ .css-1k2j3z9
 ✗ [id="auto-generated-48"]
 ✗ nth-child() on dynamic data</code></pre></div>
-        <div class="code-block"><div class="label"><span>fast troubleshooting</span><button class="copy-btn">Copy</button></div><pre><code>0 matches: verify iframe, shadow root, or text spacing
+        <div class="code-block"><div class="label"><span class="cheat-icon">🚑</span><span>fast troubleshooting</span><span class="cheat-badge">Quality</span><button class="copy-btn">Copy</button></div><pre><code>0 matches: verify iframe, shadow root, or text spacing
 Many matches: scope to the nearest stable container
 Stale element: re-locate after UI re-render
 Timeout: wait for the UI state, not a fixed delay
@@ -1207,7 +1297,7 @@ navLinks.forEach(a => a.addEventListener('click', ()=> sidebar.classList.remove(
 document.querySelectorAll('.copy-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const codeEl = btn.closest('.code-block').querySelector('code');
-    const text = codeEl.innerText;
+    const text = codeEl.textContent;
     navigator.clipboard.writeText(text).then(()=>{
       btn.textContent = 'Copied ✓';
       btn.classList.add('copied');
@@ -1215,6 +1305,55 @@ document.querySelectorAll('.copy-btn').forEach(btn=>{
     });
   });
 });
+
+// Cheat sheet topic filters and color coding
+const cheatSheet = document.getElementById('cheatsheet');
+const cheatCards = Array.from(cheatSheet.querySelectorAll('.cheat-grid .code-block'));
+const cheatFilters = cheatSheet.querySelectorAll('.cheat-filter');
+const cheatCount = cheatSheet.querySelector('.cheat-count');
+const cheatTypes = ['foundation', 'css', 'xpath', 'xpath', 'tool', 'tool', 'quality', 'quality'];
+
+cheatCards.forEach((card, index) => card.dataset.cheatType = cheatTypes[index]);
+
+// Lightweight syntax colorization for cheat sheet code blocks and tables
+function highlightCheatTokens(el){
+  const raw = el.textContent;
+  const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const tokenPattern = /('[^'\n]*'|"[^"\n]*"|\b[a-zA-Z_][\w]*(?=\()|^(?:Avoid|Use relative XPath|Playwright CSS|Closed shadow|Best long-term fix|0 matches|Many matches|Stale element|Timeout|Flaky text)[^\n]*)/gm;
+  const highlighted = esc.replace(tokenPattern, (match) => {
+    if(match.startsWith("'") || match.startsWith('&quot;') || match.startsWith('"')){
+      return `<span class="tk-str">${match}</span>`;
+    }
+    if(/^(Avoid|Use relative XPath|Playwright CSS|Closed shadow|Best long-term fix|0 matches|Many matches|Stale element|Timeout|Flaky text)/.test(match)){
+      return `<span class="tk-cm">${match}</span>`;
+    }
+    return `<span class="tk-fn">${match}</span>`;
+  });
+  el.innerHTML = highlighted;
+}
+cheatSheet.querySelectorAll('.code-block code, .cheat-table td.sel').forEach(highlightCheatTokens);
+
+
+function filterCheatSheet(type){
+  let visible = 0;
+  cheatCards.forEach(card => {
+    const show = type === 'all' || card.dataset.cheatType === type;
+    card.classList.toggle('is-hidden', !show);
+    if(show) visible++;
+  });
+  cheatFilters.forEach(filter => {
+    const selected = filter.dataset.cheatFilter === type;
+    filter.classList.toggle('active', selected);
+    filter.setAttribute('aria-pressed', String(selected));
+  });
+  cheatCount.textContent = type === 'all'
+    ? 'Showing all 8 quick references'
+    : `Showing ${visible} ${type} reference${visible === 1 ? '' : 's'}`;
+}
+
+cheatFilters.forEach(filter => filter.addEventListener('click', () => {
+  filterCheatSheet(filter.dataset.cheatFilter);
+}));
 
 // Accordion
 document.querySelectorAll('.accordion-q').forEach(q=>{
