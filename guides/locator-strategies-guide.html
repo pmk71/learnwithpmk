@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Locator Strategies — The Complete Guide | Learn With PMK71</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;
+  --bg-alt:#141a22;
+  --panel:#161d27;
+  --panel-2:#1b2330;
+  --border:#26303e;
+  --text:#dbe2ea;
+  --text-dim:#8b98a9;
+  --accent:#ff6b5b;
+  --accent-2:#4fd1c5;
+  --accent-3:#f7b955;
+  --code-bg:#0b1016;
+  --shadow: 0 8px 24px rgba(0,0,0,.35);
+  --radius:10px;
+  --font-sans:'IBM Plex Sans', sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+}
+[data-theme="light"]{
+  --bg:#f7f8fa;
+  --bg-alt:#ffffff;
+  --panel:#ffffff;
+  --panel-2:#f1f3f6;
+  --border:#e0e4ea;
+  --text:#1b232e;
+  --text-dim:#5b6675;
+  --code-bg:#0d1117;
+  --shadow: 0 8px 24px rgba(20,30,50,.08);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-sans);
+  line-height:1.65;
+  transition:background .25s ease,color .25s ease;
+  position:relative;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(600px circle at 12% -5%, rgba(255,107,91,.14), transparent 55%),
+    radial-gradient(700px circle at 100% 10%, rgba(79,209,197,.12), transparent 50%);
+}
+::selection{background:var(--accent);color:#0d1117;}
+
+/* progress bar */
+#progress-bar{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent-3));
+  z-index:1000; transition:width .1s ease;
+}
+
+/* top bar */
+.topbar{
+  position:sticky; top:0; z-index:900;
+  display:flex; align-items:center; gap:14px;
+  padding:12px 20px;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.topbar .brand{
+  font-weight:700; letter-spacing:.3px; font-size:15px;
+  display:flex; align-items:center; gap:8px; white-space:nowrap;
+}
+.brand .tag{
+  font-family:var(--font-mono); font-size:11px; color:var(--bg);
+  background:var(--accent); padding:2px 6px; border-radius:4px;
+}
+.search-wrap{flex:1; max-width:420px; position:relative;}
+#search{
+  width:100%; padding:9px 12px 9px 32px; border-radius:8px;
+  border:1px solid var(--border); background:var(--panel-2);
+  color:var(--text); font-family:var(--font-sans); font-size:13.5px;
+}
+#search:focus{outline:none; border-color:var(--accent);}
+.search-wrap::before{
+  content:"⌕"; position:absolute; left:11px; top:50%; transform:translateY(-50%);
+  color:var(--text-dim); font-size:15px;
+}
+.toggle-btn{
+  border:1px solid var(--border); background:var(--panel-2); color:var(--text);
+  padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px;
+  font-family:var(--font-sans); white-space:nowrap;
+}
+.toggle-btn:hover{border-color:var(--accent); transform:translateY(-1px);}
+.toggle-btn{transition:all .18s ease;}
+.home-btn{
+  border:1px solid var(--border); background:var(--panel-2); color:var(--text);
+  padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px;
+  font-family:var(--font-sans); white-space:nowrap; text-decoration:none;
+  display:inline-flex; align-items:center; gap:6px; transition:all .18s ease;
+}
+.home-btn:hover{border-color:var(--accent-2); color:var(--accent-2); transform:translateY(-1px);}
+.menu-btn{display:none; border:1px solid var(--border); background:var(--panel-2); color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer;}
+
+.download-btn{
+  border:1px solid var(--accent); background:linear-gradient(135deg, rgba(255,107,91,.16), rgba(247,185,85,.10));
+  color:var(--accent); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px;
+  font-family:var(--font-sans); font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:6px;
+  transition:all .18s ease;
+}
+.download-btn:hover{transform:translateY(-1px); box-shadow:0 4px 14px rgba(255,107,91,.3);}
+.download-btn:disabled{opacity:.55; cursor:progress; transform:none;}
+.download-btn .spin{display:inline-block; animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* layout */
+.layout{display:flex; max-width:1400px; margin:0 auto;}
+nav.sidebar{
+  width:270px; flex-shrink:0; position:sticky; top:57px;
+  height:calc(100vh - 57px); overflow-y:auto; padding:22px 14px 40px;
+  border-right:1px solid var(--border);
+}
+nav.sidebar::-webkit-scrollbar{width:6px;}
+nav.sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px;}
+.nav-group{margin-bottom:6px;}
+.nav-group-title{
+  font-size:11px; text-transform:uppercase; letter-spacing:1px;
+  color:var(--text-dim); padding:14px 10px 6px; font-weight:600;
+}
+nav.sidebar a{
+  display:block; padding:7px 10px; border-radius:7px; color:var(--text-dim);
+  text-decoration:none; font-size:13.5px; margin:1px 0; border-left:2px solid transparent;
+}
+nav.sidebar a:hover{background:var(--panel-2); color:var(--text);}
+nav.sidebar a.active{color:var(--accent); background:var(--panel-2); border-left:2px solid var(--accent);}
+
+main{flex:1; min-width:0; padding:36px 44px 100px;}
+
+/* hero */
+.hero{
+  padding:30px 0 20px; border-bottom:1px solid var(--border); margin-bottom:36px;
+}
+.eyebrow{
+  font-family:var(--font-mono); font-size:12.5px; color:var(--accent-2);
+  letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px;
+}
+.hero h1{
+  font-size:clamp(28px,4vw,42px); margin:0 0 14px; letter-spacing:-.5px; line-height:1.15;
+}
+.hero h1 span{
+  background:linear-gradient(100deg,var(--accent),var(--accent-3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.hero p.lead{font-size:16px; color:var(--text-dim); max-width:720px; margin:0 0 18px;}
+.hero-meta{display:flex; gap:20px; flex-wrap:wrap; font-size:12.5px; color:var(--text-dim); font-family:var(--font-mono);}
+.hero-meta b{color:var(--text);}
+
+.byline{
+  display:flex; align-items:center; gap:12px; margin:6px 0 22px;
+}
+.byline .avatar{
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent-3));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-weight:700; font-size:14px; color:#0d1117;
+  box-shadow:0 0 0 3px var(--panel-2);
+}
+.byline .who b{display:block; font-size:14px; color:var(--text);}
+.byline .who span{font-size:12px; color:var(--text-dim);}
+
+/* sections */
+section.block{
+  margin-bottom:52px; scroll-margin-top:75px;
+  opacity:0; transform:translateY(16px);
+  transition:opacity .5s ease, transform .5s ease;
+}
+section.block.reveal{opacity:1; transform:translateY(0);}
+section.block h2{
+  font-size:24px; margin:0 0 8px; padding-bottom:12px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+section.block h2 .num{
+  font-family:var(--font-mono); font-size:13px; color:var(--bg); background:var(--accent-2);
+  padding:2px 8px; border-radius:5px;
+}
+h3.sub{font-size:17px; margin:26px 0 8px; color:var(--text);}
+h3.sub .icon{color:var(--accent);}
+p{color:var(--text); font-size:14.5px;}
+.dim{color:var(--text-dim);}
+
+/* cards / grids */
+.grid{display:grid; gap:14px; margin:14px 0;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 18px; transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.card:hover{transform:translateY(-3px); border-color:var(--accent-2); box-shadow:var(--shadow);}
+.card h4{margin:0 0 8px; font-size:14.5px; display:flex; align-items:center; gap:8px;}
+.card p{margin:0; font-size:13.5px; color:var(--text-dim);}
+
+/* priority pyramid */
+.priority-list{list-style:none; margin:16px 0; padding:0; counter-reset:pri;}
+.priority-list li{
+  counter-increment:pri;
+  background:var(--panel); border:1px solid var(--border); border-left:4px solid var(--accent-2);
+  border-radius:8px; padding:12px 16px; margin-bottom:8px; position:relative; padding-left:52px;
+  font-size:14px;
+}
+.priority-list li::before{
+  content:counter(pri); position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  font-family:var(--font-mono); font-weight:700; color:var(--accent-2); font-size:16px;
+}
+.priority-list li b{display:block; font-size:14.5px; margin-bottom:2px;}
+.priority-list li.best{border-left-color:var(--accent-2);}
+.priority-list li.ok{border-left-color:var(--accent-3);}
+.priority-list li.avoid{border-left-color:var(--accent);}
+
+/* code blocks */
+.code-block{
+  position:relative; background:var(--code-bg); border:1px solid var(--border);
+  border-radius:8px; margin:10px 0 18px; overflow:hidden; transition:border-color .18s ease;
+}
+.code-block:hover{border-color:var(--accent-2);}
+
+.fab{
+  position:fixed; right:24px; bottom:24px; z-index:850;
+  width:44px; height:44px; border-radius:50%; border:1px solid var(--border);
+  background:var(--panel-2); color:var(--text); cursor:pointer; font-size:18px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:var(--shadow); opacity:0; pointer-events:none; transform:translateY(10px);
+  transition:all .25s ease;
+}
+.fab.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+.fab:hover{border-color:var(--accent); color:var(--accent);}
+.code-block .label{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:7px 12px; font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+  border-bottom:1px solid var(--border); background:rgba(255,255,255,.02);
+}
+.code-block pre{margin:0; padding:14px 16px; overflow-x:auto;}
+.code-block code{
+  font-family:var(--font-mono); font-size:13px; color:#d6deed; white-space:pre;
+}
+.copy-btn{
+  background:transparent; border:1px solid var(--border); color:var(--text-dim);
+  font-size:11px; padding:3px 9px; border-radius:5px; cursor:pointer; font-family:var(--font-mono);
+}
+.copy-btn:hover{color:var(--accent); border-color:var(--accent);}
+.copy-btn.copied{color:var(--accent-2); border-color:var(--accent-2);}
+
+/* syntax coloring (manual spans use these classes) */
+.tk-tag{color:#79c0ff;} .tk-attr{color:#ffa657;} .tk-str{color:#a5d6ff;}
+.tk-fn{color:#d2a8ff;} .tk-op{color:#ff7b72;} .tk-cm{color:#8b949e; font-style:italic;}
+
+/* tables */
+.table-wrap{overflow-x:auto; margin:14px 0 20px;}
+table{width:100%; border-collapse:collapse; font-size:13.5px;}
+th,td{padding:10px 12px; border:1px solid var(--border); text-align:left; vertical-align:top;}
+th{background:var(--panel-2); font-weight:600; color:var(--text);}
+tr:nth-child(even) td{background:color-mix(in srgb, var(--panel) 60%, transparent);}
+td code, li code, p code{
+  font-family:var(--font-mono); background:var(--panel-2); padding:1px 6px; border-radius:4px;
+  font-size:12.8px; color:var(--accent-3); border:1px solid var(--border);
+}
+
+/* callouts */
+.callout{
+  border-radius:8px; padding:13px 16px; margin:16px 0; font-size:13.8px;
+  border:1px solid var(--border); border-left:3px solid var(--accent-2); background:var(--panel);
+}
+.callout.warn{border-left-color:var(--accent);}
+.callout.tip{border-left-color:var(--accent-3);}
+.callout b{color:var(--text);}
+
+/* badges */
+.badge{
+  display:inline-block; font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+  padding:2px 8px; border-radius:20px; margin-left:6px; letter-spacing:.3px; vertical-align:middle;
+}
+.badge.new{background:rgba(79,209,197,.15); color:var(--accent-2); border:1px solid var(--accent-2);}
+.badge.adv{background:rgba(255,107,91,.15); color:var(--accent); border:1px solid var(--accent);}
+.badge.legacy{background:rgba(139,152,169,.15); color:var(--text-dim); border:1px solid var(--border);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--border); border-radius:8px; margin-bottom:8px; overflow:hidden; background:var(--panel);}
+.accordion-q{
+  padding:13px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-size:14px; font-weight:500;
+}
+.accordion-q::after{content:"+"; font-size:20px; color:var(--accent); transition:transform .2s ease;}
+.accordion-item.open .accordion-q::after{transform:rotate(45deg);}
+.accordion-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+.accordion-a-inner{padding:0 16px 16px; font-size:13.8px; color:var(--text-dim);}
+.accordion-item.open .accordion-a{max-height:600px;}
+
+/* cheat sheet */
+.cheat-grid{display:grid; grid-template-columns:1fr 1fr; gap:0;}
+.cheat-grid .col{padding:0;}
+@media(max-width:800px){.cheat-grid{grid-template-columns:1fr;}}
+
+footer{
+  border-top:1px solid var(--border); margin-top:60px; padding:30px 44px 60px;
+  font-size:12.5px; color:var(--text-dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+footer a{color:var(--accent-2); text-decoration:none;}
+
+.hidden{display:none !important;}
+mark{background:rgba(255,107,91,.35); color:inherit; border-radius:3px;}
+
+@media(max-width:900px){
+  nav.sidebar{position:fixed; left:-290px; top:57px; height:calc(100vh - 57px); background:var(--bg);
+    width:270px; z-index:800; transition:left .25s ease; box-shadow:var(--shadow);}
+  nav.sidebar.open{left:0;}
+  main{padding:26px 18px 80px;}
+  .search-wrap{max-width:none;}
+  .menu-btn{display:inline-block;}
+  .grid-2, .grid-3, .cheat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body data-theme="dark">
+<div id="progress-bar"></div>
+
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn">☰</button>
+  <div class="brand">🎯 <span>Learn With PMK71</span><span class="tag">SDET</span></div>
+  <a class="home-btn" href="../index.html">Home</a>
+  <div class="search-wrap"><input id="search" type="text" placeholder="Search locators, functions, axes…"></div>
+  <button class="download-btn" id="downloadBtn">⬇ Save as PNG</button>
+  <button class="toggle-btn" id="themeToggle">☾ Dark</button>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="nav-group">
+      <div class="nav-group-title">Start Here</div>
+      <a href="#overview">Overview</a>
+      <a href="#priority">Locator Priority Order</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">CSS Selectors</div>
+      <a href="#css-basics">CSS Basics → Advanced</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">XPath</div>
+      <a href="#xpath-basics">XPath Syntax &amp; Types</a>
+      <a href="#xpath-nodes">Node Selection Rules</a>
+      <a href="#xpath-attr">Attribute &amp; Text Based</a>
+      <a href="#xpath-functions">XPath Functions</a>
+      <a href="#xpath-axes">XPath Axes</a>
+      <a href="#xpath-regex">Regex &amp; XPath 2.0+</a>
+      <a href="#xpath-combo">Combining Conditions</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Modern / Framework</div>
+      <a href="#playwright">Playwright Locators <span class="badge new">latest</span></a>
+      <a href="#selenium">Selenium By Strategies</a>
+      <a href="#shadow-dom">Shadow DOM &amp; iFrames</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Craft &amp; Strategy</div>
+      <a href="#best-practices">Best Practices</a>
+      <a href="#anti-patterns">Anti-Patterns to Avoid</a>
+      <a href="#self-healing">Self-Healing Locators</a>
+      <a href="#enterprise">Enterprise-Scale Gotchas <span class="badge adv">real-world</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <a href="#cheatsheet">Cheat Sheet</a>
+      <a href="#faq">Interview Q&amp;A</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <div class="hero">
+      <div class="eyebrow">Locator Strategies · Complete Reference</div>
+      <h1>Every Way to Find an <span>Element</span> — Basic to Advanced</h1>
+      <p class="lead">A single reference covering CSS selectors, the full XPath specification (syntax, functions, axes, XPath 2.0 regex), the modern locator APIs in Playwright and Selenium, and the real-world edge cases enterprise automation teams run into — with runnable examples for every entry.</p>
+
+      <div class="byline">
+        <div class="avatar">PMK</div>
+        <div class="who">
+          <b>Prashanth M K</b>
+          <span>Author · Learn With PMK71 — SDET &amp; Playwright Automation</span>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <span><b>21+</b> XPath patterns</span>
+        <span><b>10</b> XPath axes</span>
+        <span><b>12+</b> Playwright locators</span>
+        <span>Updated for <b>2026</b></span>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="block" id="overview">
+      <h2><span class="num">00</span> Overview</h2>
+      <p>A "locator" is simply an instruction that tells the automation tool <i>which</i> DOM node to act on. There are three broad families, and modern frameworks now blend all three:</p>
+      <div class="grid grid-3">
+        <div class="card"><h4>🎨 CSS Selectors</h4><p>Fast, native to the browser, great for classes/ids/attributes and structural relationships.</p></div>
+        <div class="card"><h4>🧭 XPath</h4><p>The most powerful — can travel up, down, and sideways in the DOM, match text, and use functions/regex.</p></div>
+        <div class="card"><h4>⚡ Framework-native</h4><p>Playwright's <code>getByRole</code>/<code>getByTestId</code> and Selenium's <code>By</code> class wrap the above into readable, resilient APIs.</p></div>
+      </div>
+      <div class="callout tip"><b>Rule of thumb:</b> reach for the most user-facing, most stable locator first (role/text/testid), and drop down to CSS or XPath only when nothing else uniquely identifies the element.</div>
+    </section>
+
+    <!-- PRIORITY -->
+    <section class="block" id="priority">
+      <h2><span class="num">01</span> Locator Priority Order</h2>
+      <p>This is the order modern automation teams (and the Playwright/Testing Library philosophy) recommend, from most to least resilient:</p>
+      <ul class="priority-list">
+        <li class="best"><b>1. data-testid / data-test / data-qa</b> Dedicated automation hooks. Immune to design and copy changes. <code>[data-testid="login-btn"]</code></li>
+        <li class="best"><b>2. Role + Accessible Name</b> Mirrors how a screen reader/user finds the element. <code>getByRole('button', { name: 'Submit' })</code></li>
+        <li class="best"><b>3. Label / Placeholder / Alt / Title text</b> Good for forms and images. <code>getByLabel('Email')</code></li>
+        <li class="ok"><b>4. Visible Text</b> Human-readable but breaks on copy changes / i18n. <code>getByText('Add to cart')</code></li>
+        <li class="ok"><b>5. Stable id / name / unique CSS class</b> Fine if the id isn't auto-generated per session. <code>#username</code></li>
+        <li class="ok"><b>6. CSS structural / attribute selectors</b> <code>div.card > a[href^="/product"]</code></li>
+        <li class="avoid"><b>7. Relative/attribute XPath</b> Powerful, but more verbose and slightly slower than CSS. Use when CSS can't express the relationship (e.g., text match, parent traversal).</li>
+        <li class="avoid"><b>8. Absolute XPath / index-based XPath</b> Last resort only — brittle, breaks with any DOM change.</li>
+      </ul>
+    </section>
+
+    <!-- CSS -->
+    <section class="block" id="css-basics">
+      <h2><span class="num">02</span> CSS Selectors — Basic → Advanced</h2>
+
+      <h3 class="sub">Basic selectors</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Selector</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td><code>tag</code></td><td>All elements of a tag</td><td><code>input</code></td></tr>
+        <tr><td><code>#id</code></td><td>Element by id</td><td><code>#username</code></td></tr>
+        <tr><td><code>.class</code></td><td>Element by class</td><td><code>.btn-primary</code></td></tr>
+        <tr><td><code>[attr=value]</code></td><td>Attribute equals</td><td><code>[name="email"]</code></td></tr>
+        <tr><td><code>a, b</code></td><td>Group / OR</td><td><code>input, textarea</code></td></tr>
+        <tr><td><code>a b</code></td><td>Descendant (any depth)</td><td><code>form input</code></td></tr>
+        <tr><td><code>a &gt; b</code></td><td>Direct child</td><td><code>ul &gt; li</code></td></tr>
+        <tr><td><code>a + b</code></td><td>Immediate next sibling</td><td><code>label + input</code></td></tr>
+        <tr><td><code>a ~ b</code></td><td>Any following sibling</td><td><code>h2 ~ p</code></td></tr>
+      </table></div>
+
+      <h3 class="sub">Attribute operators</h3>
+      <div class="code-block">
+        <div class="label"><span>css-attribute-operators</span><button class="copy-btn">Copy</button></div>
+        <pre><code>[class^="btn"]      <span class="tk-cm">/* starts with */</span>
+[class$="-primary"] <span class="tk-cm">/* ends with */</span>
+[class*="submit"]   <span class="tk-cm">/* contains */</span>
+[lang|="en"]        <span class="tk-cm">/* exact or hyphen-prefixed, e.g. en-US */</span>
+[title~="urgent"]   <span class="tk-cm">/* one word in a space-separated list */</span></code></pre>
+      </div>
+
+      <h3 class="sub">Pseudo-classes (the advanced 20%)</h3>
+      <div class="code-block">
+        <div class="label"><span>css-pseudo-classes</span><button class="copy-btn">Copy</button></div>
+        <pre><code>tr:nth-child(3)          <span class="tk-cm">/* 3rd row */</span>
+tr:nth-child(odd)        <span class="tk-cm">/* alternate rows */</span>
+li:first-child / :last-child
+input:not([disabled])
+input:checked
+div:empty
+a:hover                  <span class="tk-cm">/* rarely used in automation */</span>
+p:has(&gt; span.badge)      <span class="tk-cm">/* :has() — modern relational selector */</span></code></pre>
+      </div>
+      <div class="callout"><b>Note:</b> CSS has no built-in "text contains" operator like XPath's <code>text()</code>. Playwright adds this back with <code>:has-text()</code> and <code>:text()</code> as CSS extensions — see the Playwright section.</div>
+    </section>
+
+    <!-- XPATH BASICS -->
+    <section class="block" id="xpath-basics">
+      <h2><span class="num">03</span> XPath Syntax &amp; Types</h2>
+
+      <div class="code-block">
+        <div class="label"><span>xpath-anatomy</span><button class="copy-btn">Copy</button></div>
+        <pre><code><span class="tk-op">//</span><span class="tk-tag">TagName</span>[<span class="tk-op">@</span><span class="tk-attr">attribute</span>=<span class="tk-str">'value'</span>]
+ │  │        │              │
+ │  │        │              └─ expression must be inside [ ]
+ │  │        └─ @ means "attribute of this element"
+ │  └─ HTML tag name (or * for any tag)
+ └─ // means "anywhere in the DOM"</code></pre>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h4>1. Absolute XPath</h4>
+          <p>Full path from the root node, missing no element in between. Starts with a single <code>/</code>.</p>
+          <div class="code-block"><pre><code>/html/body/div[1]/form/input[1]</code></pre></div>
+          <p><b>Fragile</b> — any structural change breaks it. Use only for legacy or throwaway scripts.</p>
+        </div>
+        <div class="card">
+          <h4>2. Relative XPath</h4>
+          <p>Starts anywhere in the DOM using <code>//</code>. Combines with attributes, functions, and axes.</p>
+          <div class="code-block"><pre><code>//input[@id="username"]</code></pre></div>
+          <p><b>Preferred</b> — resilient to unrelated DOM changes elsewhere on the page.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NODE SELECTION -->
+    <section class="block" id="xpath-nodes">
+      <h2><span class="num">04</span> Node Selection Rules</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Syntax</th><th>Selects</th></tr>
+        <tr><td><code>nodename</code></td><td>All nodes with that name</td></tr>
+        <tr><td><code>/</code></td><td>Selection from the root node</td></tr>
+        <tr><td><code>//</code></td><td>Selects nodes anywhere, at any depth</td></tr>
+        <tr><td><code>.</code></td><td>The current node</td></tr>
+        <tr><td><code>..</code></td><td>The parent of the current node</td></tr>
+        <tr><td><code>@</code></td><td>Selects attributes</td></tr>
+        <tr><td><code>*</code></td><td>Matches any element node (wildcard)</td></tr>
+        <tr><td><code>@*</code></td><td>Matches any attribute node</td></tr>
+        <tr><td><code>|</code></td><td>Union — select several paths at once</td></tr>
+      </table></div>
+      <div class="code-block">
+        <div class="label"><span>wildcard-and-union</span><button class="copy-btn">Copy</button></div>
+        <pre><code>//*[@id="loginBtn"]                       <span class="tk-cm">/* any tag with this id */</span>
+//input[@type="text"] | //textarea         <span class="tk-cm">/* union of two paths */</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ATTRIBUTE / TEXT -->
+    <section class="block" id="xpath-attr">
+      <h2><span class="num">05</span> Attribute &amp; Text-Based XPath</h2>
+      <div class="grid grid-2">
+        <div class="card"><h4>Attribute-based</h4><div class="code-block"><pre><code>//button[@name="login"]</code></pre></div><p>Locates using an exact attribute value.</p></div>
+        <div class="card"><h4>Wildcard tag + attribute</h4><div class="code-block"><pre><code>//*[@id="loginBtn"]</code></pre></div><p>Skips the tag name entirely — useful when the same id could sit on different tags across environments.</p></div>
+        <div class="card"><h4>Exact text</h4><div class="code-block"><pre><code>//button[text()="Submit"]</code></pre></div><p>Matches the <i>full, exact</i> visible text of the element — breaks with extra whitespace.</p></div>
+        <div class="card"><h4>Index-based</h4><div class="code-block"><pre><code>(//input[@type="text"])[1]</code></pre></div><p>Wrap the whole expression in <code>( )</code>, then index — picks the Nth match among all locators found.</p></div>
+      </div>
+      <div class="callout warn"><b>Common mistake:</b> <code>//input[@type="text"][1]</code> means "1st <code>&lt;input type="text"&gt;</code> among its own siblings" — not the same as <code>(//input[@type="text"])[1]</code>, which means "1st match across the whole document." Parenthesize when you mean the latter.</div>
+    </section>
+
+    <!-- FUNCTIONS -->
+    <section class="block" id="xpath-functions">
+      <h2><span class="num">06</span> XPath Functions</h2>
+      <p>Functions are what make XPath more powerful than CSS. Here's every commonly used one, basic to advanced.</p>
+
+      <h3 class="sub">🔎 contains()</h3>
+      <p>Matches part of an attribute value or text — ideal for dynamic classes/ids.</p>
+      <div class="code-block"><div class="label"><span>contains</span><button class="copy-btn">Copy</button></div><pre><code>//div[contains(@class,"header")]
+//span[contains(text(),'Add')]
+//input[contains(@placeholder, "Email address")]</code></pre></div>
+
+      <h3 class="sub">🚀 starts-with()</h3>
+      <p>Matches attribute values or text that begin with specific characters — perfect for auto-generated ids like <code>user_23af</code>.</p>
+      <div class="code-block"><div class="label"><span>starts-with</span><button class="copy-btn">Copy</button></div><pre><code>//input[starts-with(@id, "user")]
+//span[starts-with(text(),'Add')]</code></pre></div>
+
+      <h3 class="sub">🔢 position() &amp; last()</h3>
+      <div class="code-block"><div class="label"><span>position-last</span><button class="copy-btn">Copy</button></div><pre><code>//tr[position()=3]              <span class="tk-cm">/* 3rd row */</span>
+(//div[@class="item"])[last()]  <span class="tk-cm">/* last matching element */</span>
+//tbody/tr[last()]</code></pre></div>
+
+      <h3 class="sub">🧮 count()</h3>
+      <p>Counts matching nodes — often combined with table headers to locate a column dynamically.</p>
+      <div class="code-block"><div class="label"><span>count</span><button class="copy-btn">Copy</button></div><pre><code>//tbody/tr/td[count(//thead/tr/th[contains(text(),'Date')]/preceding-sibling::th)+1]</code></pre></div>
+
+      <h3 class="sub">🧹 normalize-space()</h3>
+      <p>Strips leading/trailing whitespace and collapses internal tabs/newlines before comparing text.</p>
+      <div class="code-block"><div class="label"><span>normalize-space</span><button class="copy-btn">Copy</button></div><pre><code>//th[normalize-space(text())='Date']
+//button[normalize-space(text())='Login']</code></pre></div>
+
+      <h3 class="sub">🔡 translate()</h3>
+      <p>Character-by-character replace — the classic trick for case-insensitive matching (no <code>lower-case()</code> in XPath 1.0).</p>
+      <div class="code-block"><div class="label"><span>translate</span><button class="copy-btn">Copy</button></div><pre><code>//th[translate(text(),
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  'abcdefghijklmnopqrstuvwxyz') = 'date']
+
+<span class="tk-cm">/* combine with normalize-space for case + whitespace safe matching */</span>
+//th[normalize-space(translate(text(),
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'))='date']</code></pre></div>
+
+      <h3 class="sub">🔢 round() &amp; floor()</h3>
+      <div class="code-block"><div class="label"><span>round-floor</span><button class="copy-btn">Copy</button></div><pre><code>//td[round(text())='9']
+//td[floor(text())='8']</code></pre></div>
+
+      <h3 class="sub">🚫 not()</h3>
+      <p>Excludes elements matching a condition.</p>
+      <div class="code-block"><div class="label"><span>not-function</span><button class="copy-btn">Copy</button></div><pre><code>//input[not(@type="hidden")]
+//input[@type="radio" and not(@value='2')]</code></pre></div>
+
+      <h3 class="sub">📏 string-length()</h3>
+      <div class="code-block"><div class="label"><span>string-length</span><button class="copy-btn">Copy</button></div><pre><code>//span[string-length(text()) = 10]
+//span[string-length(text()) &gt; 30]
+//span[string-length(text()) &lt; 4]</code></pre></div>
+    </section>
+
+    <!-- REGEX -->
+    <section class="block" id="xpath-regex">
+      <h2><span class="num">07</span> Regex &amp; XPath 2.0+ <span class="badge adv">advanced</span></h2>
+      <p>Standard XPath 1.0 (used by Selenium/browsers) has no native regex. Where the engine supports XPath 2.0 (e.g., saxon-based processors, some self-healing tools), <code>matches()</code> unlocks pattern matching — very useful for AI/self-healing locator generation.</p>
+      <div class="code-block"><div class="label"><span>xpath-2.0-regex</span><button class="copy-btn">Copy</button></div><pre><code>//input[matches(@id,'user.*')]              <span class="tk-cm">/* id starts with "user" */</span>
+//input[matches(@id,'^user_[0-9]{3}$')]     <span class="tk-cm">/* strict pattern */</span>
+//span[matches(text(),'^\d+ items?$')]      <span class="tk-cm">/* "3 item" or "12 items" */</span></code></pre></div>
+      <div class="callout warn"><b>Browser caveat:</b> Chrome/Firefox DevTools and Selenium's native XPath evaluator run <b>XPath 1.0</b> — <code>matches()</code> will throw "Unknown function." Reserve it for tools/libraries that explicitly support XPath 2.0/3.0 (e.g., certain Java XML libraries, Saxon-HE, or AI-assisted healing engines).</div>
+    </section>
+
+    <!-- COMBINING -->
+    <section class="block" id="xpath-combo">
+      <h2><span class="num">08</span> Combining Conditions, Parents &amp; Nesting</h2>
+      <div class="code-block"><div class="label"><span>and-or</span><button class="copy-btn">Copy</button></div><pre><code>//input[@type="text" and @name="username"]
+//input[@type="text" or @type="email"]</code></pre></div>
+
+      <h3 class="sub">Parent / child shorthand</h3>
+      <div class="code-block"><div class="label"><span>parent-child</span><button class="copy-btn">Copy</button></div><pre><code>//Tag[@condition]/..                     <span class="tk-cm"># parent</span>
+//Tag[@condition]/Tag[condition]          <span class="tk-cm"># child</span>
+//Tag[.//Tag[condition]]                  <span class="tk-cm"># search within descendants</span></code></pre></div>
+
+      <h3 class="sub">Index &amp; nested locators</h3>
+      <div class="code-block"><div class="label"><span>nested-locators</span><button class="copy-btn">Copy</button></div><pre><code>//Tag[@condition][index]        <span class="tk-cm">// nth child of its own parent</span>
+(//Tag[@condition])[index]      <span class="tk-cm">// nth match across the whole document</span>
+//Tag[tag[@condition]]          <span class="tk-cm">// nested locator (direct child match)</span>
+//Tag[.//tag[@condition]]       <span class="tk-cm">// nested locator (any-depth descendant match)</span></code></pre></div>
+    </section>
+
+    <!-- AXES -->
+    <section class="block" id="xpath-axes">
+      <h2><span class="num">09</span> XPath Axes — Full DOM Navigation</h2>
+      <p>Axes let you move in <i>any</i> direction from a known node — up, down, sideways, forward, or backward in document order.</p>
+
+      <div class="table-wrap"><table>
+        <tr><th>Axis</th><th>Moves…</th><th>Example</th></tr>
+        <tr><td><code>parent::</code></td><td>Direct parent</td><td><code>//span[text()="Starbucks coffee"]/parent::td/parent::tr/td[5]/span</code></td></tr>
+        <tr><td><code>child::</code></td><td>Direct children</td><td><code>//form/child::div/div/input</code></td></tr>
+        <tr><td><code>ancestor::</code></td><td>All ancestors, any depth up</td><td><code>//span[text()="MailChimp Services"]/ancestor::table</code></td></tr>
+        <tr><td><code>ancestor-or-self::</code></td><td>Ancestors + the node itself</td><td><code>//span[text()="MailChimp Services"]/ancestor-or-self::td</code></td></tr>
+        <tr><td><code>descendant::</code></td><td>All children, any depth down</td><td><code>//div[@class="table-responsive"]/descendant::td</code></td></tr>
+        <tr><td><code>descendant-or-self::</code></td><td>Descendants + the node itself</td><td><code>//div[@class="table-responsive"]/descendant-or-self::div</code></td></tr>
+        <tr><td><code>following::</code></td><td>Everything after, anywhere in the document</td><td><code>//tbody/tr[2]/following::td</code></td></tr>
+        <tr><td><code>following-sibling::</code></td><td>Siblings after, same parent only</td><td><code>//tbody/tr[2]/following-sibling::tr</code></td></tr>
+        <tr><td><code>preceding::</code></td><td>Everything before, anywhere in the document</td><td><code>//tbody/tr[2]/preceding::td</code></td></tr>
+        <tr><td><code>preceding-sibling::</code></td><td>Siblings before, same parent only</td><td><code>//tbody/tr[2]/preceding-sibling::tr</code></td></tr>
+        <tr><td><code>self::</code></td><td>The current node itself (mostly used to assert type)</td><td><code>//div[@class="container"]/self::div</code></td></tr>
+      </table></div>
+
+      <div class="callout tip"><b>following vs following-sibling:</b> <code>following::</code> grabs every matching node <i>after</i> the current one anywhere in the document (even in unrelated branches). <code>following-sibling::</code> restricts that search to nodes sharing the exact same parent. Same distinction applies to <code>preceding</code>/<code>preceding-sibling</code>.</div>
+    </section>
+
+    <!-- PLAYWRIGHT -->
+    <section class="block" id="playwright">
+      <h2><span class="num">10</span> Playwright Locators — The Modern Standard <span class="badge new">latest</span></h2>
+      <p>Playwright's built-in locators encode accessibility semantics directly, auto-wait, and auto-retry — reducing the need for raw CSS/XPath in most flows.</p>
+
+      <div class="table-wrap"><table>
+        <tr><th>Locator</th><th>Use for</th><th>Example</th></tr>
+        <tr><td><code>getByRole()</code></td><td>Buttons, links, checkboxes — matches ARIA role + accessible name</td><td><code>page.getByRole('button', { name: 'Sign in' })</code></td></tr>
+        <tr><td><code>getByText()</code></td><td>Visible text anywhere on the page</td><td><code>page.getByText('Add to cart')</code></td></tr>
+        <tr><td><code>getByLabel()</code></td><td>Form fields linked to a &lt;label&gt;</td><td><code>page.getByLabel('Email address')</code></td></tr>
+        <tr><td><code>getByPlaceholder()</code></td><td>Inputs identified by placeholder text</td><td><code>page.getByPlaceholder('Enter your email')</code></td></tr>
+        <tr><td><code>getByAltText()</code></td><td>Images by alt attribute</td><td><code>page.getByAltText('Company logo')</code></td></tr>
+        <tr><td><code>getByTitle()</code></td><td>Elements with a title tooltip</td><td><code>page.getByTitle('Close dialog')</code></td></tr>
+        <tr><td><code>getByTestId()</code></td><td>Dedicated <code>data-testid</code> hooks (most stable)</td><td><code>page.getByTestId('login-submit')</code></td></tr>
+        <tr><td><code>locator()</code></td><td>Raw CSS or XPath escape hatch</td><td><code>page.locator('xpath=//button[text()="Submit"]')</code></td></tr>
+      </table></div>
+
+      <h3 class="sub">Chaining, filtering &amp; scoping <span class="badge adv">advanced</span></h3>
+      <div class="code-block"><div class="label"><span>playwright-chaining</span><button class="copy-btn">Copy</button></div><pre><code><span class="tk-cm">// Scope a search inside a parent</span>
+page.locator('.product-card').getByRole('button', { name: 'Buy' });
+
+<span class="tk-cm">// Filter by inner text</span>
+page.getByRole('listitem').filter({ hasText: 'iPhone 17' });
+
+<span class="tk-cm">// Filter by a nested locator</span>
+page.getByRole('row').filter({ has: page.getByText('Out of stock') });
+
+<span class="tk-cm">// nth match (0-indexed) — use sparingly</span>
+page.getByRole('button', { name: 'Delete' }).nth(2);
+
+<span class="tk-cm">// Combine multiple conditions with CSS :has-text() extension</span>
+page.locator('button:has-text("Submit"):not([disabled])');
+
+<span class="tk-cm">// Chained XPath fallback for a text ancestor jump</span>
+page.locator('xpath=//label[text()="Email"]/following::input[1]');</code></pre></div>
+
+      <div class="callout"><b>Why this is "latest":</b> <code>getByRole</code> + accessible name matching is now the officially recommended first choice across Playwright, Testing Library, and Cypress — it tests the app the way assistive tech and real users perceive it, and survives most redesigns.</div>
+    </section>
+
+    <!-- SELENIUM -->
+    <section class="block" id="selenium">
+      <h2><span class="num">11</span> Selenium <code>By</code> Strategies</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Strategy</th><th>Java example</th></tr>
+        <tr><td><code>By.id</code></td><td><code>driver.findElement(By.id("username"))</code></td></tr>
+        <tr><td><code>By.name</code></td><td><code>driver.findElement(By.name("email"))</code></td></tr>
+        <tr><td><code>By.className</code></td><td><code>driver.findElement(By.className("btn-primary"))</code></td></tr>
+        <tr><td><code>By.tagName</code></td><td><code>driver.findElement(By.tagName("input"))</code></td></tr>
+        <tr><td><code>By.linkText</code></td><td><code>driver.findElement(By.linkText("Forgot password?"))</code></td></tr>
+        <tr><td><code>By.partialLinkText</code></td><td><code>driver.findElement(By.partialLinkText("Forgot"))</code></td></tr>
+        <tr><td><code>By.cssSelector</code></td><td><code>driver.findElement(By.cssSelector("form#login input[type='text']"))</code></td></tr>
+        <tr><td><code>By.xpath</code></td><td><code>driver.findElement(By.xpath("//button[text()='Login']"))</code></td></tr>
+      </table></div>
+      <div class="callout tip"><b>Selenium 4+:</b> the <code>RelativeLocator</code> API adds axis-like helpers — <code>withTagName("input").above(el)</code>, <code>.below()</code>, <code>.toLeftOf()</code>, <code>.toRightOf()</code>, <code>.near()</code> — a friendlier alternative to hand-writing <code>ancestor::</code>/<code>following::</code> XPath for spatial relationships.</div>
+    </section>
+
+    <!-- SHADOW DOM -->
+    <section class="block" id="shadow-dom">
+      <h2><span class="num">12</span> Shadow DOM &amp; iFrames <span class="badge adv">advanced</span></h2>
+      <p>Standard CSS/XPath cannot pierce a closed shadow root or cross an iframe boundary — you must switch context first.</p>
+      <div class="code-block"><div class="label"><span>shadow-and-iframe</span><button class="copy-btn">Copy</button></div><pre><code><span class="tk-cm">// Playwright pierces open shadow DOM automatically with normal CSS</span>
+page.locator('my-component').locator('button.confirm');
+
+<span class="tk-cm">// iFrame — get the frame first, then locate inside it</span>
+const frame = page.frameLocator('#payment-frame');
+await frame.getByLabel('Card number').fill('4242 4242 4242 4242');
+
+<span class="tk-cm">// Selenium — must switch driver context explicitly</span>
+driver.switchTo().frame("payment-frame");
+driver.findElement(By.id("cardNumber")).sendKeys("4242...");
+driver.switchTo().defaultContent(); <span class="tk-cm">// always switch back</span></code></pre></div>
+    </section>
+
+    <!-- BEST PRACTICES -->
+    <section class="block" id="best-practices">
+      <h2><span class="num">13</span> Best Practices</h2>
+      <div class="grid grid-2">
+        <div class="card"><h4>✅ Prefer semantic hooks</h4><p>Push for <code>data-testid</code> in the codebase — it's the only locator type immune to visual redesign and copy edits.</p></div>
+        <div class="card"><h4>✅ Keep XPath relative</h4><p>Always start from <code>//</code>, never from <code>/html/body/...</code>.</p></div>
+        <div class="card"><h4>✅ Normalize text comparisons</h4><p>Wrap dynamic text in <code>normalize-space()</code> to survive whitespace/line-break noise from the DOM.</p></div>
+        <div class="card"><h4>✅ Anchor to stable siblings</h4><p>When the target has no unique attribute, locate a nearby stable label/text and traverse with an axis (<code>following::</code>, <code>parent::</code>).</p></div>
+        <div class="card"><h4>✅ Scope before you search</h4><p>Locate the nearest stable container first, then search within it — shorter, faster, and less likely to collide with a similar element elsewhere on the page.</p></div>
+        <div class="card"><h4>✅ Centralize locators</h4><p>Keep them in a Page Object / Component Object, not scattered inline across test files.</p></div>
+      </div>
+    </section>
+
+    <!-- ANTI PATTERNS -->
+    <section class="block" id="anti-patterns">
+      <h2><span class="num">14</span> Anti-Patterns to Avoid</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Anti-pattern</th><th>Why it breaks</th><th>Fix instead</th></tr>
+        <tr><td><code>/html/body/div[3]/div[2]/span</code></td><td>Any layout change shifts every index</td><td>Relative XPath or CSS anchored to an id/testid</td></tr>
+        <tr><td><code>[id="auto_gen_39281"]</code></td><td>Auto-generated ids regenerate on every build/session</td><td><code>starts-with()</code>/<code>contains()</code> on the stable prefix, or ask devs for a testid</td></tr>
+        <tr><td><code>text()="Submit "</code> (trailing space)</td><td>Exact text match fails on invisible whitespace</td><td><code>normalize-space(text())="Submit"</code></td></tr>
+        <tr><td>Long chained XPath with 5+ axes</td><td>Unreadable, slow to evaluate, brittle to refactors</td><td>Add a testid upstream, or split into two shorter locator steps</td></tr>
+        <tr><td>Hardcoded <code>nth-child</code> on a dynamic list</td><td>Order changes when data changes (sorting, filtering, pagination)</td><td>Filter by the row's own unique text/attribute instead of position</td></tr>
+      </table></div>
+    </section>
+
+    <!-- SELF HEALING -->
+    <section class="block" id="self-healing">
+      <h2><span class="num">15</span> Self-Healing Locators <span class="badge new">latest trend</span></h2>
+      <p>Modern AI-assisted test platforms (Playwright's trace-based repair tooling, Testim, Healenium, mabl) generate a <b>locator set</b> per element instead of a single string — id, CSS, XPath, and text — and fall back through them at runtime if the primary one fails, then flag the drift for review.</p>
+      <div class="code-block"><div class="label"><span>locator-set-concept</span><button class="copy-btn">Copy</button></div><pre><code>{
+  "primary": "[data-testid='login-submit']",
+  "fallbacks": [
+    "//button[normalize-space(text())='Log in']",
+    "css=form#login button.btn-primary",
+    "//button[@type='submit'][1]"
+  ]
+}</code></pre></div>
+      <div class="callout"><b>Takeaway:</b> you don't need an AI platform to benefit from this idea — writing your Page Object locators with a documented fallback (a comment with the next-best selector) speeds up maintenance when the primary one breaks.</div>
+    </section>
+
+    <!-- ENTERPRISE -->
+    <section class="block" id="enterprise">
+      <h2><span class="num">16</span> Enterprise-Scale Gotchas <span class="badge adv">what the syntax docs don't tell you</span></h2>
+      <p>Everything above is correct syntax. What actually breaks suites in production is rarely the syntax — it's these recurring situations.</p>
+
+      <h3 class="sub">⚛️ Framework-generated class names (React / Angular / Vue)</h3>
+      <p>CSS-in-JS and CSS Modules produce classes like <code>css-1k2j3z9</code> or <code>_button_1x2y3</code> that regenerate on every build. Never anchor to them.</p>
+      <div class="code-block"><div class="label"><span>hashed-class-workaround</span><button class="copy-btn">Copy</button></div><pre><code><span class="tk-cm">/* Bad — hash changes every deploy */</span>
+.css-1k2j3z9 { }
+
+<span class="tk-cm">/* Better — attribute selector on a hand-authored data attribute */</span>
+[data-cy="submit-order"]
+[data-testid="submit-order"]
+
+<span class="tk-cm">/* If no testid exists yet, anchor to role/text and file a ticket for one */</span>
+page.getByRole('button', { name: 'Submit order' });</code></pre></div>
+
+      <h3 class="sub">⏳ Locators vs. synchronization (StaleElementReferenceException)</h3>
+      <p>A perfect locator still fails if the DOM node it found gets re-rendered (React re-render, Angular change detection) before you act on it. This is a <i>timing</i> problem, not a locator problem — re-locate instead of caching the element reference.</p>
+      <div class="code-block"><div class="label"><span>stale-element-pattern</span><button class="copy-btn">Copy</button></div><pre><code><span class="tk-cm">// Anti-pattern — caching a Selenium WebElement across re-renders</span>
+WebElement row = driver.findElement(By.xpath("//tr[3]"));
+click(refreshButton);
+row.click(); <span class="tk-cm">// StaleElementReferenceException</span>
+
+<span class="tk-cm">// Fix — re-locate right before the action, or use a fresh Playwright Locator</span>
+<span class="tk-cm">// (Playwright Locators are lazy — they re-query the DOM on every action automatically)</span>
+page.locator("tr:nth-child(3)").click();</code></pre></div>
+
+      <h3 class="sub">📱 Mobile &amp; native apps — Appium locators</h3>
+      <p>Web XPath/CSS knowledge doesn't fully transfer to native mobile. Appium adds platform-specific strategies on top of the same <code>By</code>/XPath model.</p>
+      <div class="table-wrap"><table>
+        <tr><th>Strategy</th><th>Platform</th><th>Example</th></tr>
+        <tr><td><code>AccessibilityId</code></td><td>iOS &amp; Android (cross-platform, most stable)</td><td><code>driver.findElement(AppiumBy.accessibilityId("login_button"))</code></td></tr>
+        <tr><td><code>UiAutomator</code></td><td>Android only</td><td><code>AppiumBy.androidUIAutomator("new UiSelector().text(\"Login\")")</code></td></tr>
+        <tr><td><code>-ios predicate string</code></td><td>iOS only</td><td><code>AppiumBy.iOSNsPredicateString("name == 'loginBtn'")</code></td></tr>
+        <tr><td><code>-ios class chain</code></td><td>iOS only, faster than XPath</td><td><code>AppiumBy.iOSClassChain("**/XCUIElementTypeButton[\`name == 'login'\`]")</code></td></tr>
+      </table></div>
+      <div class="callout warn"><b>Note:</b> XPath is officially the <i>slowest</i> Appium strategy on both platforms since it walks the entire native accessibility tree. Use it only when no other strategy can uniquely identify the element.</div>
+
+      <h3 class="sub">🎨 Canvas, SVG-heavy dashboards &amp; non-DOM widgets</h3>
+      <p>Charting libraries (D3, Highcharts, Canvas-rendered grids) often don't expose real DOM nodes per data point — there's nothing for XPath/CSS to grab. Standard locators can only reach the outer container.</p>
+      <ul>
+        <li>For SVG: target real <code>&lt;svg&gt;</code> child nodes with CSS/XPath exactly like HTML — SVG is DOM, so <code>//*[name()='svg']//*[name()='rect']</code> works (note the <code>name()</code> workaround for the SVG namespace).</li>
+        <li>For pure <code>&lt;canvas&gt;</code>: there's no DOM to query at all. Fall back to pixel/visual assertions (Percy, Applitools) or query the chart library's own data/JS API instead of the rendered pixels.</li>
+      </ul>
+
+      <h3 class="sub">🏛️ Legacy enterprise UIs (Salesforce, SAP, PeopleSoft)</h3>
+      <p>These platforms nest components inside multiple Shadow DOM layers and iframes, and reuse the same generic ids (<code>id="input1"</code>) across many components on one page. Two extra habits pay off here:</p>
+      <ul>
+        <li>Always scope your locator to the nearest labeled section/component first — never search the whole page for a generic id.</li>
+        <li>Budget time for the "find the real shadow host" step; browser DevTools' element picker is often faster than guessing the XPath by hand.</li>
+      </ul>
+
+      <h3 class="sub">📋 Locator governance for large suites (100+ contributors)</h3>
+      <p>At scale, the failure mode isn't "wrong XPath" — it's inconsistent locators across hundreds of Page Objects. What actually holds up over years:</p>
+      <ul>
+        <li><b>One naming convention for test hooks</b>, agreed with developers — e.g. always <code>data-testid</code>, never a mix of <code>data-qa</code>, <code>data-test</code>, and <code>data-cy</code> across teams.</li>
+        <li><b>Locator code review checklist:</b> no absolute XPath, no raw index without a filter, no hardcoded auto-generated id, text matches wrapped in <code>normalize-space()</code>.</li>
+        <li><b>A locator health dashboard</b> — track which locators fail most often in CI; that list tells you exactly where to request testids from developers.</li>
+        <li><b>Version the "locator contract"</b> alongside the UI — when a component library update ships, diff the DOM before assuming the suite still passes.</li>
+      </ul>
+    </section>
+
+    <!-- CHEATSHEET -->
+    <section class="block" id="cheatsheet">
+      <h2><span class="num">17</span> Cheat Sheet — Quick Reference</h2>
+      <div class="cheat-grid">
+        <div class="col">
+          <div class="code-block"><div class="label"><span>xpath-quick-ref</span><button class="copy-btn">Copy</button></div><pre><code>//tag[@attr='val']            attribute match
+//tag[contains(@a,'v')]       partial match
+//tag[starts-with(@a,'v')]    prefix match
+//tag[text()='x']             exact text
+//tag[contains(text(),'x')]   partial text
+(//tag)[n]                    nth match, whole doc
+//tag[n]                      nth match, per parent
+//tag/parent::p               go up
+//tag/following-sibling::s    next sibling
+//tag/ancestor::a             any ancestor
+//a[@x] | //b[@y]             union of two paths</code></pre></div>
+        </div>
+        <div class="col">
+          <div class="code-block"><div class="label"><span>playwright-quick-ref</span><button class="copy-btn">Copy</button></div><pre><code>getByRole('button', {name:'Save'})
+getByText('Add to cart')
+getByLabel('Email')
+getByPlaceholder('Search')
+getByTestId('login-btn')
+locator('css=div.card').filter({hasText:'x'})
+locator('xpath=//button[text()="X"]')
+frameLocator('#f').getByLabel('Card')
+.nth(0) / .first() / .last()</code></pre></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="block" id="faq">
+      <h2><span class="num">18</span> Interview Q&amp;A</h2>
+      <div class="accordion">
+        <div class="accordion-item">
+          <div class="accordion-q">Q1. What's the difference between absolute and relative XPath?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">Absolute XPath starts with a single <code>/</code> from the document root and lists every element down to the target — brittle to any DOM change. Relative XPath starts with <code>//</code> and can begin anywhere in the DOM, making it far more resilient.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q2. When would you choose XPath over CSS selectors?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">When you need to match on visible text, traverse upward to a parent/ancestor, move sideways to a sibling, or use a function like <code>contains()</code>/<code>normalize-space()</code>/<code>count()</code> — CSS alone can't express these.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q3. How do you handle an element with a dynamically changing id?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">Use <code>starts-with()</code> or <code>contains()</code> on the stable portion of the id, anchor via a nearby stable label/text with an axis, or push for a dedicated <code>data-testid</code> attribute from development.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q4. What's the difference between <code>following::</code> and <code>following-sibling::</code>?</div>
+          <div class="accordion-a"><div class="accordion-a-inner"><code>following::</code> matches every node after the current one anywhere in the document. <code>following-sibling::</code> restricts the match to nodes that share the exact same parent as the current node.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q5. Why wrap a locator in parentheses, e.g. <code>(//div[@class="item"])[1]</code>?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">Without parentheses, the index applies per-parent (nth match among its own siblings). Wrapping the whole expression in <code>()</code> before indexing selects the nth match across <i>all</i> results in the document.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q6. Does XPath 1.0 support regular expressions?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">No. <code>matches()</code> is part of XPath 2.0/3.0. Browser DevTools, Selenium's native evaluator, and most WebDriver implementations run XPath 1.0, so <code>matches()</code> will throw an error there — it only works in engines/libraries that implement XPath 2.0+.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q7. Why does Playwright recommend <code>getByRole()</code> over CSS/XPath?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">It matches elements the way assistive technology and real users perceive them (via ARIA role + accessible name), so it survives most visual and structural redesigns, encourages accessible markup, and auto-waits/auto-retries — unlike raw CSS/XPath which needs manual waits.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q8. How do you locate an element inside a Shadow DOM or an iframe?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">For an open shadow root, Playwright's normal CSS locators pierce through automatically. For an iframe, you must switch context first — <code>page.frameLocator()</code> in Playwright, or <code>driver.switchTo().frame()</code> in Selenium — before searching inside it, then switch back to the default content.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q9. What is a "self-healing" locator?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">A locator strategy where a set of candidate selectors (id, CSS, XPath, text) is stored for one element. If the primary selector stops matching, the framework automatically falls back to the next candidate and flags the drift, reducing test maintenance overhead.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q10. What's wrong with hardcoding <code>nth-child()</code> or an index on a dynamic list?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">The position of an item can change whenever the underlying data changes — sorting, filtering, pagination, or a new row being added. It's more reliable to filter by the row's own unique attribute or text than by its position.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q11. Your locator is correct but the click still throws <code>StaleElementReferenceException</code> — why?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">The element you found got removed and re-rendered by the framework (React/Angular re-render) before the action executed. This is a synchronization issue, not a locator issue — re-locate the element right before acting on it instead of caching the reference, or use Playwright's Locator object, which re-queries the DOM lazily on every action.</div></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-q">Q12. Why is XPath discouraged in Appium mobile automation?</div>
+          <div class="accordion-a"><div class="accordion-a-inner">XPath has to walk the entire native accessibility tree on both iOS and Android, making it the slowest available strategy. Prefer <code>AccessibilityId</code> (cross-platform), <code>UiAutomator</code> on Android, or <code>-ios predicate string</code>/<code>class chain</code> on iOS, and reserve XPath for elements nothing else can uniquely identify.</div></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>© 2026 Prashanth M K — <a href="https://learnwithpmk.github.io" target="_blank">Learn With PMK71</a></span>
+  <span>Free SDET &amp; QA Automation study guides</span>
+</footer>
+
+<button class="fab" id="backToTop" title="Back to top">↑</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+function setTheme(t){
+  body.setAttribute('data-theme', t);
+  themeToggle.textContent = t === 'dark' ? '☾ Dark' : '☀ Light';
+  localStorage.setItem('pmk-theme', t);
+}
+themeToggle.addEventListener('click', ()=>{
+  setTheme(body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+setTheme(localStorage.getItem('pmk-theme') || 'dark');
+
+// Progress bar + back-to-top visibility
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progress-bar').style.width = scrolled + '%';
+  backToTop.classList.toggle('show', h.scrollTop > 500);
+});
+backToTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+// Scroll-reveal animation for each section
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('reveal');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('section.block').forEach(sec => revealObserver.observe(sec));
+
+// Download entire guide as a PNG image
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener('click', async ()=>{
+  const original = downloadBtn.innerHTML;
+  downloadBtn.disabled = true;
+  downloadBtn.innerHTML = '<span class="spin">⟳</span> Rendering…';
+  const topbarEl = document.querySelector('.topbar');
+  const sidebarEl = document.getElementById('sidebar');
+  const progressEl = document.getElementById('progress-bar');
+  const prevTopbarPos = topbarEl.style.position;
+  const prevSidebarPos = sidebarEl.style.position;
+  try{
+    // Temporarily un-stick fixed/sticky elements so html2canvas doesn't duplicate them
+    topbarEl.style.position = 'relative';
+    sidebarEl.style.position = 'relative';
+    sidebarEl.style.height = 'auto';
+    progressEl.style.display = 'none';
+    backToTop.style.display = 'none';
+
+    const canvas = await html2canvas(document.body, {
+      backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg').trim() || '#0d1117',
+      useCORS: true,
+      scale: 2
+    });
+    const link = document.createElement('a');
+    link.download = 'Locator-Strategies-Guide-Prashanth-MK.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }catch(err){
+    alert('PNG export failed to render. Please try again — if this keeps happening, your browser may be blocking the html2canvas script.');
+    console.error(err);
+  }finally{
+    topbarEl.style.position = prevTopbarPos;
+    sidebarEl.style.position = prevSidebarPos;
+    sidebarEl.style.height = '';
+    progressEl.style.display = '';
+    backToTop.style.display = '';
+    downloadBtn.disabled = false;
+    downloadBtn.innerHTML = original;
+  }
+});
+
+// Mobile menu
+const sidebar = document.getElementById('sidebar');
+document.getElementById('menuBtn').addEventListener('click', ()=> sidebar.classList.toggle('open'));
+
+// Active link on scroll
+const sections = document.querySelectorAll('section.block');
+const navLinks = document.querySelectorAll('nav.sidebar a');
+window.addEventListener('scroll', ()=>{
+  let current = '';
+  sections.forEach(sec=>{
+    const rect = sec.getBoundingClientRect();
+    if(rect.top <= 100) current = sec.id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// Close mobile menu on nav click
+navLinks.forEach(a => a.addEventListener('click', ()=> sidebar.classList.remove('open')));
+
+// Copy to clipboard
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const codeEl = btn.closest('.code-block').querySelector('code');
+    const text = codeEl.innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  });
+});
+
+// Accordion
+document.querySelectorAll('.accordion-q').forEach(q=>{
+  q.addEventListener('click', ()=>{
+    q.parentElement.classList.toggle('open');
+  });
+});
+
+// Live search — filters cards/rows/accordion items and highlights matches
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', (e)=>{
+  const term = e.target.value.trim().toLowerCase();
+  const searchableBlocks = document.querySelectorAll('main section.block');
+
+  searchableBlocks.forEach(block=>{
+    if(!term){
+      block.classList.remove('hidden');
+      block.querySelectorAll('.card, tr, .accordion-item').forEach(el=>el.classList.remove('hidden'));
+      return;
+    }
+    let blockHasMatch = false;
+    const items = block.querySelectorAll('.card, tr, .accordion-item');
+    if(items.length){
+      items.forEach(el=>{
+        const match = el.innerText.toLowerCase().includes(term);
+        el.classList.toggle('hidden', !match);
+        if(match) blockHasMatch = true;
+      });
+    }
+    const blockText = block.innerText.toLowerCase();
+    if(!items.length && blockText.includes(term)) blockHasMatch = true;
+    block.classList.toggle('hidden', !blockHasMatch);
+  });
+});
+</script>
+</body>
+</html>

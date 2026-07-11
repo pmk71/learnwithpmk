@@ -14,7 +14,8 @@ learnwithpmk/
 │   ├── network-interception-guide.html
 │   ├── javascript-string-complete-reference.html
 │   ├── javascript-arrays-complete-reference.html
-│   └── javascript-object-sheet.html
+│   ├── javascript-object-sheet.html
+│   └── locator-strategies-guide.html
 └── readme.md
 ```
 
@@ -27,6 +28,7 @@ learnwithpmk/
 - JavaScript String - Complete Reference
 - JavaScript Arrays - Complete Reference
 - JavaScript Objects - Complete Reference
+- Locator Strategies - Complete Guide
 
 ## Adding a New Guide
 
