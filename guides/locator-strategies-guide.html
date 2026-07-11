@@ -67,10 +67,11 @@ body::before{
   position:sticky; top:0; z-index:900;
   display:flex; align-items:center; gap:14px;
   padding:12px 20px;
-  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  background:rgba(13,17,23,.88);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border);
 }
+[data-theme="light"] .topbar{background:rgba(247,248,250,.88);}
 .topbar .brand{
   font-weight:700; letter-spacing:.3px; font-size:15px;
   display:flex; align-items:center; gap:8px; white-space:nowrap;
@@ -106,6 +107,7 @@ body::before{
 .home-btn:hover{border-color:var(--accent-2); color:var(--accent-2); transform:translateY(-1px);}
 .menu-btn{display:none; border:1px solid var(--border); background:var(--panel-2); color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer;}
 
+.download-actions{display:flex;align-items:center;gap:8px;}
 .download-btn{
   border:1px solid var(--accent); background:linear-gradient(135deg, rgba(255,107,91,.16), rgba(247,185,85,.10));
   color:var(--accent); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px;
@@ -265,7 +267,7 @@ p{color:var(--text); font-size:14.5px;}
 table{width:100%; border-collapse:collapse; font-size:13.5px;}
 th,td{padding:10px 12px; border:1px solid var(--border); text-align:left; vertical-align:top;}
 th{background:var(--panel-2); font-weight:600; color:var(--text);}
-tr:nth-child(even) td{background:color-mix(in srgb, var(--panel) 60%, transparent);}
+tr:nth-child(even) td{background:rgba(255,255,255,.025);}
 td code, li code, p code{
   font-family:var(--font-mono); background:var(--panel-2); padding:1px 6px; border-radius:4px;
   font-size:12.8px; color:var(--accent-3); border:1px solid var(--border);
@@ -302,9 +304,41 @@ td code, li code, p code{
 .accordion-item.open .accordion-a{max-height:600px;}
 
 /* cheat sheet */
-.cheat-grid{display:grid; grid-template-columns:1fr 1fr; gap:0;}
+.cheat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%, 520px),1fr)); gap:0;}
 .cheat-grid .col{padding:0;}
 @media(max-width:800px){.cheat-grid{grid-template-columns:1fr;}}
+.cheat-sheet-export{
+  padding:28px; background:linear-gradient(135deg,rgba(255,107,91,.08),rgba(79,209,197,.08));
+  border:1px solid rgba(79,209,197,.32); border-radius:12px;
+}
+.cheat-sheet-export .export-brand{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:20px;
+  padding-bottom:16px; border-bottom:1px solid var(--border);
+}
+.export-brand .eyebrow{margin:0 0 4px;}
+.export-brand h2{margin:0; font-size:27px; line-height:1.2;}
+.export-brand .export-site{font-family:var(--font-mono); color:var(--accent-2); font-size:12px; white-space:nowrap;}
+.cheat-sheet-export .cheat-grid{gap:14px;}
+.cheat-sheet-export .code-block{margin:0; height:100%;}
+.cheat-sheet-export .code-block pre{white-space:pre-wrap; overflow:visible;}
+.cheat-sheet-export .code-block code{font-size:12.5px; line-height:1.65; white-space:pre-wrap; overflow-wrap:anywhere;}
+.cheat-intro{display:grid; grid-template-columns:1.3fr .7fr; gap:14px; margin:0 0 14px;}
+.cheat-note,.cheat-rules{border:1px solid var(--border); border-radius:8px; padding:14px 16px; background:rgba(13,17,23,.28);}
+.cheat-note p{margin:4px 0 0; color:var(--text-dim); font-size:13px;}
+.cheat-note strong{color:var(--accent-2); font-family:var(--font-mono); font-size:12px; letter-spacing:.4px;}
+.cheat-rules{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px;}
+.cheat-rule{border-radius:6px; padding:9px 10px; font-size:12px; font-family:var(--font-mono);}
+.cheat-rule.good{background:rgba(79,209,197,.12); color:var(--accent-2);}
+.cheat-rule.bad{background:rgba(255,107,91,.12); color:var(--accent);}
+.exporting .copy-btn{visibility:hidden;}
+.exporting{width:1200px; max-width:none; padding:36px;}
+.exporting .cheat-grid{grid-template-columns:1fr 1fr;}
+.exporting .code-block code{font-size:14px; line-height:1.72;}
+@media(max-width:800px){
+  .cheat-sheet-export{padding:18px;}
+  .cheat-sheet-export .export-brand{align-items:flex-start; flex-direction:column;}
+  .cheat-intro{grid-template-columns:1fr;}
+}
 
 footer{
   border-top:1px solid var(--border); margin-top:60px; padding:30px 44px 60px;
@@ -334,7 +368,9 @@ mark{background:rgba(255,107,91,.35); color:inherit; border-radius:3px;}
   <div class="brand">🎯 <span>Learn With PMK71</span><span class="tag">SDET</span></div>
   <a class="home-btn" href="../index.html">Home</a>
   <div class="search-wrap"><input id="search" type="text" placeholder="Search locators, functions, axes…"></div>
-  <button class="download-btn" id="downloadBtn">⬇ Save as PNG</button>
+  <div class="download-actions">
+    <button class="download-btn" id="downloadCheatSheetBtn">⬇ Get Cheat Sheet PNG</button>
+  </div>
   <button class="toggle-btn" id="themeToggle">☾ Dark</button>
 </div>
 
@@ -820,33 +856,95 @@ page.locator("tr:nth-child(3)").click();</code></pre></div>
     </section>
 
     <!-- CHEATSHEET -->
-    <section class="block" id="cheatsheet">
-      <h2><span class="num">17</span> Cheat Sheet — Quick Reference</h2>
+    <section class="block cheat-sheet-export" id="cheatsheet">
+      <div class="export-brand">
+        <div>
+          <div class="eyebrow">QA Automation · Quick Reference</div>
+          <h2>Locator Strategies Cheat Sheet</h2>
+        </div>
+        <div class="export-site">Prashanth M K · pmk71.github.io/learnwithpmk</div>
+      </div>
+      <div class="cheat-intro">
+        <div class="cheat-note"><strong>THE GOLDEN RULE</strong><p>Choose the locator closest to how a real user finds the element. Prefer semantics and explicit test hooks over layout or generated markup.</p></div>
+        <div class="cheat-rules" aria-label="Locator quick rules">
+          <div class="cheat-rule good">✓ Role / label / test id</div>
+          <div class="cheat-rule good">✓ Scope before filtering</div>
+          <div class="cheat-rule bad">× Generated classes</div>
+          <div class="cheat-rule bad">× Indexes on dynamic lists</div>
+        </div>
+      </div>
       <div class="cheat-grid">
-        <div class="col">
-          <div class="code-block"><div class="label"><span>xpath-quick-ref</span><button class="copy-btn">Copy</button></div><pre><code>//tag[@attr='val']            attribute match
-//tag[contains(@a,'v')]       partial match
-//tag[starts-with(@a,'v')]    prefix match
-//tag[text()='x']             exact text
-//tag[contains(text(),'x')]   partial text
-(//tag)[n]                    nth match, whole doc
-//tag[n]                      nth match, per parent
-//tag/parent::p               go up
-//tag/following-sibling::s    next sibling
-//tag/ancestor::a             any ancestor
-//a[@x] | //b[@y]             union of two paths</code></pre></div>
-        </div>
-        <div class="col">
-          <div class="code-block"><div class="label"><span>playwright-quick-ref</span><button class="copy-btn">Copy</button></div><pre><code>getByRole('button', {name:'Save'})
-getByText('Add to cart')
-getByLabel('Email')
-getByPlaceholder('Search')
-getByTestId('login-btn')
-locator('css=div.card').filter({hasText:'x'})
-locator('xpath=//button[text()="X"]')
-frameLocator('#f').getByLabel('Card')
-.nth(0) / .first() / .last()</code></pre></div>
-        </div>
+        <div class="code-block"><div class="label"><span>locator priority — prefer top to bottom</span><button class="copy-btn">Copy</button></div><pre><code>1. getByRole() / accessible name
+2. getByLabel() / getByPlaceholder()
+3. getByTestId() / data-testid
+4. Stable id or data-* attribute
+5. CSS selector, scoped to a component
+6. XPath for text or DOM traversal
+
+Avoid: generated ids, long chains, raw indexes</code></pre></div>
+        <div class="code-block"><div class="label"><span>css selectors</span><button class="copy-btn">Copy</button></div><pre><code>#login                         id
+[data-testid="submit"]         test hook
+input[name="email"]            attribute
+button.primary                  class (only if stable)
+form > button                   direct child
+.card .title                    descendant
+input[type="text"]:not(:disabled)
+li:nth-of-type(2)               position, use sparingly
+[class^="btn-"]                starts with
+[data-id*="user-"]             contains</code></pre></div>
+        <div class="code-block"><div class="label"><span>xpath essentials</span><button class="copy-btn">Copy</button></div><pre><code>//tag[@attr='value']           attribute match
+//tag[contains(@a,'value')]    partial attribute
+//tag[starts-with(@a,'value')] prefix
+//button[normalize-space()='Save']
+//tag[contains(normalize-space(),'Save')]
+(//button)[2]                   nth across the document
+//tr[.//td[normalize-space()='PMK']]
+//a[@x] | //button[@y]          union</code></pre></div>
+        <div class="code-block"><div class="label"><span>xpath axes</span><button class="copy-btn">Copy</button></div><pre><code>//label[.='Email']/following::input[1]
+//input[@id='email']/parent::div
+//button/ancestor::form
+//label[.='Email']/following-sibling::input
+//td[.='Paid']/preceding-sibling::td[1]
+//section[@aria-label='Profile']//button
+
+Use relative XPath. Never start with /html/body.</code></pre></div>
+        <div class="code-block"><div class="label"><span>playwright locators</span><button class="copy-btn">Copy</button></div><pre><code>page.getByRole('button', { name: 'Save' })
+page.getByLabel('Email').fill('a@b.com')
+page.getByText('Order confirmed', { exact: true })
+page.getByPlaceholder('Search')
+page.getByTestId('login-submit')
+page.locator('.card').filter({ hasText: 'Pro' })
+page.getByRole('row').filter({ hasText: 'PMK' })
+page.frameLocator('#payment').getByLabel('Card')
+locator.first() / last() / nth(0)</code></pre></div>
+        <div class="code-block"><div class="label"><span>selenium, frames, and shadow DOM</span><button class="copy-btn">Copy</button></div><pre><code>By.id('login')
+By.cssSelector('[data-testid="login"]')
+By.xpath("//button[normalize-space()='Save']")
+By.name('email')
+By.tagName('button')
+
+driver.switchTo().frame('payment-frame')
+driver.switchTo().defaultContent()
+
+Playwright CSS locators pierce open shadow roots.
+Closed shadow roots need an exposed test hook.</code></pre></div>
+        <div class="code-block"><div class="label"><span>stability checklist</span><button class="copy-btn">Copy</button></div><pre><code>✓ Unique in its component scope
+✓ Uses role, label, testid, or stable attribute
+✓ Describes intent, not styling
+✓ Survives copy and layout changes
+✓ Auto-waits before action
+
+✗ /html/body/div[3]/div[2]
+✗ .css-1k2j3z9
+✗ [id="auto-generated-48"]
+✗ nth-child() on dynamic data</code></pre></div>
+        <div class="code-block"><div class="label"><span>fast troubleshooting</span><button class="copy-btn">Copy</button></div><pre><code>0 matches: verify iframe, shadow root, or text spacing
+Many matches: scope to the nearest stable container
+Stale element: re-locate after UI re-render
+Timeout: wait for the UI state, not a fixed delay
+Flaky text: use normalize-space() or a semantic locator
+
+Best long-term fix: ask for data-testid.</code></pre></div>
       </div>
     </section>
 
@@ -951,12 +1049,77 @@ const revealObserver = new IntersectionObserver((entries)=>{
 }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
 document.querySelectorAll('section.block').forEach(sec => revealObserver.observe(sec));
 
-// Download entire guide as a PNG image
-const downloadBtn = document.getElementById('downloadBtn');
-downloadBtn.addEventListener('click', async ()=>{
-  const original = downloadBtn.innerHTML;
-  downloadBtn.disabled = true;
-  downloadBtn.innerHTML = '<span class="spin">⟳</span> Rendering…';
+// Export in canvas-safe pages so long guides remain sharp on every browser.
+const downloadButtons = [
+  document.getElementById('downloadPngBtn'),
+  document.getElementById('downloadJpgBtn')
+];
+
+function addExportWatermark(canvas){
+  const context = canvas.getContext('2d');
+  const padding = Math.round(canvas.width * .035);
+  const fontSize = Math.max(22, Math.round(canvas.width * .018));
+  const watermark = 'Prashanth M K | Learn With PMK71';
+
+  context.save();
+  context.font = `600 ${fontSize}px Arial, sans-serif`;
+  context.textAlign = 'right';
+  context.textBaseline = 'bottom';
+  context.fillStyle = 'rgba(13, 17, 23, .62)';
+  context.fillText(watermark, canvas.width - padding + 2, canvas.height - padding + 2);
+  context.fillStyle = 'rgba(255, 255, 255, .88)';
+  context.fillText(watermark, canvas.width - padding, canvas.height - padding);
+  context.restore();
+}
+
+async function exportCheatSheet(){
+  const button = document.getElementById('downloadCheatSheetBtn');
+  const sheet = document.getElementById('cheatsheet');
+  const original = button.innerHTML;
+
+  button.disabled = true;
+  button.textContent = 'Creating PNG…';
+  sheet.classList.add('reveal', 'exporting');
+  try{
+    if (typeof html2canvas !== 'function') {
+      throw new Error('The image export library did not load.');
+    }
+    // The sheet sits beside the sidebar. Include its left offset in the virtual
+    // viewport; otherwise a wide export is clipped at the browser's right edge.
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    const sheetBounds = sheet.getBoundingClientRect();
+    const canvas = await html2canvas(sheet, {
+      backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg').trim() || '#0d1117',
+      useCORS: true,
+      scale: 2,
+      logging: false,
+      width: sheet.scrollWidth,
+      height: sheet.scrollHeight,
+      windowWidth: Math.ceil(sheetBounds.left + sheet.scrollWidth + 40),
+      windowHeight: Math.ceil(sheetBounds.top + sheet.scrollHeight + 40)
+    });
+    addExportWatermark(canvas);
+    const link = document.createElement('a');
+    link.download = 'locator-strategies-cheat-sheet.png';
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }catch(err){
+    alert('Could not create the PNG. Please check your connection, refresh the page, and try again.');
+    console.error(err);
+  }finally{
+    sheet.classList.remove('exporting');
+    button.disabled = false;
+    button.innerHTML = original;
+  }
+}
+
+async function exportGuide(format){
+  const clickedButton = format === 'png' ? downloadButtons[0] : downloadButtons[1];
+  const original = clickedButton.innerHTML;
+  downloadButtons.forEach(button => button.disabled = true);
+  clickedButton.innerHTML = '<span class="spin">⟳</span> Rendering…';
   const topbarEl = document.querySelector('.topbar');
   const sidebarEl = document.getElementById('sidebar');
   const progressEl = document.getElementById('progress-bar');
@@ -969,18 +1132,42 @@ downloadBtn.addEventListener('click', async ()=>{
     sidebarEl.style.height = 'auto';
     progressEl.style.display = 'none';
     backToTop.style.display = 'none';
+    document.querySelectorAll('section.block').forEach(section => section.classList.add('reveal'));
 
-    const canvas = await html2canvas(document.body, {
-      backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg').trim() || '#0d1117',
-      useCORS: true,
-      scale: 2
-    });
-    const link = document.createElement('a');
-    link.download = 'Locator-Strategies-Guide-Prashanth-MK.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    if (typeof html2canvas !== 'function') {
+      throw new Error('The image export library did not load.');
+    }
+
+    const scale = 2;
+    const pageHeight = 7000;
+    const documentWidth = Math.max(document.body.scrollWidth, document.documentElement.scrollWidth);
+    const documentHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    const pageCount = Math.ceil(documentHeight / pageHeight);
+    const mimeType = format === 'png' ? 'image/png' : 'image/jpeg';
+    const extension = format === 'png' ? 'png' : 'jpg';
+
+    for (let page = 0; page < pageCount; page++) {
+      const y = page * pageHeight;
+      const height = Math.min(pageHeight, documentHeight - y);
+      const canvas = await html2canvas(document.body, {
+        backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg').trim() || '#0d1117',
+        useCORS: true,
+        scale,
+        width: documentWidth,
+        height,
+        y,
+        scrollY: -y
+      });
+      addExportWatermark(canvas);
+
+      const link = document.createElement('a');
+      const pageSuffix = pageCount > 1 ? `-page-${page + 1}-of-${pageCount}` : '';
+      link.download = `Locator-Strategies-Guide-Prashanth-MK${pageSuffix}.${extension}`;
+      link.href = canvas.toDataURL(mimeType, .95);
+      link.click();
+    }
   }catch(err){
-    alert('PNG export failed to render. Please try again — if this keeps happening, your browser may be blocking the html2canvas script.');
+    alert('Image export failed to render. Please refresh the page and try again.');
     console.error(err);
   }finally{
     topbarEl.style.position = prevTopbarPos;
@@ -988,10 +1175,12 @@ downloadBtn.addEventListener('click', async ()=>{
     sidebarEl.style.height = '';
     progressEl.style.display = '';
     backToTop.style.display = '';
-    downloadBtn.disabled = false;
-    downloadBtn.innerHTML = original;
+    downloadButtons.forEach(button => button.disabled = false);
+    clickedButton.innerHTML = original;
   }
-});
+}
+
+document.getElementById('downloadCheatSheetBtn').addEventListener('click', exportCheatSheet);
 
 // Mobile menu
 const sidebar = document.getElementById('sidebar');
