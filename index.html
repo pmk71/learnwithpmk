@@ -509,6 +509,7 @@ footer{
     </a>
     <ul class="nav-links">
       <li><a href="#guides">Guides</a></li>
+      <li><a href="#cheat-sheets">Cheat Sheets</a></li>
       <li><a href="#features">What's Covered</a></li>
       <li><a href="#about">About</a></li>
     </ul>
@@ -543,7 +544,7 @@ footer{
     </div>
 
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-n">7</div><div class="stat-l">Guides</div></div>
+      <div class="stat-item"><div class="stat-n">8</div><div class="stat-l">Learning resources</div></div>
       <div class="stat-item"><div class="stat-n">500+</div><div class="stat-l">Interview Q&amp;As</div></div>
       <div class="stat-item"><div class="stat-n">200+</div><div class="stat-l">Code Examples</div></div>
       <div class="stat-item"><div class="stat-n">Free</div><div class="stat-l">Always</div></div>
@@ -747,6 +748,38 @@ footer{
 </section>
 
 <!-- ── WHAT'S COVERED ── -->
+<section class="section" id="cheat-sheets" style="padding-top:0">
+  <div class="section-head">
+    <div class="section-label">
+      <h2>⚡ Cheat Sheets</h2>
+      <span class="pill">1 Live</span>
+    </div>
+    <span class="section-sub">Fast, practical references for daily automation work</span>
+  </div>
+
+  <div class="grid cheat-sheet-grid">
+    <a class="card cheat-sheet-card" href="./guides/playwright-cheat-sheet.html">
+      <div class="card-accent-bar"></div>
+      <span class="featured-badge">Quick Reference</span>
+      <div class="card-icon">🎭</div>
+      <div class="card-meta">
+        <span>24 Topics</span><span class="sep">·</span>
+        <span>Commands + Examples</span><span class="sep">·</span>
+        <span class="difficulty-badge intermediate">All levels</span>
+      </div>
+      <h3>Playwright — Complete Cheat Sheet</h3>
+      <p>Keep essential Playwright commands at hand: setup, locators, actions, assertions, debugging, API testing, CI/CD, and reporting.</p>
+      <div class="card-tags">
+        <span class="tag">Playwright</span>
+        <span class="tag">Automation</span>
+        <span class="tag">Quick Reference</span>
+        <span class="tag">SDET</span>
+      </div>
+      <div class="card-cta">Open cheat sheet <span class="arrow">→</span></div>
+    </a>
+  </div>
+</section>
+
 <section class="section" id="features" style="padding-top:0">
   <div class="section-head">
     <div class="section-label">
@@ -903,7 +936,7 @@ initTheme();
 // Search & Filter Guides
 const searchInput = document.getElementById('searchGuides');
 const filterTabs = document.querySelectorAll('.filter-tab');
-const cards = document.querySelectorAll('.grid > a.card, .grid > div.card');
+const cards = document.querySelectorAll('#guides .grid > a.card, #guides .grid > div.card');
 
 // Add data attributes to cards
 const cardData = {

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A practical Playwright cheat sheet for test automation.">
+<title>Playwright Cheat Sheet | Learn With PMK71</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;700;800&family=Sora:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--text:#f0f6fc;--muted:#b1bac4;--green:#3fb950;--blue:#79c0ff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;line-height:1.65}.nav{position:sticky;top:0;z-index:2;background:#0d1117e8;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav div,main{max-width:1240px;margin:auto;padding-left:24px;padding-right:24px}.nav div{height:62px;display:flex;align-items:center;justify-content:space-between}.brand{font:800 15px Sora,sans-serif;text-decoration:none;color:var(--text)}.nav-actions{display:flex;align-items:center;gap:10px}.back,.home{font-size:13px;font-weight:700;text-decoration:none}.back{color:var(--blue)}.home{padding:8px 12px;border:1px solid rgba(121,192,255,.5);border-radius:8px;color:var(--text);background:rgba(88,166,255,.1)}.home:hover,.back:hover{text-decoration:underline}main{padding-top:52px;padding-bottom:70px}.hero{display:flex;justify-content:space-between;align-items:end;gap:24px;padding-bottom:32px;margin-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.hero h1{font:800 clamp(32px,5vw,52px)/1.1 Sora,sans-serif;margin:8px 0 12px}.hero h1 span{color:var(--green)}.hero p{margin:0;color:var(--muted);max-width:700px;font-size:16px}.print{border:0;border-radius:9px;padding:12px 16px;background:var(--green);color:#06130a;font:700 14px Inter,sans-serif;cursor:pointer;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}.card h2{margin:0;padding:12px 15px;background:linear-gradient(90deg,#238636,#196c2e);font-size:14px;letter-spacing:.01em;color:#fff}.card pre{margin:0;padding:16px;background:#010409;color:#e6edf3;min-height:130px;white-space:pre-wrap;overflow:auto;font:13px/1.75 'JetBrains Mono',monospace}.footer{margin-top:34px;border:1px solid rgba(63,185,80,.35);border-radius:12px;background:linear-gradient(135deg,#3fb9501c,#58a6ff14);padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:22px}.footer h2{font:800 16px Sora,sans-serif;margin:0 0 10px}.footer ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px}.footer li+li{margin-top:6px}.note{text-align:center;color:var(--muted);font-size:13px;margin:23px 0 0}.note a{color:var(--blue)}@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.nav div,main{padding-left:16px;padding-right:16px}.nav-actions{gap:8px}.back{display:none}.hero{align-items:start;flex-direction:column}.print{width:100%}.grid,.footer{grid-template-columns:1fr}}@media print{.nav,.print{display:none}body{background:#fff;color:#111}main{max-width:none;padding:18px}.card{background:#fff;border-color:#aaa}.card pre{background:#f6f8fa;color:#111}.hero p,.footer ul,.note{color:#444}}
+</style>
+</head>
+<body>
+<header class="nav"><div><a class="brand" href="../index.html">Learn With PMK71</a><div class="nav-actions"><a class="back" href="../index.html#cheat-sheets">← All cheat sheets</a><a class="home" href="../index.html">Home</a></div></div></header>
+<main>
+<section class="hero"><div><div class="eyebrow">Quick reference · Playwright</div><h1>Playwright <span>Cheat Sheet</span></h1><p>End-to-end automation essentials — setup, locators, actions, debugging, API testing, CI/CD, and reports.</p></div><button class="print" onclick="window.print()">Print / Save as PDF</button></section>
+<section id="cards" class="grid" aria-label="Playwright cheat sheet topics"></section>
+<section class="footer"><div><h2>Best practices</h2><ul><li>Use role-based locators for resilient tests.</li><li>Avoid hard waits; use auto-waiting and web-first assertions.</li><li>Keep tests independent and idempotent.</li><li>Use Page Objects as projects grow.</li></ul></div><div><h2>Key Playwright strengths</h2><ul><li>Cross-browser and parallel execution.</li><li>Trace viewer and Inspector for debugging.</li><li>Reliable locators and auto-waiting.</li><li>Built-in API testing and network mocking.</li></ul></div></section>
+<p class="note">Learn With PMK71 · <a href="https://playwright.dev/docs/intro" target="_blank" rel="noopener noreferrer">Official Playwright documentation</a></p>
+</main>
+<script>
+const topics = [
+['1. INSTALLATION', '# Create a project\nnpm init playwright@latest\n\n# Install browsers\nnpx playwright install\nnpx playwright install chromium'],
+['2. BASIC TEST', "import { test, expect } from '@playwright/test';\n\ntest('has title', async ({ page }) => {\n  await page.goto('https://playwright.dev');\n  await expect(page).toHaveTitle(/Playwright/);\n});"],
+['3. RUN TESTS', 'npx playwright test          # all tests\n--headed                     # headed mode\n--debug                      # Inspector\n--ui                         # test runner UI\n--project=chromium           # one project\nshow-report                  # HTML report'],
+['4. LOCATORS', "page.getByRole('button', { name: 'Login' })\npage.getByText('Sign In')\npage.getByLabel('Email')\npage.getByTestId('submit-btn')\npage.locator('.css-class')\npage.locator('//div[@class=\"item\"]')"],
+['5. ACTIONS', "locator.click()\nlocator.fill('a@b.com')\nlocator.check()\nlocator.selectOption('IN')\nlocator.hover()\nlocator.setInputFiles('file.pdf')\nsource.dragTo(target)"],
+['6. ASSERTIONS', "await expect(locator).toBeVisible()\nawait expect(locator).toContainText('Hello')\nawait expect(locator).toHaveValue('Admin')\nawait expect(locator).toBeChecked()\nawait expect(locator).toHaveCount(3)\nawait expect(page).toHaveURL(/dashboard/)"],
+['7. NAVIGATION', "await page.goto('https://example.com')\nawait page.reload()\nawait page.goBack()\nawait page.goForward()\nawait page.waitForURL('/dashboard/')\nawait page.waitForLoadState('domcontentloaded')"],
+['8. WAITING', "await page.waitForSelector('text=Loaded')\nawait page.waitForResponse('**/api/data')\nawait page.waitForRequest('**/api/data')\nawait expect(locator).toBeVisible({ timeout: 5000 })\n\nPrefer auto-waiting over hard waits."],
+['9. HANDLING DIALOGS', "page.on('dialog', async dialog => {\n  console.log(dialog.message());\n  await dialog.accept(); // or dismiss()\n});"],
+['10. FRAMES', "const frame = page.frameLocator('#myframe');\nawait frame.getByRole('button').click();"],
+['11. WINDOWS / TABS', "const [newPage] = await Promise.all([\n  context.waitForEvent('page'),\n  page.getByText('Open new tab').click()\n]);\nawait newPage.waitForLoadState();"],
+['12. STORAGE STATE', "// Save after login\nawait context.storageState({ path: 'state.json' });\n\n// Reuse authenticated state\nuse: { storageState: 'state.json' }"],
+['13. FIXTURES', "import { test as base } from '@playwright/test';\n\nexport const test = base.extend({\n  loginPage: async ({ page }, use) => {\n    await use(new LoginPage(page));\n  }\n});"],
+['14. TEST CONFIGURATION', "export default defineConfig({\n  testDir: './tests', timeout: 30_000,\n  retries: 1,\n  use: { baseURL: 'https://example.com',\n    screenshot: 'only-on-failure', trace: 'on-first-retry' }\n});"],
+['15. PARAMETRIZATION', "const data = [{ user: 'admin', pass: 'admin123' }];\nfor (const { user, pass } of data) {\n  test('login', async () => { /* use user, pass */ });\n}"],
+['16. API TESTING', "const res = await request.post('/api/login', {\n  data: { user: 'admin', pass: 'admin123' }\n});\nexpect(res.ok()).toBeTruthy();\nconst json = await res.json();"],
+['17. NETWORK INTERCEPTION', "await page.route('**/api/users', route => {\n  route.fulfill({ json: [{ id: 1 }] });\n});\nawait page.route('**/*.png', route => route.abort());"],
+['18. TRACING & DEBUGGING', "npx playwright test --debug\nnpx playwright test --trace on\nnpx playwright show-trace trace.zip\nawait page.pause()\nPWDEBUG=1 npx playwright test"],
+['19. MOBILE / DEVICE EMULATION', "import { devices } from '@playwright/test';\n\nuse: {\n  ...devices['iPhone 13'],\n  viewport: { width: 390, height: 844 }\n}"],
+['20. PARALLELISM & SHARDING', "workers: 4\nfullyParallel: true\nnpx playwright test --shard=1/3\ntest.describe.configure({ mode: 'serial' })"],
+['21. ACCESSIBILITY & ENV', "// Environment variable\nconst baseURL = process.env.BASE_URL;\n\n// With @axe-core/playwright\nawait new AxeBuilder({ page }).analyze();"],
+['22. MISCELLANEOUS', "test.only('focus', async () => {})\ntest.skip('temporarily disabled', async () => {})\ntest.setTimeout(60_000)\ntest.slow()\ntest.describe('feature', () => {})"],
+['23. CI/CD (GITHUB ACTIONS)', "- run: npx playwright install --with-deps\n- run: npx playwright test\n- uses: actions/upload-artifact@v4\n  with:\n    name: playwright-report\n    path: playwright-report/"],
+['24. REPORTS & ARTIFACTS', "HTML report: npx playwright show-report\nScreenshots: configurable on failure\nVideos: configurable on failure\nTraces: --trace on\nTrace viewer: show-trace trace.zip"]
+];
+const cards = document.getElementById('cards');
+topics.forEach(([title, code]) => {
+  const card = document.createElement('article');
+  card.className = 'card';
+  const heading = document.createElement('h2');
+  heading.textContent = title;
+  const pre = document.createElement('pre');
+  pre.textContent = code;
+  card.append(heading, pre);
+  cards.append(card);
+});
+</script>
+</body>
+</html>
