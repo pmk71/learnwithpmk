@@ -28,6 +28,7 @@ learnwithpmk/
 - JavaScript String - Complete Reference
 - JavaScript Arrays - Complete Reference
 - JavaScript Objects - Complete Reference
+- JavaScript Regex & Playwright - Interactive Field Guide
 - Locator Strategies - Complete Guide
 
 ## Adding a New Guide

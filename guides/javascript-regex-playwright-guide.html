@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regex, Fully Parsed — A JavaScript & Playwright Regex Field Guide</title>
+<meta name="description" content="An interactive JavaScript regular expressions guide for Playwright: patterns, flags, groups, assertions, locators, exercises, and interview questions.">
+<meta name="author" content="Prashanth M K">
+<link rel="canonical" href="https://learnwithpmk71.com/guides/javascript-regex-playwright-guide.html">
+<style>
+:root{
+  --bg:#0f1218;
+  --bg-raised:#161b23;
+  --bg-card:#1a2029;
+  --bg-inset:#0b0e13;
+  --border:#262d3a;
+  --text:#e8e8ec;
+  --text-dim:#9aa3b2;
+  --text-faint:#5f6779;
+  --match:#ffd23f;
+  --match-dim:#8a6d1f;
+  --cyan:#5eead4;
+  --violet:#b9a3ff;
+  --red:#ff7a7a;
+  --green:#7ee787;
+  --radius:10px;
+  --mono: 'JetBrains Mono','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+html.light{
+  --bg:#f7f7f5;
+  --bg-raised:#ffffff;
+  --bg-card:#ffffff;
+  --bg-inset:#eef0ee;
+  --border:#dcdfe3;
+  --text:#1b1f27;
+  --text-dim:#4c5563;
+  --text-faint:#8890a0;
+  --match-dim:#f4d477;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.65;
+  transition:background .2s,color .2s;
+}
+h1,h2,h3,h4,.mono{font-family:var(--mono);}
+h1,h2,h3,h4{color:var(--text);font-weight:700;letter-spacing:-0.01em;}
+a{color:var(--cyan);text-decoration:none;}
+::selection{background:var(--match);color:#1a1500;}
+
+/* ---------- progress bar ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--match),var(--cyan));z-index:999;width:0%;transition:width .1s;}
+
+/* ---------- top bar ---------- */
+#topbar{
+  position:sticky;top:0;z-index:900;
+  display:flex;align-items:center;gap:14px;
+  padding:10px 18px;padding-top:13px;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+#topbar .brand{font-family:var(--mono);font-weight:700;font-size:15px;white-space:nowrap;}
+#topbar .brand span{color:var(--match);}
+.author-credit{font-size:12px;color:var(--text-dim);white-space:nowrap;}
+.author-credit strong{color:var(--text);}
+#searchWrap{position:relative;flex:1;max-width:420px;}
+#searchBox{
+  width:100%;padding:8px 12px 8px 30px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg-inset);color:var(--text);font-family:var(--mono);font-size:13px;
+}
+#searchWrap::before{content:'⌕';position:absolute;left:10px;top:6px;color:var(--text-faint);font-size:15px;}
+#searchResults{
+  position:absolute;top:36px;left:0;right:0;max-height:340px;overflow:auto;
+  background:var(--bg-raised);border:1px solid var(--border);border-radius:8px;display:none;z-index:950;
+}
+#searchResults div{padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:13px;}
+#searchResults div:hover{background:var(--bg-card);}
+#searchResults b{color:var(--match);}
+.topbtn{
+  background:var(--bg-inset);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px;font-family:var(--mono);
+}
+.topbtn:hover{border-color:var(--cyan);}
+#menuToggle{display:none;}
+
+/* ---------- layout ---------- */
+#shell{display:flex;max-width:1440px;margin:0 auto;}
+#sidebar{
+  width:270px;flex-shrink:0;position:sticky;top:52px;align-self:flex-start;
+  height:calc(100vh - 52px);overflow-y:auto;padding:18px 10px 60px 18px;
+  border-right:1px solid var(--border);
+}
+#sidebar::-webkit-scrollbar{width:6px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.navgroup{margin-bottom:2px;}
+.navlink{
+  display:block;padding:6px 10px;border-radius:6px;color:var(--text-dim);font-size:13.5px;
+  cursor:pointer;border-left:2px solid transparent;
+}
+.navlink:hover{color:var(--text);background:var(--bg-card);}
+.navlink.active{color:var(--match);background:var(--bg-card);border-left:2px solid var(--match);font-weight:600;}
+main{flex:1;min-width:0;padding:0 34px 100px 34px;}
+
+/* ---------- hero ---------- */
+#hero{padding:46px 0 30px 0;border-bottom:1px solid var(--border);margin-bottom:36px;}
+#hero h1{font-size:clamp(28px,4vw,42px);margin:0 0 10px 0;line-height:1.15;}
+#hero h1 em{font-style:normal;color:var(--match);}
+#hero p.lede{color:var(--text-dim);max-width:640px;font-size:15.5px;margin-bottom:26px;}
+#tester{
+  background:var(--bg-inset);border:1px solid var(--border);border-radius:var(--radius);padding:18px;
+}
+#tester .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+#tester label{font-family:var(--mono);font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
+#patternInput,#flagsInput,#testInput{
+  width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:var(--mono);font-size:14px;padding:9px 10px;
+}
+#flagsInput{width:90px;text-transform:lowercase;}
+.testerCol{flex:1;min-width:220px;}
+.flagsCol{width:100px;flex:none;}
+#testInput{min-height:80px;resize:vertical;}
+#testOutput{
+  margin-top:10px;padding:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;
+  font-family:var(--mono);font-size:14px;white-space:pre-wrap;word-break:break-word;min-height:40px;
+}
+#testOutput mark{background:var(--match);color:#1a1500;border-radius:3px;padding:0 1px;}
+#testMeta{margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--text-faint);}
+#testMeta.err{color:var(--red);}
+
+/* ---------- section content ---------- */
+section.topic{scroll-margin-top:70px;margin-bottom:54px;padding-top:6px;border-top:1px solid var(--border);}
+section.topic:first-of-type{border-top:none;}
+.topic-head{display:flex;align-items:baseline;gap:12px;margin-top:26px;}
+.topic-num{font-family:var(--mono);color:var(--text-faint);font-size:14px;}
+.topic-head h2{font-size:24px;margin:0;}
+.badge{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-left:6px;}
+.badge.beg{color:var(--green);border-color:var(--green);}
+.badge.int{color:var(--match);border-color:var(--match-dim);}
+.badge.adv{color:var(--red);border-color:var(--red);}
+
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:800px){.grid2{grid-template-columns:1fr;}}
+
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px;}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);}
+th{color:var(--text-faint);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+tr:hover td{background:var(--bg-card);}
+code{font-family:var(--mono);background:var(--bg-inset);padding:1px 6px;border-radius:4px;font-size:13px;color:var(--match);border:1px solid var(--border);}
+
+pre{
+  position:relative;background:var(--bg-inset);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.6;margin:10px 0;
+}
+pre .cm{color:var(--text-faint);}
+pre .kw{color:var(--violet);}
+pre .str{color:var(--green);}
+pre .rgx{color:var(--match);}
+pre .fn{color:var(--cyan);}
+.copybtn{
+  position:absolute;top:8px;right:8px;background:var(--bg-card);border:1px solid var(--border);
+  color:var(--text-dim);font-size:11px;padding:4px 9px;border-radius:6px;cursor:pointer;font-family:var(--mono);
+}
+.copybtn:hover{color:var(--match);border-color:var(--match-dim);}
+
+.ascii{font-family:var(--mono);white-space:pre;background:var(--bg-inset);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:12.5px;color:var(--text-dim);overflow-x:auto;}
+
+.note,.warn,.tip{border-radius:8px;padding:10px 14px;margin:12px 0;font-size:13.5px;border-left:3px solid;}
+.note{background:color-mix(in srgb, var(--cyan) 8%, var(--bg-card));border-color:var(--cyan);}
+.warn{background:color-mix(in srgb, var(--red) 8%, var(--bg-card));border-color:var(--red);}
+.tip{background:color-mix(in srgb, var(--match) 10%, var(--bg-card));border-color:var(--match);}
+.note b,.warn b,.tip b{font-family:var(--mono);text-transform:uppercase;font-size:11px;letter-spacing:.04em;display:block;margin-bottom:3px;}
+
+details{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;margin:8px 0;padding:0;}
+details summary{cursor:pointer;padding:10px 14px;font-size:13.5px;font-weight:600;list-style:none;display:flex;justify-content:space-between;}
+details summary::-webkit-details-marker{display:none;}
+details summary::after{content:'+';color:var(--match);font-family:var(--mono);}
+details[open] summary::after{content:'−';}
+details .body{padding:0 14px 14px 14px;font-size:13.5px;color:var(--text-dim);}
+
+.exbox{border:1px dashed var(--border);border-radius:8px;padding:12px 14px;margin:12px 0;background:var(--bg-inset);}
+.exbox b{font-family:var(--mono);color:var(--violet);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
+
+.examples{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.ex-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.ex-item .ex-head{display:flex;justify-content:space-between;padding:8px 12px;background:var(--bg-inset);font-size:12.5px;}
+.ex-item .ex-explain{padding:10px 12px;font-size:13px;color:var(--text-dim);border-top:1px solid var(--border);}
+
+.tag-beg{color:var(--green);} .tag-int{color:var(--match);} .tag-adv{color:var(--red);}
+
+#backtop{position:fixed;bottom:22px;right:22px;background:var(--bg-card);border:1px solid var(--border);color:var(--text);
+  width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;z-index:800;}
+
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.chip{font-family:var(--mono);font-size:11.5px;padding:5px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;color:var(--text-dim);}
+.chip.on{color:var(--match);border-color:var(--match-dim);}
+
+.qa{border-bottom:1px solid var(--border);padding:10px 0;}
+.qa .q{cursor:pointer;font-weight:600;font-size:14px;display:flex;gap:8px;}
+.qa .qnum{color:var(--text-faint);font-family:var(--mono);}
+.qa .a{display:none;color:var(--text-dim);font-size:13.5px;margin-top:8px;padding-left:22px;}
+.qa.open .a{display:block;}
+.qa .cat{font-size:10px;font-family:var(--mono);color:var(--cyan);border:1px solid var(--border);padding:1px 6px;border-radius:10px;margin-left:auto;}
+
+.pw-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
+.pw-card h4{margin:0 0 6px 0;font-size:15px;color:var(--cyan);}
+.pw-card p{margin:0 0 8px 0;font-size:13.5px;color:var(--text-dim);}
+
+.practice-item{border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:10px 0;}
+.practice-item .pnum{font-family:var(--mono);color:var(--text-faint);font-size:12px;}
+.practice-item .ptitle{font-weight:600;margin:4px 0 6px 0;}
+.practice-item .solbtn{font-family:var(--mono);font-size:11px;color:var(--cyan);cursor:pointer;border:1px solid var(--border);padding:3px 8px;border-radius:6px;display:inline-block;margin-top:4px;}
+.practice-item .sol{display:none;margin-top:8px;}
+.practice-item.show .sol{display:block;}
+
+footer{border-top:1px solid var(--border);padding:26px 0;color:var(--text-faint);font-size:12.5px;text-align:center;}
+
+@media(max-width:980px){
+  #sidebar{position:fixed;left:-280px;top:0;height:100vh;background:var(--bg);z-index:970;transition:left .2s;padding-top:60px;width:260px;}
+  #sidebar.open{left:0;}
+  #menuToggle{display:block;}
+  main{padding:0 16px 80px 16px;}
+  .grid2{grid-template-columns:1fr;}
+}
+@media print{
+  #topbar,#sidebar,#backtop,#progress,.copybtn,#menuToggle{display:none !important;}
+  main{padding:0;}
+  body{background:#fff;color:#000;}
+  .card,pre,.ascii,table{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="topbar">
+  <button id="menuToggle" class="topbtn">☰</button>
+  <a class="brand" href="../index.html" aria-label="Learn With PMK71 home">/ regex<span>.fully-parsed</span></a>
+  <span class="author-credit">by <strong>Prashanth M K</strong></span>
+  <div id="searchWrap">
+    <input id="searchBox" placeholder="Search topics, methods, tokens… (e.g. lookahead, exec, \b)">
+    <div id="searchResults"></div>
+  </div>
+  <button class="topbtn" id="themeToggle">☾ Dark</button>
+  <a class="topbtn" href="../index.html">Home</a>
+</div>
+
+<div id="shell">
+  <nav id="sidebar"></nav>
+  <main>
+    <section id="hero">
+      <h1>Regex, fully <em>parsed</em>.</h1>
+      <p class="lede">A single-file, offline field guide to JavaScript regular expressions — from your first <code>/[a-z]/</code> to lookbehind assertions inside a Playwright <code>getByText()</code> call. Built for QA automation engineers who need this in interviews and in real test suites.</p>
+      <div id="tester">
+        <div class="row">
+          <div class="testerCol">
+            <label>Pattern</label>
+            <input id="patternInput" class="mono" value="(\w+)@(\w+)\.com" spellcheck="false">
+          </div>
+          <div class="flagsCol">
+            <label>Flags</label>
+            <input id="flagsInput" class="mono" value="gi" spellcheck="false">
+          </div>
+        </div>
+        <label>Test string — matches highlight live</label>
+        <textarea id="testInput" spellcheck="false">Contact QA at prashanth@testmail.com or backup.lead@corpmail.com for the OTP 483920.</textarea>
+        <div id="testOutput"></div>
+        <div id="testMeta"></div>
+      </div>
+    </section>
+
+    <div id="content"></div>
+
+    <footer>Built as a single offline HTML file — no CDN, no framework, no tracking. Right-click → Save As to keep a local copy.</footer>
+  </main>
+</div>
+
+<button id="backtop">↑</button>
+
+<script>
+/* ======================================================================
+   DATA LAYER
+   Everything below is structured data. The render functions at the
+   bottom turn it into the DOM. Edit data here to extend any section.
+   ====================================================================== */
+
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* crude JS syntax painter for <pre> blocks — comments, strings, regex literals, keywords, function calls */
+function paint(code){
+  code = esc(code);
+  code = code.replace(/(\/\/.*$)/gm, '<span class="cm">$1</span>');
+  code = code.replace(/(&quot;.*?&quot;|'.*?'|`.*?`)/g, '<span class="str">$1</span>');
+  code = code.replace(/\b(const|let|var|function|return|if|else|for|while|new|true|false|null|undefined|async|await|class|try|catch|of|in|typeof)\b/g, '<span class="kw">$1</span>');
+  code = code.replace(/\b([a-zA-Z_$][\w$]*)\(/g, '<span class="fn">$1</span>(');
+  code = code.replace(/(\/(?:[^\/\n\\]|\\.)+\/[gimsuy]*)/g, m => m.length < 60 ? '<span class="rgx">'+m+'</span>' : m);
+  return code;
+}
+
+function codeBlock(code){
+  return `<pre>${paint(code)}<button class="copybtn" onclick="copyCode(this)">copy</button></pre>`;
+}
+function copyCode(btn){
+  const pre = btn.parentElement;
+  const txt = pre.innerText.replace(/copy\s*$/,'').trim();
+  navigator.clipboard.writeText(txt).then(()=>{btn.textContent='copied ✓';setTimeout(()=>btn.textContent='copy',1200);});
+}
+
+/* ---------------------------------------------------------------------
+   TOPICS — sections 1 through 23 (the conceptual core).
+   Each topic: id, num, title, level badge, blocks[]
+--------------------------------------------------------------------- */
+const topics = [
+{id:'intro',num:1,title:'Introduction to Regex',level:'beg',
+ what:`A regular expression (regex) is just a short piece of text that describes a <b>pattern</b> you want to find inside other text. Instead of listing every possible phone number, you write one pattern like <code>/\\d{3}-\\d{4}/</code> — "3 digits, then a dash, then 4 digits" — and it matches any text that has that shape.`,
+ why:`Without regex, checking text usually means writing a loop that looks at each character one at a time. Regex replaces that whole loop with one short line. As a QA engineer you'll use it to check emails, OTPs, and URLs, to clean up messy text pulled off a webpage, and to check that data "looks right" without needing to know the exact value ahead of time.`,
+ visual:`Input string\n     │\n     ▼\n┌─────────────┐\n│ Regex Engine │  ← reads the string one character at a time,\n└─────────────┘     and tries the pattern against it\n     │\n     ▼\nMatch / No match  (plus any pieces you asked it to remember)`,
+ examples:[
+  {level:'beg',code:`/cat/.test("concatenate")   // true  — "cat" is a substring`,explain:'By default, a pattern just has to appear somewhere inside the text — it does not need to match the whole thing.'},
+  {level:'beg',code:`/^cat$/.test("concatenate") // false — ^ and $ force a full match`,explain:'^ means "start of the text" and $ means "end of the text". Adding both means the whole text must match, not just part of it. Forgetting this is the single most common beginner mistake.'},
+  {level:'int',code:`"Order #4521 shipped".match(/#(\\d+)/)[1]   // "4521"`,explain:'The part in parentheses ( ) is what we actually want to keep — just the digits. The "#" is only there to help find the right spot; we throw it away.'},
+  {level:'adv',code:`/^(?=.*[A-Z])(?=.*\\d).{8,}$/.test("Passw0rd") // true`,explain:'This checks three things at once: has an uppercase letter, has a digit, and is at least 8 characters long. Don\'t worry about how it works yet — it\'s fully explained in the Lookaheads section.'},
+ ],
+ mistakes:['Assuming regex always checks the whole string — by default it only checks whether the pattern shows up somewhere inside.','Writing one huge pattern to check an entire form instead of a few small, clearly-named checks.','Not knowing that other tools/languages have slightly different regex rules — JS regex looks similar to others but isn\'t always identical.'],
+ best:['Add <code>^</code> and <code>$</code> whenever you mean "the whole string", not just "somewhere inside the string".','Leave a short comment above any tricky pattern explaining what it\'s for — regex is very hard to read again later without one.','If you\'re only checking for one fixed word or phrase, just use a plain method like <code>includes()</code> instead of regex.'],
+ interview:[{q:'Does a JS regex like `/abc/` check the whole string, or just part of it, by default?',a:'Just part of it — it looks for the pattern anywhere inside the string. Add `^` and `$` if you want it to check the whole string.'}]
+},
+{id:'why',num:2,title:'Why Regex?',level:'beg',
+ what:`Checking or pulling out text by hand usually means writing lots of nested "if" checks, and it's easy to get the edge cases wrong — an empty string, a leading zero, extra spaces at the end.`,
+ why:`Compare two ways to check "is this a valid 10-digit phone number": writing a loop that checks every character is a digit, plus a length check — versus <code>/^\\d{10}$/.test(str)</code>. The regex is one line, easy to read once you know the basics, and the pattern-matching itself is handled by the engine instead of by your own code (which might miss a case).`,
+ visual:`Manual approach            Regex approach\n───────────────            ──────────────\nfor each character:         one short pattern\n  check if it's a digit VS  describing the whole\n  keep track of position     shape you want\ncheck total length\nhandle edge cases by hand`,
+ examples:[
+  {level:'beg',code:`// manual\nfunction isDigits(s){\n  for (let i=0;i<s.length;i++){\n    if (s[i] < '0' || s[i] > '9') return false;\n  }\n  return s.length === 10;\n}`,explain:'This works, but every new rule (allow a +91 in front, allow dashes) means going back and editing this logic by hand.'},
+  {level:'beg',code:`const isDigits = s => /^\\d{10}$/.test(s);`,explain:'Same result, one line. Adding "an optional +91 in front" is a tiny edit: /^(\\+91)?\\d{10}$/.'},
+  {level:'int',code:`"  QA  Lead  ".replace(/\\s+/g,' ').trim()  // "QA Lead"`,explain:'Turning any run of spaces/tabs/newlines into a single space is a case where regex is simply less code than manually splitting and rejoining the text. Handy for cleaning up text pulled from the page.'},
+ ],
+ mistakes:['Reaching for regex when a plain string method would be simpler and clearer (like checking for one exact word).'],
+ best:['Use regex when the rule is about the *shape* of the text (digits, ranges, repeats). Use plain string methods when the rule is about *exact, fixed* text.'],
+ interview:[{q:'When would you NOT use regex, even though it could technically do the job?',a:'When you\'re checking for one exact, fixed piece of text — plain === or .includes() is clearer. Also avoid regex for nested structures like HTML or JSON — it can\'t reliably handle content that nests inside itself.'}]
+},
+{id:'engine',num:3,title:'The Regex Engine',level:'int',
+ what:`The "regex engine" is the part of JavaScript that actually reads your pattern and checks it against the text. It works through your pattern piece by piece, and if a later piece doesn't fit, it goes back and tries a different option before giving up. This going-back-and-trying-again is called <b>backtracking</b>.`,
+ why:`Knowing about backtracking explains two things you'll run into eventually: why a pattern that "looks fine" can freeze your test run (this is called catastrophic backtracking), and why a pattern sometimes matches more text than you expected.`,
+ visual:`Pattern: /a.*b/   Input: "axxbxxb"\n\nThe engine tries to grab as much as possible first (greedy):\n  a [xxbxxb] b?   → nothing left for the final 'b' → go back one char\n  a [xxbxx]  b    → 'b' found here → MATCH: "axxbxxb"\n\nEach "go back and try again" step re-checks the rest of the pattern\nagainst a shorter piece of text — that repeated re-checking is where\nslow performance can hide.`,
+ examples:[
+  {level:'int',code:`/a.*b/.exec("axxbxxb")[0]   // "axxbxxb" (greedy — longest match)`,explain:'The engine first grabs everything it can, then gives characters back one at a time until the final "b" in the pattern can be satisfied.'},
+  {level:'int',code:`/a.*?b/.exec("axxbxxb")[0]  // "axxb" (lazy — shortest match)`,explain:'Adding a ? right after * tells the engine to try the shortest match first, and only take more text if it has to.'},
+  {level:'adv',code:`// avoid this shape — it can freeze:\n/^(a+)+$/.test("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!")\n// this can take seconds or minutes to fail`,explain:'Two "+" repeats nested inside each other, over the same character, gives the engine a huge number of ways to go back and retry. On a long input that fails, this can hang the whole process. It really happens in real projects, not just in theory.'},
+ ],
+ mistakes:['Nesting repeats over the same characters (like <code>(a+)+</code> or <code>(a*)*</code>) — a common cause of the engine hanging (called ReDoS).','Assuming regex is always fast — JS regex does not guarantee fast performance in every case.'],
+ best:['Avoid repeating a group that itself contains a repeat over the same characters.','If a pattern comes from outside your code (config, user input, a UI field), test it against a long "almost matching" string before trusting it in production.'],
+ interview:[{q:'What is catastrophic backtracking and how do you avoid it?',a:'It\'s when nested repeats over the same characters give the engine huge numbers of ways to retry, freezing it on certain input. Avoid nesting repeats over the same character set, and test any pattern that comes from outside your code against tricky input first.'}]
+},
+{id:'creating',num:4,title:'Creating a Regex',level:'beg',
+ what:`There are two ways to make a pattern in JS: the <b>literal</b> way — <code>/pattern/flags</code> — and the <b>constructor</b> way — <code>new RegExp("pattern", "flags")</code>.`,
+ why:`Use the literal form when you already know the exact pattern while writing your code. Use the constructor form the moment your pattern needs to be built while the program is running — for example, building a "contains any of these tags" pattern from a list your test fetched from an API.`,
+ visual:`/abc/gi              new RegExp("abc", "gi")\n  literal    ≈ same as ≈   constructor form\n(fixed while you write it)   (can be built while running)`,
+ examples:[
+  {level:'beg',code:`const re1 = /foo/i;`,explain:'The literal form — the fastest and most common way to write a pattern you already know.'},
+  {level:'beg',code:`const re2 = new RegExp("foo", "i");`,explain:'Same result as the line above, but written as a plain string, which means it could be built dynamically instead of typed by hand.'},
+  {level:'int',code:`const tags = ["urgent","blocked","flaky"];\nconst re = new RegExp(tags.join("|"), "i");\nre.test("marked as Flaky")   // true`,explain:'A common real case: turning a list you got at runtime into an "any of these" pattern.'},
+ ],
+ mistakes:['Forgetting that inside a JS string, backslashes need to be doubled up: `"\\\\d+"` not `"\\d+"`.','Rebuilding the same pattern inside a loop instead of building it once, outside the loop.'],
+ best:['Build a pattern once, outside any loop, and reuse it — building it repeatedly costs real time.','If you\'re putting user-typed text into `new RegExp()`, escape it first (see the Escaping section) so it\'s treated as plain text, not as a pattern.'],
+ interview:[{q:'Why would you use `new RegExp()` instead of a literal?',a:'When the pattern needs to be built while the program runs — from a config file, a UI input, or a dynamic list of tags/IDs.'}]
+},
+{id:'literal',num:5,title:'Regex Literal Syntax',level:'beg',
+ what:`<code>/pattern/flags</code> — everything between the two slashes is your pattern. Any letters right after the closing slash are flags (options that change how matching works).`,
+ examples:[
+  {level:'beg',code:`/hello/.test("hello world")     // true`,explain:'No flags used: matching cares about upper/lowercase, and only the first match is used.'},
+  {level:'beg',code:`/hello/i.test("Hello World")    // true`,explain:'The "i" flag turns off case sensitivity, so "Hello" matches "hello".'},
+ ],
+ mistakes:['Using a plain `/` inside the pattern (like when matching a URL path) without escaping it as `\\/`.'],
+ best:['If your pattern has lots of literal slashes, consider the constructor form with a plain string instead — you won\'t need to escape every `/`.'],
+ interview:[]
+},
+{id:'constructor',num:6,title:'The RegExp Constructor',level:'beg',
+ what:`<code>new RegExp(pattern, flags)</code> — here, both pattern and flags are plain strings. You can also pass in an existing pattern (to copy it and change its flags).`,
+ examples:[
+  {level:'beg',code:`new RegExp("\\\\d+", "g").test("id 42")   // true`,explain:'The backslash is doubled because this is a JS string first — JS reads the string, then hands the result to the regex engine.'},
+  {level:'int',code:`const base = /error/i;\nconst withGlobal = new RegExp(base, "gi");`,explain:'Passing in an existing pattern copies its text, so you can add or change flags without retyping the pattern itself.'},
+ ],
+ mistakes:['Only single-escaping backslashes in the string form — JS reads the string first, so it needs double backslashes.'],
+ best:['When copying a pattern just to add a flag, use `new RegExp(existingPattern, "newFlags")` instead of retyping the whole pattern by hand.'],
+ interview:[]
+},
+{id:'methods',num:7,title:'Regex Methods',level:'int',
+ what:`JavaScript splits regex actions across two places: methods on the <code>RegExp</code> itself (<code>test</code>, <code>exec</code>) and methods on the <code>String</code> (<code>match</code>, <code>matchAll</code>, <code>replace</code>, <code>replaceAll</code>, <code>search</code>, <code>split</code>).`,
+ why:`Picking the right one matters. <code>test()</code> for a simple yes/no answer is much cheaper than <code>match()</code> when you don't actually need the matched text back.`,
+ visual:`RegExp.prototype          String.prototype\n─────────────────         ─────────────────\ntest(str) → true/false    str.match(re)\nexec(str) → array or null str.matchAll(re)\n                           str.replace(re, x)\n                           str.replaceAll(re, x)\n                           str.search(re) → position\n                           str.split(re)`,
+ examples:[
+  {level:'beg',code:`/\\d+/.test("id 42")            // true`,explain:'test() — the cheapest option. It just answers yes or no.'},
+  {level:'beg',code:`/\\d+/.exec("id 42")            // ["42", index: 3, input: "id 42", groups: undefined]`,explain:'exec() gives you detail about one match — what it found, and where. Call it again and again (with the g flag) to walk through every match.'},
+  {level:'int',code:`"id 42 and 7".match(/\\d+/g)    // ["42", "7"]`,explain:'match() with the g flag gives you a plain list of the matched text only — no extra detail like position.'},
+  {level:'int',code:`[...("id 42 and 7").matchAll(/\\d+/g)].map(m => m[0])  // ["42","7"]`,explain:'matchAll() gives you full detail (like groups and position) for every match at once — the modern, easier way to loop through matches instead of calling exec() over and over.'},
+  {level:'beg',code:`"Order #42".replace(/#(\\d+)/, "No.$1")   // "Order No.42"`,explain:'replace() can reuse a captured piece in the replacement text using $1, which refers back to whatever group 1 captured.'},
+  {level:'int',code:`"a1 b2 c3".replaceAll(/[a-z](\\d)/g, (m,d)=>"#"+d)   // "#1 #2 #3"`,explain:'Instead of a fixed replacement string, you can pass a function. It gets called for each match, and you return whatever text you want in its place.'},
+  {level:'beg',code:`"hello world".search(/world/)    // 6`,explain:'search() tells you where the first match starts — like indexOf(), but it understands patterns, not just fixed text.'},
+  {level:'beg',code:`"a, b,c ,  d".split(/\\s*,\\s*/)   // ["a","b","c","d"]`,explain:'split() with a pattern handles messy, inconsistent spacing around a comma in one line.'},
+ ],
+ mistakes:['Calling `match()` without the `g` flag and expecting all matches back — without `g` you only get the first match, with extra detail.','Using `exec()` inside a `while` loop without the `g` flag — it will loop forever, since it keeps returning the same first match.','Calling `replace()` when you meant `replaceAll()`, but forgetting the pattern needs the `g` flag too — otherwise only the first match gets replaced.'],
+ best:['Use `test()` for yes/no checks, `matchAll()` when you need full detail on several matches, and `exec()` in a manual loop only when you need to pause between matches.','Always add the `g` flag when using `replaceAll()` or a "replace everything" `replace()` — JS will throw an error otherwise.'],
+ interview:[
+   {q:'What is the difference between `String.match()` and `String.matchAll()`?',a:'match() with the global flag only returns the matched text as a plain list — no groups, no position. matchAll() returns full detail (groups and position) for every match, and it requires the global flag.'},
+   {q:'Why does `str.replaceAll(regex, x)` throw an error without the g flag?',a:'Because "replace all" only makes sense with a pattern that\'s allowed to match more than once. JS requires the global flag so you can\'t accidentally think you replaced everything when you only replaced the first match.'}
+ ]
+},
+{id:'charclasses',num:8,title:'Character Classes',level:'beg',
+ what:`A character class matches just <b>one</b> character, chosen from a set you define. Write it with square brackets <code>[...]</code>, or use a shortcut like <code>\\d</code> for "any digit".`,
+ visual:`[abc]     → one character that is 'a' OR 'b' OR 'c'\n[a-z]     → one character, any lowercase letter (a range)\n[^abc]    → one character that is NOT a, b, or c  (the ^ here means "not")\n.         → one character, anything except a line break\n\\d  \\D    → a digit / not a digit         (same as [0-9] / [^0-9])\n\\w  \\W    → a word character / not one     (same as [A-Za-z0-9_])\n\\s  \\S    → whitespace / not whitespace`,
+ table:{head:['Token','Matches','Same as'],rows:[
+   ['[abc]','a, b, or c','—'],
+   ['[^abc]','anything except a, b, c','—'],
+   ['[a-z]','lowercase a through z','a range'],
+   ['.','any character except a line break','—'],
+   ['\\d','a digit','[0-9]'],
+   ['\\D','anything that is not a digit','[^0-9]'],
+   ['\\w','a word character','[A-Za-z0-9_]'],
+   ['\\W','anything that is not a word character','[^A-Za-z0-9_]'],
+   ['\\s','a whitespace character','[ \\t\\n\\r\\f\\v]'],
+   ['\\S','anything that is not whitespace','—'],
+ ]},
+ examples:[
+  {level:'beg',code:`/[aeiou]/.test("sky")     // false — no vowels`,explain:'This matches one character from the set. "sky" has none of the listed vowels, so it fails.'},
+  {level:'beg',code:`/[^0-9]/.test("42")       // false — every char IS a digit, so negated class fails everywhere`,explain:'[^0-9] means "one character that is NOT a digit". Since both characters in "42" ARE digits, there\'s nothing for it to match.'},
+  {level:'int',code:`"user_42-name".match(/[\\w-]+/)[0]   // "user_42-name"`,explain:'A hyphen placed at the end of a class is just a normal character, not a range. [\\w-] means "a word character, or a literal hyphen".'},
+  {level:'adv',code:`/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/.test("qa.lead@corp.io")`,explain:'A real-world email pattern, built entirely out of character classes and repeat counts — no advanced tricks needed for the common case.'},
+ ],
+ mistakes:['Putting a `-` in the middle of a class in a way that isn\'t a valid range — e.g. `[a-\\d]` is invalid; put the `-` at the start/end of the class, or escape it.','Forgetting that `\\s` also matches newlines — this can accidentally swallow more text than you meant, especially with multi-line text from a webpage.'],
+ best:['Spell out `[a-zA-Z0-9_]` instead of `\\w` when you specifically want to exclude non-English letters — `\\w` only covers English letters by default. Add the `u` flag and `\\p{L}` if you need full Unicode letter support.'],
+ interview:[{q:'Does `\\w` match accented letters like "é"?',a:'No — by default \\w only covers English letters, digits, and underscore ([A-Za-z0-9_]). For accented or non-English letters, add the u flag and use \\p{L} instead.'}]
+},
+{id:'quantifiers',num:9,title:'Quantifiers',level:'beg',
+ what:`A quantifier controls <b>how many times</b> the thing right before it is allowed to repeat.`,
+ table:{head:['Token','Meaning'],rows:[
+   ['*','0 or more times'],['+','1 or more times'],['?','0 or 1 time (optional)'],
+   ['{n}','exactly n times'],['{n,}','n or more times'],['{n,m}','between n and m times'],
+ ]},
+ visual:`Pattern: /\\d{2,4}/   →  "between 2 and 4 digits — grab as many as you can, up to 4"\n\nInput: "id-123456"\nThe engine grabs up to 4 digits first: "1234", then stops (hit the cap).`,
+ examples:[
+  {level:'beg',code:`/colou?r/.test("color")    // true\n/colou?r/.test("colour")   // true`,explain:'? makes the letter "u" optional — this one pattern matches both the US and UK spelling.'},
+  {level:'beg',code:`/\\d{3}-\\d{4}/.test("555-0199")   // true`,explain:'{n} forces an exact number of repeats — handy for fixed-length IDs, PIN codes, or area codes.'},
+  {level:'int',code:`/a{2,4}/.exec("aaaaaa")[0]    // "aaaa" — greedy caps at 4`,explain:'{n,m} takes the biggest number it\'s allowed to (4), not the smallest (2) — that\'s the default "greedy" behavior.'},
+  {level:'adv',code:`/^\\d{6,}$/.test("483920")     // true — OTP of 6+ digits`,explain:'{n,} with no upper limit is common for things like OTPs or IDs that have a minimum length but no fixed maximum.'},
+ ],
+ mistakes:['Confusing `{n,m}` (repeat n to m times) with writing `{n}{m}` (which isn\'t the same thing at all).','Using an un-anchored `.*` when you actually meant a specific, limited number of repeats — it can quietly match way more text than intended.'],
+ best:['Use an exact `{n,m}` range instead of open-ended `*`/`+` when checking fixed-format IDs (OTPs, PIN codes), so badly-formed input gets rejected.'],
+ interview:[{q:'Is `*` greedy or lazy by default in JS regex?',a:'Greedy — it tries to match as many repeats as possible first, and only gives some back if the rest of the pattern needs it.'}]
+},
+{id:'anchors',num:10,title:'Anchors',level:'beg',
+ what:`An anchor checks a <b>position</b> in the text — not an actual character. It says "here is the start", "here is the end", or "here is a word boundary", without using up any characters itself.`,
+ table:{head:['Token','Checks for'],rows:[
+   ['^','the start of the string (or start of a line, with the m flag)'],
+   ['$','the end of the string (or end of a line, with the m flag)'],
+   ['\\b','a word boundary — the spot between a word character and a non-word character'],
+   ['\\B','anywhere that is NOT a word boundary'],
+ ]},
+ examples:[
+  {level:'beg',code:`/^Order/.test("Order #42")     // true\n/^Order/.test("My Order #42")  // false`,explain:'^ requires the match to start right at the very beginning of the string.'},
+  {level:'beg',code:`/cat\\b/.test("category")   // false\n/cat\\b/.test("the cat")    // true`,explain:'\\b stops "cat" from matching as just the start of "category" — it requires a real boundary right after "cat".'},
+  {level:'int',code:`"line1\\nline2".match(/^line\\d/gm)   // ["line1","line2"]`,explain:'With the m (multiline) flag, ^ and $ also match at the start/end of every line, not only the very start/end of the whole string.'},
+ ],
+ mistakes:['Expecting `^`/`$` to mean "start/end of a line" without the `m` flag — by default they only mean the start/end of the whole string.','Thinking `\\b` matches an actual character — it matches a position and takes up zero characters.'],
+ best:['Always anchor a validation pattern with `^...$` when you want to check the whole string, so partial matches don\'t sneak through.'],
+ interview:[{q:'Does \\b match a character or a position?',a:'A position, not a character — it checks for the boundary between a word character and a non-word character, and it doesn\'t use up any characters itself.'}]
+},
+{id:'groups',num:11,title:'Groups & Backreferences',level:'int',
+ what:`Parentheses <code>()</code> group pieces of a pattern together — useful for applying a quantifier to several tokens at once — and, by default, they also <b>remember</b> the matched text so you can use it later.`,
+ table:{head:['Syntax','Type','Notes'],rows:[
+   ['(abc)','Capturing group','The matched text is saved at match[1], match[2], and so on'],
+   ['(?:abc)','Non-capturing group','Groups things together, but doesn\'t save anything'],
+   ['(?<name>abc)','Named group','Saved text is available as match.groups.name'],
+   ['\\1 or $1','Backreference','Refers back to whatever group 1 matched (inside the pattern, or in a replacement)'],
+ ]},
+ examples:[
+  {level:'beg',code:`"2026-07-15".match(/(\\d{4})-(\\d{2})-(\\d{2})/).slice(1)   // ["2026","07","15"]`,explain:'Three separate groups pull out the year, month, and day as their own pieces.'},
+  {level:'int',code:`/(?:https?:\\/\\/)?(\\w+\\.\\w+)/.exec("https://corp.io")[1]   // "corp.io"`,explain:'The web-address prefix is grouped so the "?" can make it optional, but we don\'t need to save it — so it\'s a non-capturing group.'},
+  {level:'int',code:`"2026-07-15".match(/(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})/).groups.year   // "2026"`,explain:'Named groups make later code much easier to read — instead of remembering "group 1 is the year", you just write .groups.year.'},
+  {level:'adv',code:`/(\\w+)\\s\\1/.test("test test")    // true — a repeated word`,explain:'\\1 inside the pattern means "whatever group 1 already matched, match it again here" — useful for spotting a word that\'s accidentally repeated twice in a row.'},
+ ],
+ mistakes:['Using a plain `()` when you don\'t actually need to save the text — this just adds clutter to your results and can shift the numbering of later groups.','Losing track of group numbers once groups are nested inside each other — the count follows the order the opening parentheses appear in.'],
+ best:['Use non-capturing `(?:...)` by default when you\'re only grouping for structure. Switch to named groups `(?<name>...)` as soon as you have two or more groups, so your code stays readable.'],
+ interview:[
+  {q:'What is the difference between `(abc)` and `(?:abc)`?',a:'(abc) saves the matched text into a numbered group you can use later. (?:abc) only groups things together for structure — it doesn\'t save anything.'},
+  {q:'How do you use a named group inside the replacement text of `.replace()`?',a:'With $<name> — for example: "2026-07-15".replace(/(?<y>\\d{4})-(?<m>\\d{2})-(?<d>\\d{2})/, "$<d>/$<m>/$<y>").'}
+ ]
+},
+{id:'alternation',num:12,title:'Alternation',level:'beg',
+ what:`<code>|</code> means OR — try to match the left side; if that fails, try the right side. Wrap it in a group unless you actually want the whole pattern to branch.`,
+ examples:[
+  {level:'beg',code:`/cat|dog/.test("I have a dog")   // true`,explain:'Matches either word, anywhere in the string, with no anchors involved.'},
+  {level:'int',code:`/gray|grey/.test("favorite colour: grey")   // true`,explain:'A common use: matching two different spellings of the same word.'},
+  {level:'int',code:`/^(pending|approved|rejected)$/.test("approved")   // true`,explain:'Here the alternation is inside a group and anchored, so the whole string must be exactly one of these three words — a common way to check a status field.'},
+ ],
+ mistakes:['Forgetting that `|` applies to the whole pattern unless grouped — `/^abc|xyz$/` really means "(^abc) OR (xyz$)", not "either word, with both anchors". Group it instead: `/^(abc|xyz)$/`.'],
+ best:['Wrap your OR options in a group whenever there are anchors or repeats nearby, so it\'s clear what the OR actually applies to.'],
+ interview:[{q:'Why might `/^cat|dog$/` not do what you expect?',a:'Because | applies to the entire pattern, not just the word next to it. This actually means "(^cat) OR (dog$)" — not "cat or dog, with both ends anchored". Fix it by grouping: /^(cat|dog)$/.'}]
+},
+{id:'lookahead',num:13,title:'Lookaheads',level:'adv',
+ what:`A lookahead peeks at what comes <b>right after</b> the current spot, to check if something is or isn't there — without actually including that text in the match. <code>(?=...)</code> checks "is it there" (positive), <code>(?!...)</code> checks "is it NOT there" (negative).`,
+ visual:`price(?=\\s?USD)   on "price USD"\n\n  p-r-i-c-e   ← this part is matched normally\n           |\n           └─ the engine peeks ahead: is " USD" here? YES → check passes\n              but " USD" itself is NOT part of the actual match`,
+ examples:[
+  {level:'int',code:`"price USD".match(/price(?=\\s?USD)/)[0]   // "price" (not "price USD")`,explain:'The lookahead confirms " USD" is there, but doesn\'t include it in the result — handy when you want to match something only when a certain label follows it, without keeping that label.'},
+  {level:'adv',code:`/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$/.test("Qatest25")`,explain:'Each lookahead at the start checks one rule on its own: is there a lowercase letter, an uppercase letter, a digit? Then the final `.{8,}` checks the length. All three checks look at the same starting spot, one after another.'},
+  {level:'int',code:`"100px".match(/\\d+(?!\\D)/)`, explain:'This is a negative lookahead — it rejects a match if the given pattern comes right after. In general, (?!...) is used to say "match this, but only if it is NOT followed by that".'},
+ ],
+ mistakes:['Thinking a lookahead includes the text it checks in the actual match — it never does; it checks and moves on, but uses up zero characters.','Using several lookaheads for something a simple `&&` between two `.test()` calls would say more clearly.'],
+ best:['Stack a few lookaheads together at the start of a pattern when you need to check several unrelated rules at once — like a password needing an uppercase letter AND a digit AND a minimum length. This is the classic use case.'],
+ interview:[{q:'Does a lookahead include its checked text in the match?',a:'No. It checks whether a pattern follows the current spot, but the checked text itself is never included in the match, and it doesn\'t use up any characters.'}]
+},
+{id:'lookbehind',num:14,title:'Lookbehinds',level:'adv',
+ what:`This is the mirror of a lookahead: it peeks at what comes <b>right before</b> the current spot. <code>(?&lt;=...)</code> checks "is it there" (positive), <code>(?&lt;!...)</code> checks "is it NOT there" (negative). All modern browsers, Node, and Playwright support this.`,
+ examples:[
+  {level:'int',code:`"$4500".match(/(?<=\\$)\\d+/)[0]   // "4500"`,explain:'This checks that a "$" comes right before the digits, but the "$" itself is not included in what gets matched — great for stripping a currency symbol while pulling out a price.'},
+  {level:'adv',code:`"item price: 4500".match(/(?<!\\$)\\b\\d+\\b/)[0]   // "4500"`,explain:'This is a negative lookbehind: match digits that are NOT preceded by a "$" — useful when you need to tell a plain number apart from a price in mixed text.'},
+ ],
+ mistakes:['Assuming lookbehind isn\'t supported everywhere — it works fine in all current browsers, Node, and Playwright\'s bundled engines today, so this is rarely an issue in practice.'],
+ best:['Reach for a lookbehind when you want the match itself to skip a fixed prefix, instead of capturing the prefix and slicing it off afterward — it keeps your code simpler.'],
+ interview:[{q:'How would you pull out just the number from "$4500" without using lookbehind?',a:'Capture it directly instead: str.match(/\\$(\\d+)/)[1] — group 1 holds "4500" without the $, giving the same result as a lookbehind, just via a capturing group.'}]
+},
+{id:'flags',num:15,title:'Regex Flags',level:'beg',
+ what:`Flags go right after the closing slash and change how the whole pattern behaves.`,
+ table:{head:['Flag','Name','What it does'],rows:[
+   ['g','global','find every match, not just the first one'],
+   ['i','ignoreCase','ignore upper/lowercase differences'],
+   ['m','multiline','^ and $ also match at the start/end of each line'],
+   ['s','dotAll','. also matches newline characters'],
+   ['u','unicode','treats text as full Unicode characters; unlocks \\p{...}'],
+   ['y','sticky','only matches if it starts at exactly the right spot — won\'t search forward'],
+   ['d','hasIndices','include the start/end position of each match/group in the result'],
+ ]},
+ examples:[
+  {level:'beg',code:`"Cat CAT cat".match(/cat/gi)   // ["Cat","CAT","cat"]`,explain:'g finds every match instead of stopping at the first one; i ignores case. You can combine flags freely.'},
+  {level:'int',code:`/^\\d+$/s.test("42")   // s flag has no visible effect here, but matters once . is used across newlines`,explain:'The s flag only changes what "." matches — it does nothing here since there\'s no ".", but it becomes important once you use a wildcard on text that spans multiple lines.'},
+  {level:'adv',code:`const re = /foo/y;\nre.lastIndex = 3;\nre.test("xxxfoo")   // true — matches exactly at index 3, not by scanning`,explain:'Sticky mode is mostly used when building your own text-parsing tools: the match must start at exactly the given position, or it fails right away instead of searching further.'},
+ ],
+ mistakes:['Forgetting the `g` flag when using `matchAll()`/`replaceAll()` — both require it.','Mixing up `y` (sticky) with `g` (global) — sticky does not search forward; it only checks one exact spot.'],
+ best:['Default to `gi` for most everyday text scanning/cleaning, unless case actually matters (like matching an exact ID).'],
+ interview:[{q:'What is the difference between the g and y flags?',a:'g searches forward through the string for the next match, anywhere. y (sticky) only tries to match starting at exactly lastIndex, and fails right away if the match isn\'t exactly there.'}]
+},
+{id:'greedy',num:16,title:'Greedy vs Lazy Matching',level:'int',
+ what:`By default, repeats are <b>greedy</b> — they grab as much text as possible, and only give characters back if they have to. Adding <code>?</code> right after a repeat makes it <b>lazy</b> instead — it grabs as little as possible, and only takes more if it has to.`,
+ visual:`Input:  <b>bold</b> and <b>strong</b>\n\nGreedy   /<b>.*<\\/b>/   → matches "<b>bold</b> and <b>strong</b>"  (too much!)\nLazy     /<b>.*?<\\/b>/  → matches "<b>bold</b>"                    (stops at the first close tag)`,
+ examples:[
+  {level:'int',code:`"<b>bold</b> and <b>strong</b>".match(/<b>.*<\\/b>/)[0]`,explain:'Greedy .* grabs all the way to the LAST </b> in the string, so it accidentally spans both tags — a very common bug when reading tags/HTML off a page.'},
+  {level:'int',code:`"<b>bold</b> and <b>strong</b>".match(/<b>.*?<\\/b>/)[0]`,explain:'Lazy .*? stops as soon as it finds the FIRST </b>, giving just "<b>bold</b>" — usually what you actually wanted.'},
+ ],
+ mistakes:['Defaulting to greedy `.*` when pulling text out between two markers (tags, quotes, brackets) that can repeat — it can accidentally span past the first pair.'],
+ best:['When pulling out "everything between two markers" and that marker can appear more than once, use the lazy version, or — even better — a negated character class like `[^<]*` which is both correct and usually faster.'],
+ interview:[{q:'Why is a negated character class often better than a lazy quantifier for pulling out bounded text?',a:'A negated class like [^"]* simply can\'t go past the boundary character at all, so it\'s more precise and usually faster than .*? which still has to try expanding and checking as it goes.'}]
+},
+{id:'escaping',num:17,title:'Escaping Characters',level:'beg',
+ what:`Some characters already have a special meaning in regex (<code>. * + ? ^ $ { } ( ) | [ ] \\</code>). If you want to match one of them as a plain, literal character, put a backslash in front of it.`,
+ examples:[
+  {level:'beg',code:`/3.14/.test("3.14")    // true — but ALSO true for "3x14" since . means "any char"`,explain:'An un-escaped "." means "any character", not "a literal dot" — this is a very common bug when matching version numbers or decimals.'},
+  {level:'beg',code:`/3\\.14/.test("3x14")   // false — correctly requires a literal dot`,explain:'Adding a backslash before the dot makes it match a real, literal dot only.'},
+  {level:'int',code:`function escapeRegex(str){\n  return str.replace(/[.*+?^\${}()|[\\]\\\\]/g, "\\\\$&");\n}\nnew RegExp(escapeRegex("a.b*c")).test("a.b*c")   // true, literal match`,explain:'When you\'re building a pattern out of text you don\'t control (like user input), run it through a function like this first, so every special character is treated as plain text instead of part of the pattern.'},
+ ],
+ mistakes:['Putting text straight from a user into `new RegExp()` without escaping it first — this can break the pattern, or worse, let someone else control what it actually matches.'],
+ best:['Always escape untrusted or dynamic text before putting it into `new RegExp()`.'],
+ interview:[{q:'Why is `new RegExp(userInput)` risky without escaping first?',a:'Because userInput might contain regex special characters, which would change what the pattern actually matches — or in bad cases, could be crafted to make the engine hang. Always escape special characters first.'}]
+},
+{id:'unicode',num:18,title:'Unicode Regex',level:'adv',
+ what:`Adding the <code>u</code> flag tells JS to treat your pattern and text as full, real characters — including ones like emoji that are stored using two "units" internally — and it unlocks a handy shortcut: <code>\\p{...}</code>, for matching by Unicode category (like "any letter").`,
+ examples:[
+  {level:'int',code:`/^\\p{L}+$/u.test("Ångström")   // true`,explain:'\\p{L} matches any letter from any language, including accented ones — something plain \\w cannot do.'},
+  {level:'adv',code:`[..."a😀b"].length          // 3 (code-point aware via spread)\n"a😀b".length                // 4 (UTF-16 code units — emoji counted as 2)\n/^.$/u.test("😀")            // true — u flag makes . match one code point, not one code unit`,explain:'Without the u flag, an emoji like this one is secretly stored as two separate units, which can confuse a plain "." or character class.'},
+ ],
+ mistakes:['Matching names or free text with `\\w`/`.` and being surprised that accented letters or emoji don\'t behave as expected.'],
+ best:['Add the `u` flag by default whenever your text might include names, addresses, or any free-typed text — it barely changes anything for plain English text, and fixes correctness for everything else.'],
+ interview:[{q:'What problem does the u flag fix for emoji or accented letters?',a:'Without u, JS regex works on smaller internal text units, so some emoji end up split into two pieces and can confuse . or a character class. The u flag makes matching work on whole real characters instead, and unlocks \\p{...} for matching by category.'}]
+},
+{id:'dynamic',num:19,title:'Dynamic Regex',level:'int',
+ what:`Building a pattern while your program is running, out of variables — test data, config values, an API response — using the <code>RegExp</code> constructor.`,
+ examples:[
+  {level:'int',code:`function buildEnvUrlRegex(env){\n  return new RegExp("^https://" + env + "\\\\.corp\\\\.io/");\n}\nbuildEnvUrlRegex("staging").test("https://staging.corp.io/login")   // true`,explain:'A common Playwright case: checking the current URL matches the right shape for whichever environment (staging, prod, etc.) is running right now.'},
+  {level:'adv',code:`const allowedStatuses = ["pending","approved","rejected"];\nconst re = new RegExp(\`^(\${allowedStatuses.join("|")})$\`);\nre.test("approved")   // true`,explain:'Turning a list of allowed values (maybe from a config file) into an "is it one of these" pattern.'},
+ ],
+ mistakes:['Putting raw, untrusted text straight into the pattern without escaping it first (see the Escaping section) — this can break, or change the meaning of, the pattern.'],
+ best:['Wrap pattern-building logic in small, clearly-named functions (like the example above) instead of building patterns inline everywhere they\'re used — it\'s easier to reuse and easier to read.'],
+ interview:[]
+},
+{id:'performance',num:20,title:'Regex Performance',level:'adv',
+ what:`Most regex you'll write is plenty fast and nothing to worry about. Speed only becomes a real concern in two cases: (a) very large chunks of text scanned again and again, or (b) patterns with repeats nested inside repeats over the same characters, which can freeze the engine.`,
+ table:{head:['Good habit','Why it helps'],rows:[
+   ['Anchor when you can (`^`)','Lets the engine give up quickly instead of scanning the whole string'],
+   ['Use a negated class instead of lazy `.*?`','Avoids the extra "try again" work entirely'],
+   ['Don\'t nest repeats over the same characters','Avoids the engine freezing (ReDoS)'],
+   ['Build a pattern once, reuse it','Avoids rebuilding the same pattern over and over inside a loop'],
+   ['Use `test()` instead of `match()` for a yes/no check','Skips building result objects you don\'t need'],
+ ]},
+ examples:[
+  {level:'adv',code:`// slow / risky shape:\n/^(\\w+\\s?)*$/\n\n// safer equivalent:\n/^[\\w\\s]*$/`,explain:'The first pattern repeats a group that itself repeats over overlapping characters — this can be very slow on long text that doesn\'t match. The second says the same thing without that nested repeat.'},
+ ],
+ mistakes:['Rebuilding the same pattern inside a loop that runs once per row or per element when reading a table or list.'],
+ best:['Don\'t optimize before you need to — most regex in a test suite is nowhere near slow. Save the rewriting effort for patterns that run on large amounts of text, or text you don\'t fully control.'],
+ interview:[{q:'Give one way to make a "match between two markers" pattern both safer and faster.',a:'Use a negated character class instead of a lazy quantifier — for example /"[^"]*"/ instead of /".*?"/. It can\'t go past the boundary character at all, so it avoids the extra work entirely.'}]
+},
+{id:'debugging',num:21,title:'Regex Debugging',level:'int',
+ what:`Debugging regex means figuring out exactly which part of the pattern failed, and why. Break the pattern into smaller pieces and test each one on its own, look closely at what <code>.exec()</code> actually returns, and think of backtracking as a series of steps, not a mystery.`,
+ examples:[
+  {level:'int',code:`const re = /^(\\d{4})-(\\d{2})-(\\d{2})$/;\nconst m = re.exec("2026-7-15");\nconsole.log(m)   // null — month/day need exactly 2 digits, "7" is only 1`,explain:'When exec() gives you null, break the pattern apart: test /\\d{4}/ on its own, then /\\d{2}/ on each part of the date, to find exactly which piece is failing.'},
+  {level:'int',code:`"2026-07-15".match(/(?<y>\\d{4})-(?<m>\\d{2})-(?<d>\\d{2})/).groups\n// { y: "2026", m: "07", d: "15" }`,explain:'Named groups double as a debugging tool — printing .groups shows exactly what each part captured, which is faster to check than counting positions by hand.'},
+ ],
+ mistakes:['Trying to debug one huge pattern as a single block instead of splitting it into smaller, labeled pieces and testing each one by itself.'],
+ best:['Build a complicated pattern one small piece at a time — get each small piece working correctly on a few test cases before combining them into the full pattern.'],
+ interview:[]
+},
+{id:'mistakes',num:22,title:'Common Mistakes',level:'int',
+ what:`A quick list of the regex bugs that show up most often in real test automation code.`,
+ table:{head:['Mistake','How to fix it'],rows:[
+   ['Forgetting to anchor a check','Add ^ and $'],
+   ['A dot that should be a literal dot, in a version number or decimal','Escape it as \\.'],
+   ['Greedy .* grabbing too much between repeated markers','Use lazy .*? or a negated class'],
+   ['match() without g, expecting every match back','Use matchAll() with g, or match() with g'],
+   ['exec() in a while-loop without g','This loops forever — add g so it keeps moving forward'],
+   ['Assuming \\w covers accented letters','Add the u flag and use \\p{L}'],
+   ['Untrusted text put straight into new RegExp()','Escape special characters first'],
+   ['Repeats nested inside repeats over the same characters','Rewrite it so the engine can\'t freeze'],
+ ]},
+ examples:[],mistakes:[],best:[],interview:[]
+},
+{id:'bestpractices',num:23,title:'Best Practices',level:'int',
+ what:`A few habits that keep regex easy to maintain in a real project, not just technically correct.`,
+ table:{head:['Habit','Why it helps'],rows:[
+   ['Save tricky patterns as named constants with a comment','Regex is very hard to read again months later without an explanation'],
+   ['Use named capture groups instead of numbered ones','Makes the code that reads the result much easier to follow'],
+   ['Keep each pattern responsible for one thing','A few small, clear patterns beat one giant 200-character one'],
+   ['Keep shared patterns (email, phone, OTP) in one place','Stops slightly different copies from drifting apart across the codebase'],
+   ['Write a small test for any tricky pattern, with edge cases','Regex bugs are quiet — they don\'t throw an error, they just quietly match the wrong thing'],
+   ['Escape any text that comes from outside your code','Keeps things correct and safe'],
+ ]},
+ examples:[],mistakes:[],best:[],interview:[]
+},
+];
+
+/* ---------------------------------------------------------------------
+   CHEAT SHEET TABLES
+--------------------------------------------------------------------- */
+const cheatTables = [
+{title:'Character Classes',rows:[['[abc]','a, b, or c'],['[^abc]','not a, b, or c'],['[a-z]','range a–z'],['.','any char except newline'],['\\d / \\D','digit / non-digit'],['\\w / \\W','word char / non-word'],['\\s / \\S','whitespace / non-whitespace']]},
+{title:'Quantifiers',rows:[['*','0 or more'],['+','1 or more'],['?','0 or 1'],['{n}','exactly n'],['{n,}','n or more'],['{n,m}','n to m'],['*? +? ??','lazy versions']]},
+{title:'Anchors',rows:[['^','start of string/line'],['$','end of string/line'],['\\b','word boundary'],['\\B','not a word boundary']]},
+{title:'Groups',rows:[['(...)','capturing group'],['(?:...)','non-capturing group'],['(?<name>...)','named group'],['\\1 / $1','backreference'],['|','alternation (OR)']]},
+{title:'Lookaround',rows:[['(?=...)','positive lookahead'],['(?!...)','negative lookahead'],['(?<=...)','positive lookbehind'],['(?<!...)','negative lookbehind']]},
+{title:'Flags',rows:[['g','global — all matches'],['i','ignoreCase'],['m','multiline ^/$'],['s','dotAll — . matches \\n'],['u','unicode / \\p{}'],['y','sticky — match at lastIndex only'],['d','hasIndices']]},
+{title:'Methods',rows:[['re.test(str)','boolean'],['re.exec(str)','single match + detail'],['str.match(re)','matches (behavior depends on g)'],['str.matchAll(re)','iterator of full matches, needs g'],['str.replace(re, x)','replace (first, or all with g)'],['str.replaceAll(re, x)','replace all, needs g'],['str.search(re)','index of first match'],['str.split(re)','split by pattern']]},
+{title:'Escape Sequences',rows:[['\\.','literal dot'],['\\\\','literal backslash'],['\\/','literal slash (in / / literals)'],['\\n \\t \\r','newline, tab, carriage return'],['\\uXXXX','unicode code unit'],['\\p{L}','unicode letter (needs u flag)']]},
+];
+
+/* ---------------------------------------------------------------------
+   PLAYWRIGHT SECTION
+--------------------------------------------------------------------- */
+const playwright = [
+{title:'Cleaning UI Text',code:`const raw = await page.locator('.price-tag').innerText();\nconst clean = raw.replace(/\\s+/g, ' ').trim();\n// "  ₹  4,999.00  \\n" → "₹ 4,999.00"`,explain:'innerText() from real DOM nodes routinely carries stray whitespace/newlines from formatting — normalize before comparing.'},
+{title:'Extract Prices',code:`const text = await page.locator('.price').innerText();\nconst amount = text.match(/[\\d,]+\\.?\\d*/)[0].replace(/,/g, '');\nexpect(Number(amount)).toBeGreaterThan(0);`,explain:'Pull the numeric portion out of a currency-formatted string, strip thousands separators, then assert on the parsed number.'},
+{title:'OTP Extraction',code:`const smsBody = await getLatestSms(); // from test SMS provider\nconst otp = smsBody.match(/\\b\\d{6}\\b/)[0];\nawait page.locator('#otp-input').fill(otp);`,explain:'A bounded \\b\\d{6}\\b avoids accidentally grabbing a 6-digit substring out of a longer unrelated number in the message.'},
+{title:'Email Validation',code:`const email = await page.locator('#email').inputValue();\nexpect(email).toMatch(/^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$/);`,explain:'expect().toMatch() can take a regex directly — a quick check that the email "looks right" without needing a full, official email-format spec.'},
+{title:'Phone Validation',code:`expect(phone).toMatch(/^(\\+91[- ]?)?[6-9]\\d{9}$/);\n// optional +91 prefix, Indian mobile number shape`,explain:'Region-specific phone shapes are best kept as small, named, testable patterns rather than one "universal" regex.'},
+{title:'Dynamic Locator Validation',code:`const rows = page.locator('tr[data-row-id]');\nconst count = await rows.count();\nfor (let i=0;i<count;i++){\n  const id = await rows.nth(i).getAttribute('data-row-id');\n  expect(id).toMatch(/^row-\\d+$/);\n}`,explain:'Validating that dynamically-rendered attribute values conform to an expected ID shape across every row.'},
+{title:'URL Validation',code:`await expect(page).toHaveURL(/\\/checkout\\/(success|confirmation)\\/\\d+$/);`,explain:'toHaveURL() accepts a regex, letting you assert on a URL *shape* (dynamic order ID) instead of one brittle exact string.'},
+{title:'API Response Validation',code:`const res = await request.get('/api/orders/4521');\nconst body = await res.json();\nexpect(body.trackingId).toMatch(/^TRK-[A-Z0-9]{8}$/);`,explain:'Regex-based shape assertions on API fields catch format regressions (a backend change to ID format) that an exact-string assertion would miss entirely on the next real ID.'},
+{title:'Response Assertions (headers/body)',code:`const res = await page.waitForResponse(r => /\\/api\\/cart\\/\\d+$/.test(r.url()));\nexpect(res.headers()['content-type']).toMatch(/application\\/json/);`,explain:'Matching dynamic response URLs by pattern is essential when the ID segment changes per test run.'},
+{title:'Downloaded File Validation',code:`const download = await page.waitForEvent('download');\nexpect(download.suggestedFilename()).toMatch(/^invoice-\\d{4}-\\d{2}-\\d{2}\\.pdf$/);`,explain:'Validates a generated filename\'s date-stamped shape without hardcoding today\'s date.'},
+{title:'Screenshot Filename Validation',code:`const name = \`screenshot-\${Date.now()}.png\`;\nexpect(name).toMatch(/^screenshot-\\d{13}\\.png$/);`,explain:'Sanity-checking generated artifact names follow the expected pattern before writing them to disk in CI.'},
+{title:'Data Cleaning (list scraping)',code:`const raw = await page.locator('.tag').allInnerTexts();\nconst tags = raw.map(t => t.replace(/^#/, '').trim().toLowerCase());`,explain:'Stripping a leading "#" and normalizing case across a scraped list of tags before comparing to expected values.'},
+{title:'Text Assertions',code:`await expect(page.locator('.status')).toHaveText(/^(Shipped|Delivered)$/);`,explain:'toHaveText() with a regex asserts one of several acceptable exact states, instead of one brittle literal string.'},
+{title:'Locator Filtering with Regex',code:`const flaky = page.locator('li').filter({ hasText: /flaky|retry/i });\nawait expect(flaky).toHaveCount(0);`,explain:'.filter({hasText}) accepts a regex, letting you narrow a locator set by pattern rather than exact text.'},
+{title:'Regex with getByText()',code:`await page.getByText(/order\\s#\\d+/i).click();`,explain:'getByText() accepts a regex directly, matching a dynamically-numbered element without needing the exact order number.'},
+{title:'Regex with hasText option',code:`const row = page.locator('tr', { hasText: /^INV-\\d{5}$/ });\nawait row.locator('button.delete').click();`,explain:'Scoping a locator to the row whose text matches an invoice-ID shape, then acting within that row.'},
+{title:'Regex with toHaveText()',code:`await expect(page.locator('h1')).toHaveText(/welcome,\\s+\\w+/i);`,explain:'Asserts a dynamic greeting ("Welcome, Prashanth") without hardcoding the username.'},
+{title:'Regex with toContainText()',code:`await expect(page.locator('.banner')).toContainText(/\\d+% off/i);`,explain:'toContainText() with regex checks a substring pattern (a discount percentage) inside otherwise-changing promotional copy.'},
+{title:'Real Scenario — Bulk ID Assertion',code:`const ids = await page.locator('[data-testid^="candidate-"]').evaluateAll(\n  els => els.map(e => e.getAttribute('data-testid'))\n);\nexpect(ids.every(id => /^candidate-\\d+$/.test(id))).toBe(true);`,explain:'A real-world check: confirm every candidate row on the page has an ID in the right shape, all in one assertion — instead of checking each row one at a time.'},
+];
+
+/* ---------------------------------------------------------------------
+   INTERVIEW BANK
+--------------------------------------------------------------------- */
+const interviewBank = [
+{cat:'Basics',q:'What is a regular expression?',a:'A pattern-matching mini-language for describing sets of strings by shape, used for testing, extracting, and replacing text.'},
+{cat:'Basics',q:'Difference between a regex literal and the RegExp constructor?',a:'Literal /abc/ is parsed at load time and fixed; new RegExp("abc") takes a string, so it can be built dynamically at runtime.'},
+{cat:'Basics',q:'Is JS regex matching case-sensitive by default?',a:'Yes — add the i flag for case-insensitive matching.'},
+{cat:'Basics',q:'What does /abc/.test("xabcx") return?',a:'true — regex matches substrings anywhere unless anchored with ^ and $.'},
+{cat:'Methods',q:'test() vs exec() — when would you use each?',a:'test() returns a boolean, cheapest for yes/no checks. exec() returns full match detail (groups, index) for one match at a time, useful in manual iteration.'},
+{cat:'Methods',q:'match() vs matchAll() — what changes with the g flag?',a:'match() with g returns only matched strings, losing group detail. matchAll() (requires g) returns an iterator of full match objects including groups and index for every match.'},
+{cat:'Methods',q:'Why does replaceAll() throw without the g flag?',a:'Because "replace all" is only unambiguous with a global pattern; JS enforces this explicitly rather than silently replacing only the first match.'},
+{cat:'Methods',q:'What does search() return if there is no match?',a:'-1, similar to String.indexOf().'},
+{cat:'Methods',q:'How do you split a string on a regex that includes capturing groups?',a:'The captured pieces get mixed into the result array along with the split pieces — split() includes whatever your groups captured, not just the leftover text between matches.'},
+{cat:'Character Classes',q:'What\'s the ASCII equivalent of \\w?',a:'[A-Za-z0-9_].'},
+{cat:'Character Classes',q:'Does \\s match a newline character?',a:'Yes — \\s includes \\n, \\r, \\t, \\f, \\v and the space character.'},
+{cat:'Character Classes',q:'How do you match a literal hyphen inside a character class?',a:'Place it first or last in the class (e.g. [-a-z] or [a-z-]), or escape it (\\-), so it isn\'t read as a range operator.'},
+{cat:'Quantifiers',q:'What\'s the difference between {2,4} and {2}{4}?',a:'{2,4} means 2 to 4 repetitions of the preceding token. {2}{4} is not valid shorthand for a range — chaining quantifiers like that is invalid syntax in most contexts.'},
+{cat:'Quantifiers',q:'Is + greedy or lazy by default?',a:'Greedy — add ? after it (+?) to make it lazy.'},
+{cat:'Anchors',q:'What does \\B mean?',a:'The negation of \\b — matches a position that is NOT a word boundary.'},
+{cat:'Anchors',q:'How do ^ and $ change with the m flag?',a:'Without m they match only the very start/end of the whole string. With m, they additionally match at every line break within the string.'},
+{cat:'Groups',q:'How many capture groups does /(a(b)(c))/ have?',a:'Three — group 1 is "abc" (the outer), group 2 is "b", group 3 is "c", numbered by the position of their opening parenthesis.'},
+{cat:'Groups',q:'What is a backreference used for?',a:'Referring back to a previously captured group\'s exact matched text — either inside the pattern (\\1) to detect repeats, or in a replacement string ($1) to reuse captured text.'},
+{cat:'Groups',q:'Why prefer named groups over positional ones in a large pattern?',a:'match.groups.year tells you exactly what it is just by reading it; match[1] forces you to count parentheses to figure out what it represents.'},
+{cat:'Lookaround',q:'What is the key difference between a lookahead and a capturing group used for the same text?',a:'A lookahead asserts the text is present without including it in the overall match (zero-width); a capturing group includes the text in the match and stores it separately.'},
+{cat:'Lookaround',q:'Give a real use case for negative lookbehind.',a:'Matching a number that is NOT preceded by a currency symbol, to distinguish a raw quantity from a price in mixed text.'},
+{cat:'Lookaround',q:'Can lookbehind patterns be variable-length in JS?',a:'Yes, JS lookbehind supports variable-length patterns (unlike some older regex engines), though very complex variable-length lookbehind can still be a performance concern.'},
+{cat:'Flags',q:'What does the y (sticky) flag change about matching?',a:'Instead of scanning forward through the string for the next match, it requires the match to start exactly at lastIndex, failing immediately otherwise.'},
+{cat:'Flags',q:'Why add the u flag when matching international user input?',a:'It makes matching Unicode code-point aware (correct for characters outside the BMP like emoji) and unlocks \\p{...} Unicode property escapes for accented letters.'},
+{cat:'Performance',q:'What is catastrophic backtracking?',a:'A pathological case where nested/overlapping quantifiers create exponentially many backtracking paths for certain non-matching inputs, causing the engine to hang.'},
+{cat:'Performance',q:'How can you make a bounded-extraction pattern safer against backtracking?',a:'Replace a lazy .*? with a negated character class that excludes the closing delimiter — it structurally cannot backtrack past the boundary.'},
+{cat:'Performance',q:'Should you rebuild a RegExp inside a hot loop?',a:'No — construct it once outside the loop and reuse the compiled object; rebuilding repeatedly adds unnecessary compilation cost.'},
+{cat:'Debugging',q:'exec() returns null — what\'s your first debugging step?',a:'Isolate and test each sub-pattern piece independently against a minimal example to localize which part of the pattern is failing to match the input.'},
+{cat:'Debugging',q:'How do named groups help debugging?',a:'Printing match.groups shows exactly what each labelled part captured, which is faster to reason about than counting positional indices.'},
+{cat:'Playwright',q:'How do you assert a URL matches a dynamic pattern in Playwright?',a:'await expect(page).toHaveURL(/\\/orders\\/\\d+$/) — toHaveURL accepts a regex directly.'},
+{cat:'Playwright',q:'How does getByText() differ when given a string vs a regex?',a:'A string performs an exact (or substring, depending on options) text match; a regex performs pattern-based matching, useful when the visible text contains a dynamic portion like an order number.'},
+{cat:'Playwright',q:'How would you validate every row in a table follows an ID pattern in one assertion?',a:'Collect all matching attribute/text values with evaluateAll() or allInnerTexts(), then assert with Array.every(id => pattern.test(id)) rather than asserting per row.'},
+{cat:'Playwright',q:'Why use toContainText() with a regex instead of toHaveText() with a regex?',a:'toContainText() checks the pattern occurs somewhere within the element\'s text (good for banners/labels with surrounding dynamic copy); toHaveText() requires the full text to match the pattern.'},
+{cat:'Debugging/Output',q:'What does "abc".replace(/b/, "$&$&") produce?',a:'"abbc" — $& in the replacement string refers to the entire matched text, so it is duplicated.'},
+{cat:'Debugging/Output',q:'What does "one two three".match(/\\w+/g).length return?',a:'3 — three whitespace-separated word matches.'},
+{cat:'Debugging/Output',q:'What does /^\\s*$/.test("") return, and why does it matter?',a:'true — an empty string satisfies "zero or more whitespace characters", which is why "is this field blank/whitespace-only" checks commonly use this exact pattern.'},
+{cat:'Basics',q:'Can a regex literal span multiple lines in source code?',a:'No — a regex literal must be written on a single line; use the constructor form with a template string (or string concatenation) if you need to build a multi-part pattern across lines.'},
+{cat:'Basics',q:'What character class shorthand is the negation of \\d?',a:'\\D — matches any character that is not a digit.'},
+{cat:'Groups',q:'What happens to numbered group indices when you mix named and unnamed capturing groups?',a:'Named groups still occupy a numbered slot in match order, in addition to being accessible by name via match.groups — the numbering follows the order of opening parentheses regardless of naming.'},
+];
+
+/* ---------------------------------------------------------------------
+   PRACTICE BANK
+--------------------------------------------------------------------- */
+const practiceBank = [
+{title:'Validate a 6-digit OTP, nothing more nothing less',hint:'Anchor both ends, exact repeat count.',sol:`/^\\d{6}$/`},
+{title:'Extract all hashtags from a tweet-like string',hint:'A hashtag starts with # followed by word characters.',sol:`text.match(/#\\w+/g)`},
+{title:'Match an Indian mobile number with optional +91',hint:'First digit is 6–9, then 9 more digits, +91 prefix optional.',sol:`/^(\\+91[- ]?)?[6-9]\\d{9}$/`},
+{title:'Collapse multiple spaces/newlines/tabs into one space',hint:'\\s+ covers all whitespace types in one shot.',sol:`str.replace(/\\s+/g, ' ').trim()`},
+{title:'Extract the domain from an email address',hint:'Everything after the @ symbol.',sol:`email.match(/@(.+)$/)[1]`},
+{title:'Check a password has at least one uppercase, one digit, and is 8+ chars',hint:'Stack lookaheads at the start of the pattern.',sol:`/^(?=.*[A-Z])(?=.*\\d).{8,}$/`},
+{title:'Match a hex color code like #A1B2C3 or #abc',hint:'Support both 3-digit and 6-digit shorthand forms.',sol:`/^#([0-9a-fA-F]{3}){1,2}$/`},
+{title:'Split a CSV-ish line where fields may have surrounding spaces around commas',hint:'Split on a comma with optional surrounding whitespace.',sol:`line.split(/\\s*,\\s*/)`},
+{title:'Extract the numeric order ID from "Order #4521 confirmed"',hint:'Capture group after a literal #.',sol:`text.match(/#(\\d+)/)[1]`},
+{title:'Detect a repeated consecutive word ("the the")',hint:'Backreference to a captured word.',sol:`/\\b(\\w+)\\s+\\1\\b/i`},
+{title:'Validate a URL is https and ends in .io',hint:'Anchor start with https, end with a specific TLD.',sol:`/^https:\\/\\/.+\\.io\\/?$/`},
+{title:'Remove all HTML tags from a string of scraped innerText',hint:'A tag is < followed by non-> characters, then >.',sol:`html.replace(/<[^>]+>/g, '')`},
+{title:'Match a filename ending in .png, .jpg, or .jpeg (case-insensitive)',hint:'Alternation inside a group, anchor the end, add the i flag.',sol:`/\\.(png|jpe?g)$/i`},
+{title:'Extract all prices like $4,999.00 from a page of text',hint:'Dollar sign, then digits/commas/decimal.',sol:`text.match(/\\$[\\d,]+\\.\\d{2}/g)`},
+{title:'Check a string contains no whitespace at all',hint:'Negate the whitespace shorthand across the whole string.',sol:`/^\\S+$/`},
+{title:'Validate a date in strict YYYY-MM-DD format',hint:'Named groups make this readable for a follow-up range check.',sol:`/^(?<y>\\d{4})-(?<m>\\d{2})-(?<d>\\d{2})$/`},
+{title:'Match a word that is NOT preceded by "un" (negative lookbehind)',hint:'(?<!un) right before the word boundary.',sol:`/(?<!un)\\bhappy\\b/`},
+{title:'Extract the first sentence up to the first period, question mark, or exclamation point',hint:'Lazy match up to any of three terminators.',sol:`text.match(/^.*?[.?!]/)[0]`},
+{title:'Validate a username: letters, numbers, underscores, 3–16 chars',hint:'Character class plus a bounded quantifier, anchored.',sol:`/^\\w{3,16}$/`},
+{title:'Find every occurrence of a word regardless of case, count them',hint:'g + i flags, then read .length.',sol:`(text.match(/regex/gi) || []).length`},
+];
+
+/* ======================================================================
+   RENDER LAYER
+   ====================================================================== */
+function levelBadge(l){
+  const map = {beg:['Beginner','beg'],int:['Intermediate','int'],adv:['Advanced','adv']};
+  const [label,cls] = map[l] || map.beg;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function renderTopicBlocks(t){
+  let html = '';
+  if(t.what) html += `<div class="card"><b>What is it?</b><p style="margin:6px 0 0 0">${t.what}</p></div>`;
+  if(t.why) html += `<div class="card"><b>Why do we use it?</b><p style="margin:6px 0 0 0">${t.why}</p></div>`;
+  if(t.visual) html += `<div class="ascii">${esc(t.visual)}</div>`;
+  if(t.table){
+    html += `<table><thead><tr>${t.table.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+    t.table.rows.forEach(r=>{ html += `<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`; });
+    html += `</tbody></table>`;
+  }
+  if(t.examples && t.examples.length){
+    html += `<div class="examples">`;
+    t.examples.forEach(e=>{
+      html += `<div class="ex-item"><div class="ex-head"><span class="mono">example</span><span class="tag-${e.level}">${e.level==='beg'?'● beginner':e.level==='int'?'● intermediate':'● advanced'}</span></div>${codeBlock(e.code)}<div class="ex-explain">${e.explain}</div></div>`;
+    });
+    html += `</div>`;
+  }
+  if(t.mistakes && t.mistakes.length){
+    html += `<details><summary>⚠ Common Mistakes<span></span></summary><div class="body"><ul>${t.mistakes.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
+  }
+  if(t.best && t.best.length){
+    html += `<details><summary>✓ Best Practices<span></span></summary><div class="body"><ul>${t.best.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
+  }
+  if(t.interview && t.interview.length){
+    html += `<div class="exbox"><b>Mini Interview Check</b>` + t.interview.map(qa=>`<p style="margin:8px 0 2px 0"><b style="color:var(--text)">Q:</b> ${qa.q}</p><p style="margin:0;color:var(--text-dim)"><b style="color:var(--text)">A:</b> ${qa.a}</p>`).join('') + `</div>`;
+  }
+  return html;
+}
+
+function buildSidebar(){
+  const groups = [
+    {label:'Core Concepts', items: topics.map(t=>({id:t.id,label:`${t.num}. ${t.title}`}))},
+    {label:'Reference', items:[{id:'cheatsheet',label:'24. Cheat Sheet'},{id:'interview',label:'25. Interview Questions'},{id:'practice',label:'26. Coding Exercises'},{id:'playwright',label:'27. Playwright Regex'}]},
+  ];
+  let html = '';
+  groups.forEach(g=>{
+    html += `<div style="font-family:var(--mono);font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin:16px 10px 6px 10px;">${g.label}</div>`;
+    g.items.forEach(it=>{
+      html += `<div class="navlink" data-target="${it.id}" onclick="jump('${it.id}')">${it.label}</div>`;
+    });
+  });
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function jump(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function buildContent(){
+  let html = '';
+  topics.forEach(t=>{
+    html += `<section class="topic" id="${t.id}">
+      <div class="topic-head"><span class="topic-num">§${t.num}</span><h2>${t.title}</h2>${levelBadge(t.level)}</div>
+      ${renderTopicBlocks(t)}
+    </section>`;
+  });
+
+  // Cheat sheet
+  html += `<section class="topic" id="cheatsheet">
+    <div class="topic-head"><span class="topic-num">§24</span><h2>Regex Cheat Sheet</h2></div>
+    <p style="color:var(--text-dim)">Every token from this guide, grouped for quick lookup during an interview or a debugging session.</p>
+    <div class="grid2">`;
+  cheatTables.forEach(ct=>{
+    html += `<div class="card"><h4 style="margin:0 0 6px 0;color:var(--match)">${ct.title}</h4><table>${ct.rows.map(r=>`<tr><td><code>${esc(r[0])}</code></td><td>${r[1]}</td></tr>`).join('')}</table></div>`;
+  });
+  html += `</div></section>`;
+
+  // Interview
+  html += `<section class="topic" id="interview">
+    <div class="topic-head"><span class="topic-num">§25</span><h2>Interview Questions</h2></div>
+    <p style="color:var(--text-dim)">${interviewBank.length} questions pulled from real regex/Playwright interview loops, grouped by category. Click a question to reveal the answer.</p>
+    <div class="chip-row" id="catChips"></div>
+    <div id="qaList"></div>
+  </section>`;
+
+  // Practice
+  html += `<section class="topic" id="practice">
+    <div class="topic-head"><span class="topic-num">§26</span><h2>Coding Exercises</h2></div>
+    <p style="color:var(--text-dim)">${practiceBank.length} hands-on pattern-writing exercises. Try it yourself in the tester at the top of the page before revealing the solution.</p>
+    <div id="practiceList"></div>
+  </section>`;
+
+  // Playwright
+  html += `<section class="topic" id="playwright">
+    <div class="topic-head"><span class="topic-num">§27</span><h2>Playwright Regex — Real Automation Scenarios</h2></div>
+    <p style="color:var(--text-dim)">Regex as it actually shows up in a Playwright + TypeScript/JS test suite: locators, assertions, API responses, and data cleaning.</p>
+    <div id="pwList"></div>
+  </section>`;
+
+  document.getElementById('content').innerHTML = html;
+
+  // Interview render
+  let qaHtml = '';
+  interviewBank.forEach((qa,i)=>{
+    qaHtml += `<div class="qa" data-cat="${qa.cat}"><div class="q" onclick="this.parentElement.classList.toggle('open')"><span class="qnum">${String(i+1).padStart(2,'0')}</span><span>${qa.q}</span><span class="cat">${qa.cat}</span></div><div class="a">${qa.a}</div></div>`;
+  });
+  document.getElementById('qaList').innerHTML = qaHtml;
+  const cats = [...new Set(interviewBank.map(q=>q.cat))];
+  document.getElementById('catChips').innerHTML = `<span class="chip on" onclick="filterCat('all',this)">all</span>` + cats.map(c=>`<span class="chip" onclick="filterCat('${c}',this)">${c}</span>`).join('');
+
+  // Practice render
+  let prHtml = '';
+  practiceBank.forEach((p,i)=>{
+    prHtml += `<div class="practice-item"><div class="pnum">Exercise ${i+1}</div><div class="ptitle">${p.title}</div><div style="font-size:12.5px;color:var(--text-faint)">Hint: ${p.hint}</div><div class="solbtn" onclick="this.parentElement.classList.toggle('show')">reveal solution</div><div class="sol">${codeBlock(p.sol)}</div></div>`;
+  });
+  document.getElementById('practiceList').innerHTML = prHtml;
+
+  // Playwright render
+  let pwHtml = '';
+  playwright.forEach(p=>{
+    pwHtml += `<div class="pw-card"><h4>${p.title}</h4><p>${p.explain}</p>${codeBlock(p.code)}</div>`;
+  });
+  document.getElementById('pwList').innerHTML = pwHtml;
+}
+
+function filterCat(cat,el){
+  document.querySelectorAll('#catChips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('#qaList .qa').forEach(q=>{
+    q.style.display = (cat==='all' || q.dataset.cat===cat) ? '' : 'none';
+  });
+}
+
+/* ---------------------------------------------------------------------
+   LIVE REGEX TESTER (hero)
+--------------------------------------------------------------------- */
+function runTester(){
+  const patEl = document.getElementById('patternInput');
+  const flagEl = document.getElementById('flagsInput');
+  const testEl = document.getElementById('testInput');
+  const out = document.getElementById('testOutput');
+  const meta = document.getElementById('testMeta');
+  let re;
+  try{
+    re = new RegExp(patEl.value, flagEl.value);
+    meta.classList.remove('err');
+  }catch(e){
+    meta.classList.add('err');
+    meta.textContent = 'Invalid pattern: ' + e.message;
+    out.innerHTML = esc(testEl.value);
+    return;
+  }
+  const str = testEl.value;
+  let result = '';
+  let count = 0;
+  if(re.global){
+    let last = 0, m;
+    const re2 = new RegExp(re.source, re.flags);
+    while((m = re2.exec(str)) !== null){
+      result += esc(str.slice(last, m.index)) + '<mark>' + esc(m[0]) + '</mark>';
+      last = m.index + (m[0].length || 1);
+      re2.lastIndex = last;
+      count++;
+      if(count > 500) break;
+    }
+    result += esc(str.slice(last));
+  } else {
+    const m = re.exec(str);
+    if(m){
+      result = esc(str.slice(0,m.index)) + '<mark>' + esc(m[0]) + '</mark>' + esc(str.slice(m.index+m[0].length));
+      count = 1;
+    } else {
+      result = esc(str);
+    }
+  }
+  out.innerHTML = result || '<span style="color:var(--text-faint)">(empty test string)</span>';
+  meta.textContent = count + ' match' + (count===1?'':'es') + (re.global?' (global)':' (first only — add g to find all)');
+}
+['patternInput','flagsInput','testInput'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', runTester);
+});
+
+/* ---------------------------------------------------------------------
+   CHROME: theme, progress, scrollspy, search, back-to-top, menu
+--------------------------------------------------------------------- */
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  document.documentElement.classList.toggle('light');
+  const isLight = document.documentElement.classList.contains('light');
+  document.getElementById('themeToggle').textContent = isLight ? '☀ Light' : '☾ Dark';
+});
+
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progress').style.width = scrolled + '%';
+  document.getElementById('backtop').style.display = h.scrollTop > 500 ? 'flex' : 'none';
+});
+document.getElementById('backtop').addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+document.getElementById('menuToggle').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+function setupScrollSpy(){
+  if(typeof IntersectionObserver === 'undefined') return;
+  const sections = document.querySelectorAll('section.topic');
+  const links = document.querySelectorAll('.navlink');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const active = document.querySelector(`.navlink[data-target="${entry.target.id}"]`);
+        if(active) active.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-15% 0px -70% 0px'});
+  sections.forEach(s=>io.observe(s));
+}
+
+/* search across topic titles + interview + practice + playwright */
+function buildSearchIndex(){
+  const index = [];
+  topics.forEach(t=>index.push({id:t.id,label:t.title,type:'Topic'}));
+  index.push({id:'cheatsheet',label:'Cheat Sheet',type:'Reference'});
+  interviewBank.forEach((q)=>index.push({id:'interview',label:q.q,type:'Interview'}));
+  practiceBank.forEach((p)=>index.push({id:'practice',label:p.title,type:'Exercise'}));
+  playwright.forEach((p)=>index.push({id:'playwright',label:p.title,type:'Playwright'}));
+  return index;
+}
+const searchIndex = buildSearchIndex();
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  const box = document.getElementById('searchResults');
+  if(!q){ box.style.display='none'; return; }
+  const hits = searchIndex.filter(i=>i.label.toLowerCase().includes(q)).slice(0,12);
+  if(!hits.length){ box.innerHTML = '<div>No matches</div>'; box.style.display='block'; return; }
+  box.innerHTML = hits.map(h=>`<div onclick="jump('${h.id}');document.getElementById('searchResults').style.display='none';document.getElementById('searchBox').value='';"><b>${h.type}</b> — ${h.label}</div>`).join('');
+  box.style.display='block';
+});
+document.addEventListener('click',(e)=>{
+  if(!document.getElementById('searchWrap').contains(e.target)) document.getElementById('searchResults').style.display='none';
+});
+
+/* ---------------------------------------------------------------------
+   INIT
+--------------------------------------------------------------------- */
+buildSidebar();
+buildContent();
+runTester();
+setupScrollSpy();
+</script>
+</body>
+</html>

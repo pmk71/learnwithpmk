@@ -97,9 +97,6 @@ details summary::-webkit-details-marker{display:none}
 #main{margin-left:var(--nav-w);flex:1;padding:24px 32px 60px;max-width:1080px}
 
 /* ── PROGRESS ── */
-#prog-wrap{background:var(--bg3);border-radius:4px;height:6px;margin-bottom:6px;overflow:hidden}
-#prog-bar{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--accent2));border-radius:4px;transition:width .4s;box-shadow:0 0 8px rgba(79,63,224,.5)}
-#prog-label{font-size:.72rem;color:var(--text3);text-align:right;margin-bottom:20px}
 
 /* ── CHAPTER ── */
 .chapter{display:none}.chapter.active{display:block;animation:fadein .35s ease}
@@ -406,29 +403,10 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 
 <!-- MAIN -->
 <main id="main">
-<div id="prog-wrap"><div id="prog-bar"></div></div>
-<div id="prog-label">0 / 9 topics read</div>
-
 <div class="hero-cover">
   <h2>📘 Manual Testing — Complete Notes Guide</h2>
   <p class="hc-sub">A visual, interactive reference covering SDLC models, testing fundamentals, defect management, STLC, and interview Q&amp;A — built for QA engineers who want concepts to actually click.</p>
   <span class="hero-badge"><span class="hb-avatar">PK</span> Compiled &amp; Designed by Prashanth M K</span>
-</div>
-
-<div id="resume-card" class="card" style="margin-bottom:22px">
-  <div class="resume-meta">
-    <div><strong>Resume where you left off:</strong> <span id="resume-title"></span></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <button class="done-btn nav-btn" onclick="resumeLast()">Resume</button>
-      <button class="done-btn nav-btn secondary" onclick="resumeNextUnread()">Next unread</button>
-    </div>
-  </div>
-  <div id="resume-hint" style="margin-top:14px;font-size:.87rem;color:var(--text2)"></div>
-</div>
-
-<div id="chapter-nav" class="card" style="margin-bottom:22px">
-  <button class="done-btn nav-btn secondary" onclick="goPrevTopic()">◀ Previous Topic</button>
-  <button class="done-btn nav-btn" onclick="goNextTopic()">Next Topic ▶</button>
 </div>
 
 <div class="section">
@@ -574,7 +552,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 </div>
 </div>
 
-<button class="done-btn" onclick="markRead('ch1')">✅ Mark as Read → Next Topic</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -670,7 +647,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What happens if requirements change in Waterfall?</div><div class="a">If requirements change → design changes (defects introduced in design) → code changes (defects in coding) → more defects in testing → massive rework → increased cost. That is why requirements are frozen — to avoid this cascade of problems.</div></div>
 <div class="qa"><div class="q">Q: What is the main drawback of Waterfall?</div><div class="a">Testing happens only AFTER coding is complete. Defects in requirements and design are not tested early — they flow all the way to the testing phase and cause massive rework. Also, developers were involved in testing (no dedicated test team).</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch2a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -802,7 +778,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: Why is Spiral called Iterative and Incremental model?</div><div class="a">Iterative: Same process (req→design→code→test→release) repeats in every cycle. Incremental: Each cycle adds a new module/feature to the product — we keep incrementing the product.</div></div>
 <div class="qa"><div class="q">Q: When to use Spiral model?</div><div class="a">1) When there is dependency between modules (B depends on A). 2) When customer gives requirements in stages (not all at once).</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch2b')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH2C — V&V MODEL                                             -->
@@ -957,7 +932,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is the difference between Verification and Validation?</div><div class="a">Verification: Static testing of documents (SRS, HLD, LLD) BEFORE development. Ensures we're building the product RIGHT. Validation: Dynamic testing of actual software by executing test cases AFTER development. Ensures we built the RIGHT product. V&V ensures both.</div></div>
 <div class="qa"><div class="q">Q: Why is V&V model better than Waterfall?</div><div class="a">In Waterfall, requirements and design are NOT tested — defects in these documents flow all the way to coding and testing causing massive rework. In V&V, every stage is tested (static testing for requirements/design, dynamic testing for code). Defects are caught earliest when they are cheapest to fix.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch2c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1078,7 +1052,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 </div>
 </div>
 
-<button class="done-btn" onclick="markRead('ch2d')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1135,7 +1108,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <div class="info-card"><h4>📊 Sprint End</h4><ul><li>Regression testing</li><li>Demo support</li><li>Test summary report</li><li>Retrospective participation</li></ul></div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch2e')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH3A — WHAT & WHY TESTING                                   -->
@@ -1245,7 +1217,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is software testing? Give two definitions.</div><div class="a">Definition 1: The process of identifying the defects in the software. Definition 2: Verifying the functionality of the application against requirement specifications. Both are valid — use either in interviews.</div></div>
 <div class="qa"><div class="q">Q: Why do we need software testing?</div><div class="a">1) Every software supports business — defects break business. 2) Developers are human and make mistakes. 3) Defects found in testing cost 10x less than in production. 4) Testing builds customer confidence. 5) Regulatory compliance requires tested evidence. 6) Security — untested software may have vulnerabilities.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch3a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1321,7 +1292,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>7</td><td>Absence of Errors Fallacy</td><td>Zero bugs + wrong product = failure</td><td>Validate business needs, not just technical specs</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch3b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1426,7 +1396,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is the difference between severity and priority with an example?</div><div class="a">Severity = impact on the system (set by tester). Priority = urgency of fix (set by business). Example of Low Severity + High Priority: The company logo is broken on the homepage. Functionally the app works perfectly (low severity) but the CEO is demoing to investors in 1 hour (high priority) — fix immediately. Example of High Severity + Low Priority: App crashes if admin tries to delete a record that is 10+ years old (high severity crash) but this action happens once a year and is always done by IT manually (low priority).</div></div>
 <div class="qa"><div class="q">Q: What is a defect variance?</div><div class="a">Defect is also called "variance" — it is the difference (variance) between the expected result (as per requirements) and the actual result (what the software actually does). When expected ≠ actual, that difference is a defect/variance.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch3c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1490,7 +1459,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   </div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch3d')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH4A — BLACK BOX & WHITE BOX                                -->
@@ -1585,7 +1553,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is Black Box testing? Why is the tester unbiased?</div><div class="a">Black Box testing is testing without knowledge of internal code. The tester only knows requirements and tests from a user's perspective. The tester is unbiased because they have no preconceived notion of how the code works — they test what the software SHOULD do, not what they think the code DOES. This often finds defects that developers miss because developers subconsciously avoid testing their own assumptions.</div></div>
 <div class="qa"><div class="q">Q: What is the difference between Black Box and White Box testing?</div><div class="a">Black Box: No code knowledge, tests from user perspective based on requirements, done by Test Engineers. White Box: Full code knowledge, tests internal logic and code paths, done by developers or senior QA. Both are needed — Black Box finds functional defects, White Box finds code-level defects.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1675,7 +1642,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is the difference between Smoke and Sanity testing?</div><div class="a">Smoke: Wide, shallow test of the whole build's critical functionality after EVERY new build. Purpose: verify build is stable. If fails, build rejected. Sanity: Narrow, deep test of one specific fix or feature. Purpose: verify the fix works. Done after developer fixes a specific defect. Both are important but serve completely different purposes.</div></div>
 <div class="qa"><div class="q">Q: What happens if Smoke Testing fails?</div><div class="a">If smoke testing fails, the build is immediately REJECTED and sent back to the development team. QA does NOT proceed with further testing on an unstable build. It would waste time testing on a fundamentally broken build. Dev team fixes the critical issue, deploys a new build, and smoke testing is run again from scratch.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1753,7 +1719,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is Regression Testing? Why is it important?</div><div class="a">Regression testing is re-running previously passed test cases after any code change to ensure new changes haven't broken existing functionality. Important because: every code change (even a tiny bug fix) can accidentally break unrelated features through shared code, shared databases, or shared APIs. Without regression, a bug fix in payments might silently break order history and no one knows until a customer calls.</div></div>
 <div class="qa"><div class="q">Q: What is the difference between Regression Testing and Re-testing?</div><div class="a">Retesting: Tests the specific FAILED test case again after developer fixes it — confirms the bug is fixed. Regression: Tests the previously PASSING test cases — confirms the fix didn't break something that was working. Both happen after a bug fix: Retest first (is fix done?), then Regression (did fix break anything else?).</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1835,7 +1800,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 </div>
 </div>
 
-<button class="done-btn" onclick="markRead('ch4d')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1908,7 +1872,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>Focus</td><td>Does Module A talk correctly to Module B?</td><td>Does the whole system meet requirements?</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4e')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH4F — UAT & ACCEPTANCE                                      -->
@@ -1960,7 +1923,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <div class="step"><div class="step-n">5</div><div class="step-c"><strong>Support Sign-Off</strong><p>Provide test coverage metrics and defect status to help business make the go/no-go release decision.</p></div></div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4f')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2036,7 +1998,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <div class="stat"><span class="stat-n">P90</span><div class="stat-l">90th Percentile RT</div></div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4g')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2108,7 +2069,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   </div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4h')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH5A — TEST SCENARIO & TEST CASE                            -->
@@ -2190,7 +2150,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 </div>
 <div class="callout ci">💡 A good tester writes BOTH positive AND negative test cases. Positive tests verify features work. Negative tests verify the app doesn't break when things go wrong — which is equally important.</div>
 </div>
-<button class="done-btn" onclick="markRead('ch5a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2255,7 +2214,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>TC_FT_010</td><td>Transfer to inactive account</td><td>To: frozen account ACC-FROZEN</td><td>Error: "Beneficiary account is not active"</td><td>High</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch5b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2375,7 +2333,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <div class="info-card"><h4>🔄 Flow Scenarios</h4><ul><li>Double-click submit button</li><li>Back button after payment</li><li>Two tabs open simultaneously</li><li>Session expires mid-form</li><li>Network disconnect mid-upload</li></ul></div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch5c')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH4A — BLACK BOX & WHITE BOX TESTING                        -->
@@ -2477,7 +2434,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is Black Box testing? What are other names for it?</div><div class="a">Black Box testing is testing an application without knowledge of its internal code. The tester provides inputs and verifies outputs against requirements. Other names: Functional testing, specification-based testing, behavioural testing. Most manual testing is black box testing.</div></div>
 <div class="qa"><div class="q">Q: What is Grey Box testing?</div><div class="a">Grey Box testing is a combination of Black Box and White Box. The tester has partial knowledge — they know the architecture (DB schema, API contracts, system design) but not the full source code. Used for integration testing, API testing, and database testing where knowing the structure helps design better test cases.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2568,7 +2524,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is the difference between Smoke Testing and Sanity Testing?</div><div class="a">Smoke Testing: Done after every new build. Wide and shallow — tests critical features only to verify build is stable. If smoke fails, entire build is rejected. Takes 30–60 min. Sanity Testing: Done after a specific bug fix. Narrow and deep — tests ONLY the fixed area to verify it works. If sanity fails, that specific fix is rejected (defect reopened). Takes 15–30 min. Both happen BEFORE full regression testing.</div></div>
 <div class="qa"><div class="q">Q: What happens when Smoke Testing fails?</div><div class="a">The build is REJECTED and returned to developers for fixing. QA does NOT proceed with any further testing on an unstable build. A failed smoke test means the application has critical functionality broken — there's no point testing secondary features when the core is broken.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2652,7 +2607,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is regression testing? Why is it important?</div><div class="a">Regression testing is re-executing previously passed test cases after any code change to ensure existing functionality is not broken. Important because: when developers add new code, they may accidentally break existing features. Without regression, defects introduced by code changes escape to production. It's the safety net that catches unintended side effects of every code change.</div></div>
 <div class="qa"><div class="q">Q: What is the difference between Regression and Re-testing?</div><div class="a">Re-testing: Execute the specific FAILED test cases to verify a particular bug fix works. Uses failed test cases. Narrow scope. Regression testing: Execute previously PASSED test cases to verify nothing else broke. Uses passed test cases. Broad scope. Both are done after a bug fix — re-testing first, then regression.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2729,7 +2683,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   </div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4d')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2803,7 +2756,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>Defects found</td><td>Business logic, UI, performance bugs</td><td>Interface mismatch, data format errors, API bugs</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4e')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2843,7 +2795,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   <div class="info-card"><h4>Types of UAT</h4><ul><li><strong>Alpha Testing:</strong> Internal users in dev org</li><li><strong>Beta Testing:</strong> Real users in their environment</li><li><strong>Contract UAT:</strong> Against contract specs</li><li><strong>Regulation UAT:</strong> Compliance verification</li></ul></div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4f')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2919,7 +2870,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: What is the difference between Load and Stress testing?</div><div class="a">Load Testing: Tests under EXPECTED normal/peak load (e.g., 1000 concurrent users the business expects). Goal: verify SLA is met. System should work correctly. Stress Testing: Tests BEYOND the limit — keep adding users until system breaks. Goal: find the breaking point and verify system fails gracefully (not catastrophically, with data corruption). Load tests normal behavior; stress tests failure behavior.</div></div>
 <div class="qa"><div class="q">Q: When would you use Spike testing?</div><div class="a">When the application may experience sudden traffic bursts — e-commerce during flash sales (0→100k users instantly), news site when breaking news drops, ticketing system when concert tickets go on sale. Spike testing verifies the system handles sudden surges, auto-scales, and returns to normal after the spike passes. Example: Amazon during Prime Day, Flipkart during Big Billion Days.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch4g')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2973,7 +2923,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
   </div>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch4h')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH5A — TEST SCENARIO & TEST CASE                            -->
@@ -3047,7 +2996,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 </div>
 <div class="callout ci">💡 <strong>Rule of thumb:</strong> For every positive test case, write at least 2 negative test cases. Defects hide in error paths — negative testing finds them.</div>
 </div>
-<button class="done-btn" onclick="markRead('ch5a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3097,7 +3045,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>TC_012</td><td>Login with spaces in email</td><td>Email: " john@bank.com " (spaces)</td><td>Spaces trimmed, login succeeds OR validation error shown</td><td>Medium</td><td style="color:var(--danger)">-ve</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch5b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3241,7 +3188,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td><strong>Error Guessing</strong></td><td>Experience-based intuition for defect-prone areas</td><td>Enter 0, negative, very large, special chars</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch5c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3283,7 +3229,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <tr><td>TC_CHK_008</td><td>Order history after successful purchase</td><td>New order appears in "My Orders" with correct details and status "Processing"</td><td>High</td><td style="color:var(--success)">+ve</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch5d')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH6A — DEFECT DEFINITION & LIFECYCLE                        -->
@@ -3388,7 +3333,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: When do you reopen a defect?</div><div class="a">You reopen a defect when: 1) The developer marks it as Fixed but when you retest, the original issue still exists. 2) The fix was partial — original bug fixed but introduced a new issue. 3) You find the same defect in a different flow. Change status from Verified back to Open/Reopened and add a comment explaining why it's being reopened.</div></div>
 <div class="qa"><div class="q">Q: What is the difference between Rejected and Deferred?</div><div class="a">Rejected: Developer says it's NOT a bug — the system is working as per design. QA should challenge this if requirements say otherwise. Deferred: The defect IS valid but the business decides not to fix it in the current release — will fix in a future version. Deferred defects stay in the backlog; rejected ones are closed.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch6a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3503,7 +3447,6 @@ mark{background:#fef08a;color:#1e293b;padding:1px 3px;border-radius:3px}
 <div class="qa"><div class="q">Q: Give an example of a LOW severity, HIGH priority defect.</div><div class="a">The company logo on the homepage is broken (image not loading). Severity is LOW because no functionality is affected — users can still browse, login, purchase everything perfectly. Priority is HIGH because the CEO has a product demo to major investors in 2 hours and showing a broken logo would be embarrassing and unprofessional. Fix it immediately even though it's not technically severe.</div></div>
 <div class="qa"><div class="q">Q: Who decides severity and who decides priority?</div><div class="a">SEVERITY is set by the Test Engineer — based on the technical impact on the application functionality. PRIORITY is set by the Business / Product Owner / Project Manager — based on business urgency and customer impact. The same defect can be rated differently: a TE sets severity based on what's broken; business sets priority based on when it must be fixed.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch6b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3601,7 +3544,6 @@ ADDITIONAL INFO
 <tr><td>"Amount wrong"</td><td>"Transfer amount shows USD symbol ($) instead of GBP (£) for UK accounts"</td><td>Exact what is wrong, exact context</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch6c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3692,7 +3634,6 @@ ADDITIONAL INFO
   <p style="font-size:.78rem;color:var(--text3);margin-top:5px">Impact: Confuses UK customers — they may think they're seeing USD not GBP amounts.</p>
 </div>
 </div>
-<button class="done-btn" onclick="markRead('ch6d')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH7A — STLC PHASES                                          -->
@@ -3817,7 +3758,6 @@ ADDITIONAL INFO
 <div class="qa"><div class="q">Q: What is the difference between SDLC and STLC?</div><div class="a">SDLC (Software Development Life Cycle) covers the entire software project — from feasibility to maintenance — involving all teams (BA, architects, developers, QA, DevOps). STLC (Software Testing Life Cycle) covers ONLY the testing activities within that project — from requirement analysis to test closure — involving only the QA team. STLC is a subset of SDLC that runs within the Testing phase of SDLC.</div></div>
 <div class="qa"><div class="q">Q: When does STLC start?</div><div class="a">STLC starts at the Requirement Analysis phase — as soon as the SRS/BRD document is available. It does NOT wait for code to be written. The first two phases (Requirement Analysis and Test Planning) happen while developers are still in the design/coding phase. This is the V&V model approach — testing activities start in parallel with development.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch7a')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -3971,7 +3911,6 @@ Business Owner  : _______ | Date: _______
 <div class="qa"><div class="q">Q: What is a Test Plan? What are its key sections?</div><div class="a">A Test Plan is a formal document that describes the testing approach, scope, resources, timeline, entry/exit criteria, and deliverables for a project. Key sections: 1) Introduction/Objective, 2) Scope (in and out), 3) Test Strategy (levels, types, tools), 4) Resources (team), 5) Timeline, 6) Entry Criteria, 7) Exit Criteria, 8) Risk & Mitigation, 9) Defect Management process, 10) Approvals. Created by QA Lead, approved by Project Manager and Business.</div></div>
 <div class="qa"><div class="q">Q: What is the difference between Entry Criteria and Exit Criteria?</div><div class="a">Entry Criteria: Pre-conditions that MUST be satisfied BEFORE testing can begin. Example: build deployed, smoke test passed, test cases ready. Exit Criteria: Conditions that MUST be met to declare testing COMPLETE. Example: 95% pass rate, zero critical bugs, UAT sign-off. Without entry criteria, QA might start testing on an unstable build. Without exit criteria, testing might go on indefinitely or stop prematurely.</div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch7b')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -4026,7 +3965,6 @@ Business Owner  : _______ | Date: _______
 <tr><td>Req Coverage</td><td>(Requirements with TCs / Total Reqs) × 100</td><td>100% critical</td></tr>
 </table></div>
 </div>
-<button class="done-btn" onclick="markRead('ch7c')">✅ Mark as Read → Next</button>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -4124,7 +4062,6 @@ Business Owner  : _______ | Date: _______
 <div class="qa"><div class="q">Q60. You have tested a feature and found 15 defects. All are fixed. When do you recommend release?</div><div class="a">NOT automatically. Checklist before recommending release: 1) All 15 defects retested and verified fixed. 2) Regression suite passed — no new defects introduced. 3) Pass rate ≥ 95% overall. 4) Exit criteria from Test Plan are met. 5) UAT sign-off received if applicable. 6) No critical/high open defects. Present this data to business — THEY make the release decision. QA recommends; business decides.</div></div>
 </div></div>
 </div>
-<button class="done-btn" onclick="markRead('ch8')">✅ Mark as Read → Next</button>
 </div>
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CH9 — QUICK REVISION CHEATSHEET                             -->
@@ -4335,7 +4272,6 @@ Req Coverage %           = (Reqs with TCs / Total Reqs) × 100        → Target
 </div>
 </div>
 
-<button class="done-btn" onclick="markRead('ch9')">✅ Mark as Read — Entire Guide Completed! 🎉</button>
 </div>
 
 <div id="footer-credit">
@@ -4386,16 +4322,10 @@ const topics = [
 ];
 
 // ── STATE ──────────────────────────────────────────────────────
-const topicOrder = topics.map(t => t.id);
 let current = 'ch1';
-let read = JSON.parse(localStorage.getItem('notes_read') || '[]');
-const total = topicOrder.length;
 
 // ── INIT ──────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  updateProgress();
-  const savedLast = localStorage.getItem('notes_last_chapter');
-  if (savedLast && document.getElementById(savedLast)) showResume(savedLast);
   window.addEventListener('scroll', () => {
     const bt = document.getElementById('back-top');
     bt.style.display = window.scrollY > 400 ? 'flex' : 'none';
@@ -4406,52 +4336,12 @@ window.addEventListener('DOMContentLoaded', () => {
 function goChap(id, el) {
   document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
   const ch = document.getElementById(id);
-  if (ch) { ch.classList.add('active'); current = id; localStorage.setItem('notes_last_chapter', id); }
+  if (ch) { ch.classList.add('active'); current = id; }
   window.scrollTo({top:0, behavior:'smooth'});
   if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
   // close all nav subs
   document.querySelectorAll('.nav-sub').forEach(s => s.classList.remove('open'));
   document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('open'); });
-}
-
-function showResume(id) {
-  const title = topics.find(t => t.id === id)?.title || 'your last topic';
-  const card = document.getElementById('resume-card');
-  const titleEl = document.getElementById('resume-title');
-  const hint = document.getElementById('resume-hint');
-  if (card && titleEl && hint) {
-    titleEl.textContent = title;
-    const nextUnread = getNextUnread();
-    if (!nextUnread) {
-      hint.textContent = 'All topics completed — great work!';
-    } else if (nextUnread !== id) {
-      const nextTitle = topics.find(t => t.id === nextUnread)?.title || 'next unread topic';
-      hint.textContent = 'Next unread topic: ' + nextTitle + '.';
-    } else {
-      hint.textContent = 'Resume this topic or continue to the next unread item.';
-    }
-    card.style.display = 'block';
-  }
-}
-
-function resumeLast() {
-  const last = localStorage.getItem('notes_last_chapter');
-  if (last) goChap(last, null);
-}
-
-function resumeNextUnread() {
-  const next = getNextUnread();
-  if (next) goChap(next, null);
-}
-
-function goNextTopic() {
-  const idx = topicOrder.indexOf(current);
-  if (idx < topicOrder.length - 1) goChap(topicOrder[idx + 1], null);
-}
-
-function goPrevTopic() {
-  const idx = topicOrder.indexOf(current);
-  if (idx > 0) goChap(topicOrder[idx - 1], null);
 }
 
 function toggleNav(subId, btn) {
@@ -4496,35 +4386,6 @@ function toggleSidebar() {
 }
 
 // ── PROGRESS ──────────────────────────────────────────────────
-function markRead(id) {
-  if (!read.includes(id)) {
-    read.push(id);
-    localStorage.setItem('notes_read', JSON.stringify(read));
-  }
-  updateProgress();
-  // Auto-navigate to next topic
-  const idx = topicOrder.indexOf(id);
-  if (idx < topicOrder.length - 1) goChap(topicOrder[idx + 1], null);
-}
-
-function updateProgress() {
-  const pct = Math.round((read.length / total) * 100);
-  document.getElementById('prog-bar').style.width = pct + '%';
-  document.getElementById('prog-label').textContent = read.length + ' / ' + total + ' topics read (' + pct + '%)';
-}
-
-function getNextUnread() {
-  const last = localStorage.getItem('notes_last_chapter');
-  const start = topicOrder.indexOf(last);
-  if (start >= 0) {
-    for (let i = start + 1; i < topicOrder.length; i++) {
-      if (!read.includes(topicOrder[i])) return topicOrder[i];
-    }
-  }
-  return topicOrder.find(id => !read.includes(id)) || null;
-}
-
-// ── CHECKLIST ─────────────────────────────────────────────────
 function toggleCheck(li) { li.classList.toggle('done'); }
 
 // ── SEARCH ────────────────────────────────────────────────────
@@ -4576,3 +4437,4 @@ document.addEventListener('keydown', e => {
 </div>
 </body>
 </html>
+
