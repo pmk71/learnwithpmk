@@ -421,7 +421,7 @@ footer{
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "name": "QA Testing & Automation Guides",
-  "description": "9 comprehensive guides covering manual testing, TypeScript & Playwright, API testing, network interception, JavaScript strings, arrays, objects, and regular expressions.",
+  "description": "10 comprehensive guides covering QA fundamentals, Playwright automation, JavaScript, regular expressions, and Jira for QA engineers.",
   "url": "https://learnwithpmk71.com/",
   "mainEntity": {
     "@type": "ItemList",
@@ -498,6 +498,14 @@ footer{
         "headline": "JavaScript Regex & Playwright Guide",
         "description": "An interactive regular expressions field guide with patterns, flags, Playwright scenarios, exercises, and interview questions.",
         "url": "https://learnwithpmk71.com/guides/javascript-regex-playwright-guide.html",
+        "datePublished": "2026-07-16"
+      },
+      {
+        "@type": "Article",
+        "position": 10,
+        "headline": "Jira for QA Engineers — Volume 1",
+        "description": "A practical guide to Jira fundamentals, JQL, boards, workflows, and QA collaboration.",
+        "url": "https://learnwithpmk71.com/guides/jira-for-qa-engineers-volume-1.html",
         "datePublished": "2026-07-16"
       }
     ]
@@ -698,6 +706,34 @@ footer{
       </div>
       <div class="card-cta">Open guide <span class="arrow">→</span></div>
     </a>
+
+    <div class="card super-card" data-key="jira-concepts" data-difficulty="beginner">
+      <div class="card-accent-bar"></div>
+      <span class="featured-badge">Jira Learning</span>
+      <div class="card-icon">J</div>
+      <div class="card-meta">
+        <span>QA Workflow</span><span class="sep">Â·</span>
+        <span>Beginner</span><span class="sep">Â·</span>
+        <span class="read-time">75 min</span>
+      </div>
+      <h3>Jira for QA Engineers — Super Card</h3>
+      <p>Build practical Jira confidence for QA work, from issue fundamentals and JQL to boards, workflows, and day-to-day testing collaboration.</p>
+      <div class="card-topics">
+        <a class="topic-card" data-topic="jira-volume-1" href="./guides/jira-for-qa-engineers-volume-1.html">
+          <strong>Volume 1</strong>
+          <span>Fundamentals, JQL, boards, and workflows</span>
+          <em>Open guide</em>
+        </a>
+      </div>
+      <div class="topic-preview" aria-live="polite" aria-hidden="true"></div>
+      <div class="card-tags">
+        <span class="tag">Jira</span>
+        <span class="tag">QA Workflow</span>
+        <span class="tag">JQL</span>
+        <span class="tag">Defect Tracking</span>
+      </div>
+      <div class="card-cta">Explore Jira volumes <span class="arrow">â†’</span></div>
+    </div>
 
     <div class="card super-card" data-key="javascript-concepts" data-difficulty="beginner">
       <div class="card-accent-bar"></div>
@@ -953,7 +989,8 @@ const cardData = {
   'api-testing': { difficulty: 'intermediate', tags: ['api testing', 'rest', 'playwright', 'auth'] },
   'network-interception': { difficulty: 'advanced', tags: ['playwright', 'network', 'mocking', 'interviews'] },
   'locator-strategies': { difficulty: 'advanced', tags: ['locator strategies', 'locators', 'xpath', 'css selectors', 'playwright', 'selenium', 'shadow dom', 'iframes'] },
-  'javascript-concepts': { difficulty: 'beginner', tags: ['javascript', 'strings', 'arrays', 'objects', 'functions', 'async', 'regex', 'concepts'] }
+  'javascript-concepts': { difficulty: 'beginner', tags: ['javascript', 'strings', 'arrays', 'objects', 'functions', 'async', 'regex', 'concepts'] },
+  'jira-concepts': { difficulty: 'beginner', tags: ['jira', 'qa workflow', 'jql', 'defect tracking', 'agile', 'scrum'] }
 };
 
 function getCardDifficulty(card) {
@@ -994,8 +1031,7 @@ filterTabs.forEach(tab => {
   });
 });
 
-// JS Concepts sub-card hover preview
-const topicPreview = document.querySelector('.topic-preview');
+// Super-card sub-topic hover previews
 const topicCards = document.querySelectorAll('.topic-card');
 const topicMeta = {
   strings: {
@@ -1039,12 +1075,19 @@ const topicMeta = {
     coverage: '27 sections, flags, groups, assertions, Playwright',
     level: 'Beginner to advanced',
     time: '90 min'
+  },
+  'jira-volume-1': {
+    title: 'Jira for QA Engineers — Volume 1',
+    description: 'A practical Jira guide for QA engineers covering issue fundamentals, JQL, agile boards, workflows, and testing collaboration.',
+    coverage: 'Jira basics, JQL, boards, workflows, QA scenarios',
+    level: 'Beginner to intermediate',
+    time: '75 min'
   }
 };
 
 let previewHideTimeout;
 
-function showTopicPreview(topic) {
+function showTopicPreview(topic, topicPreview) {
   const metadata = topicMeta[topic];
   if (!metadata) return;
   topicPreview.innerHTML = `
@@ -1062,7 +1105,7 @@ function showTopicPreview(topic) {
   topicPreview.setAttribute('aria-hidden', 'false');
 }
 
-function hideTopicPreview() {
+function hideTopicPreview(topicPreview) {
   previewHideTimeout = setTimeout(() => {
     topicPreview.classList.remove('visible');
     topicPreview.setAttribute('aria-hidden', 'true');
@@ -1075,20 +1118,21 @@ function cancelHideTopicPreview() {
 
 topicCards.forEach(card => {
   const topic = card.dataset.topic;
+  const topicPreview = card.closest('.super-card')?.querySelector('.topic-preview');
+  if (!topicPreview) return;
   card.addEventListener('mouseenter', () => {
     cancelHideTopicPreview();
-    showTopicPreview(topic);
+    showTopicPreview(topic, topicPreview);
   });
   card.addEventListener('focus', () => {
     cancelHideTopicPreview();
-    showTopicPreview(topic);
+    showTopicPreview(topic, topicPreview);
   });
-  card.addEventListener('mouseleave', hideTopicPreview);
-  card.addEventListener('blur', hideTopicPreview);
+  card.addEventListener('mouseleave', () => hideTopicPreview(topicPreview));
+  card.addEventListener('blur', () => hideTopicPreview(topicPreview));
+  topicPreview.addEventListener('mouseenter', cancelHideTopicPreview);
+  topicPreview.addEventListener('mouseleave', () => hideTopicPreview(topicPreview));
 });
-
-topicPreview.addEventListener('mouseenter', cancelHideTopicPreview);
-topicPreview.addEventListener('mouseleave', hideTopicPreview);
 </script>
 </body>
 </html>

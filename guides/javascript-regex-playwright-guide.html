@@ -135,15 +135,42 @@ main{flex:1;min-width:0;padding:0 34px 100px 34px;}
 #testMeta.err{color:var(--red);}
 
 /* ---------- section content ---------- */
-section.topic{scroll-margin-top:70px;margin-bottom:54px;padding-top:6px;border-top:1px solid var(--border);}
-section.topic:first-of-type{border-top:none;}
-.topic-head{display:flex;align-items:baseline;gap:12px;margin-top:26px;}
-.topic-num{font-family:var(--mono);color:var(--text-faint);font-size:14px;}
-.topic-head h2{font-size:24px;margin:0;}
-.badge{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-left:6px;}
+section.topic{scroll-margin-top:70px;margin-bottom:40px;padding-top:6px;}
+.concept-card{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--bg-card);box-shadow:0 1px 0 rgba(0,0,0,.15);}
+.concept-header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--accent-soft);border-bottom:1px solid var(--border);}
+.concept-icon{width:42px;height:42px;border-radius:50%;background:var(--accent);color:#12141a;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.concept-titlewrap{flex:1;min-width:0;}
+.concept-titlewrap .num{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px;}
+.concept-titlewrap h2{margin:0;font-size:20px;color:var(--text);line-height:1.25;}
+.concept-body{padding:20px 22px;}
+.topic-num{display:none;} /* legacy, unused after redesign */
+.badge{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;}
 .badge.beg{color:var(--green);border-color:var(--green);}
 .badge.int{color:var(--match);border-color:var(--match-dim);}
 .badge.adv{color:var(--red);border-color:var(--red);}
+
+/* accent palette — cycled across concept cards */
+.accent-0{--accent:#5b9dff;--accent-soft:rgba(91,157,255,.14);}
+.accent-1{--accent:#3ddc97;--accent-soft:rgba(61,220,151,.14);}
+.accent-2{--accent:#c79bff;--accent-soft:rgba(199,155,255,.14);}
+.accent-3{--accent:#ffb454;--accent-soft:rgba(255,180,84,.15);}
+.accent-4{--accent:#ff85ac;--accent-soft:rgba(255,133,172,.14);}
+.accent-5{--accent:#5eead4;--accent-soft:rgba(94,234,212,.14);}
+.accent-6{--accent:#ffd23f;--accent-soft:rgba(255,210,63,.16);}
+html.light .concept-icon{color:#fff;}
+
+/* sub-section labels inside a concept card */
+.subhead{display:flex;align-items:center;gap:9px;margin:20px 0 9px 0;}
+.subhead:first-child{margin-top:0;}
+.subhead .ic{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.subhead .lbl{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;}
+
+/* token/subconcept chip grid — used for the small reference tables inside a topic */
+.tokgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:9px;margin:6px 0 4px 0;}
+.tokcard{background:var(--bg-inset);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
+.tokcard .tag{font-family:var(--mono);font-size:12.5px;font-weight:700;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:3px 8px;white-space:nowrap;flex-shrink:0;}
+.tokcard .desc{font-size:12.5px;color:var(--text-dim);line-height:1.5;padding-top:2px;}
+.tokcard .desc small{display:block;color:var(--text-faint);margin-top:2px;}
 
 .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -189,9 +216,10 @@ details .body{padding:0 14px 14px 14px;font-size:13.5px;color:var(--text-dim);}
 .exbox b{font-family:var(--mono);color:var(--violet);font-size:11px;text-transform:uppercase;letter-spacing:.04em;}
 
 .examples{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
-.ex-item{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-.ex-item .ex-head{display:flex;justify-content:space-between;padding:8px 12px;background:var(--bg-inset);font-size:12.5px;}
-.ex-item .ex-explain{padding:10px 12px;font-size:13px;color:var(--text-dim);border-top:1px solid var(--border);}
+.ex-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.ex-item .ex-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg-inset);font-size:12.5px;}
+.ex-item .ex-explain{padding:11px 13px;font-size:13px;color:var(--text-dim);border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;}
+.ex-item .ex-explain .bulb{flex-shrink:0;font-size:13px;}
 
 .tag-beg{color:var(--green);} .tag-int{color:var(--match);} .tag-adv{color:var(--red);}
 
@@ -210,12 +238,13 @@ details .body{padding:0 14px 14px 14px;font-size:13.5px;color:var(--text-dim);}
 .qa .cat{font-size:10px;font-family:var(--mono);color:var(--cyan);border:1px solid var(--border);padding:1px 6px;border-radius:10px;margin-left:auto;}
 
 .pw-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:14px 0;}
-.pw-card h4{margin:0 0 6px 0;font-size:15px;color:var(--cyan);}
+.pw-card h4{margin:0 0 6px 0;font-size:15px;color:var(--cyan);display:flex;align-items:center;gap:8px;}
+.pw-card h4 .ic{width:24px;height:24px;border-radius:7px;background:rgba(94,234,212,.14);display:flex;align-items:center;justify-content:center;font-size:12.5px;flex-shrink:0;}
 .pw-card p{margin:0 0 8px 0;font-size:13.5px;color:var(--text-dim);}
 
 .practice-item{border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:10px 0;}
 .practice-item .pnum{font-family:var(--mono);color:var(--text-faint);font-size:12px;}
-.practice-item .ptitle{font-weight:600;margin:4px 0 6px 0;}
+.practice-item .ptitle{font-weight:600;margin:4px 0 6px 0;display:flex;align-items:center;gap:7px;}
 .practice-item .solbtn{font-family:var(--mono);font-size:11px;color:var(--cyan);cursor:pointer;border:1px solid var(--border);padding:3px 8px;border-radius:6px;display:inline-block;margin-top:4px;}
 .practice-item .sol{display:none;margin-top:8px;}
 .practice-item.show .sol{display:block;}
@@ -279,7 +308,7 @@ footer{border-top:1px solid var(--border);padding:26px 0;color:var(--text-faint)
 
     <div id="content"></div>
 
-    <footer>Built as a single offline HTML file — no CDN, no framework, no tracking. Right-click → Save As to keep a local copy.</footer>
+    <footer>Built by Prashanth M K as a single offline HTML file — no CDN, no framework, no tracking. Right-click → Save As to keep a local copy.</footer>
   </main>
 </div>
 
@@ -294,15 +323,20 @@ footer{border-top:1px solid var(--border);padding:26px 0;color:var(--text-faint)
 
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-/* crude JS syntax painter for <pre> blocks — comments, strings, regex literals, keywords, function calls */
+/* single-pass JS syntax painter for <pre> blocks — one combined regex, one replace pass,
+   so later token types can never re-scan HTML inserted by earlier ones (that was the bug). */
+const TOKEN_RE = /(\/\/.*$)|("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*')|(`(?:[^`\\]|\\.)*`)|(\/(?:[^\/\n\\]|\\.)+\/[a-z]*)|(\b(?:const|let|var|function|return|if|else|for|while|new|true|false|null|undefined|async|await|class|try|catch|of|in|typeof)\b)|(\b[a-zA-Z_$][\w$]*(?=\())/gm;
 function paint(code){
-  code = esc(code);
-  code = code.replace(/(\/\/.*$)/gm, '<span class="cm">$1</span>');
-  code = code.replace(/(&quot;.*?&quot;|'.*?'|`.*?`)/g, '<span class="str">$1</span>');
-  code = code.replace(/\b(const|let|var|function|return|if|else|for|while|new|true|false|null|undefined|async|await|class|try|catch|of|in|typeof)\b/g, '<span class="kw">$1</span>');
-  code = code.replace(/\b([a-zA-Z_$][\w$]*)\(/g, '<span class="fn">$1</span>(');
-  code = code.replace(/(\/(?:[^\/\n\\]|\\.)+\/[gimsuy]*)/g, m => m.length < 60 ? '<span class="rgx">'+m+'</span>' : m);
-  return code;
+  return esc(code).replace(TOKEN_RE, (m, cm, dstr, sstr, bstr, rgx, kw, fn) => {
+    if(cm) return '<span class="cm">'+cm+'</span>';
+    if(dstr) return '<span class="str">'+dstr+'</span>';
+    if(sstr) return '<span class="str">'+sstr+'</span>';
+    if(bstr) return '<span class="str">'+bstr+'</span>';
+    if(rgx) return rgx.length < 60 ? '<span class="rgx">'+rgx+'</span>' : rgx;
+    if(kw) return '<span class="kw">'+kw+'</span>';
+    if(fn) return '<span class="fn">'+fn+'</span>';
+    return m;
+  });
 }
 
 function codeBlock(code){
@@ -755,45 +789,91 @@ const practiceBank = [
 /* ======================================================================
    RENDER LAYER
    ====================================================================== */
+const TOPIC_ICONS = {
+  intro:'🧭', why:'⭐', engine:'⚙️', creating:'🧱', literal:'📄', constructor:'🏗️',
+  methods:'🧰', charclasses:'🔤', quantifiers:'🔁', anchors:'⚓', groups:'🧩',
+  alternation:'🔀', lookahead:'👀', lookbehind:'🔎', flags:'🚩', greedy:'🐢',
+  escaping:'🛡️', unicode:'🌐', dynamic:'🧬', performance:'⚡', debugging:'🐞',
+  mistakes:'⚠️', bestpractices:'✅', cheatsheet:'📋', interview:'🎤', practice:'🏋️', playwright:'🎭'
+};
+function accentClass(num){ return `accent-${(num-1)%7}`; }
+
 function levelBadge(l){
   const map = {beg:['Beginner','beg'],int:['Intermediate','int'],adv:['Advanced','adv']};
   const [label,cls] = map[l] || map.beg;
   return `<span class="badge ${cls}">${label}</span>`;
 }
+function levelIcon(l){ return l==='beg' ? '🟢' : l==='int' ? '🟡' : '🔴'; }
+
+function subhead(icon,label){
+  return `<div class="subhead"><span class="ic">${icon}</span><span class="lbl">${label}</span></div>`;
+}
+
+/* renders a topic's {head:[...], rows:[...]} table as a grid of small subconcept cards
+   instead of a plain table — this is the "each subconcept is its own card" treatment. */
+function tokenGrid(table){
+  const has3 = table.head.length > 2;
+  let html = `<div class="tokgrid">`;
+  table.rows.forEach(r=>{
+    const tag = esc(r[0]);
+    const main = r[1] || '';
+    const extra = has3 && r[2] ? `<small>${esc(table.head[2])}: <code style="border:none;background:none;padding:0;">${r[2]}</code></small>` : '';
+    html += `<div class="tokcard"><span class="tag">${tag}</span><span class="desc">${main}${extra}</span></div>`;
+  });
+  html += `</div>`;
+  return html;
+}
 
 function renderTopicBlocks(t){
   let html = '';
-  if(t.what) html += `<div class="card"><b>What is it?</b><p style="margin:6px 0 0 0">${t.what}</p></div>`;
-  if(t.why) html += `<div class="card"><b>Why do we use it?</b><p style="margin:6px 0 0 0">${t.why}</p></div>`;
-  if(t.visual) html += `<div class="ascii">${esc(t.visual)}</div>`;
-  if(t.table){
-    html += `<table><thead><tr>${t.table.head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
-    t.table.rows.forEach(r=>{ html += `<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`; });
-    html += `</tbody></table>`;
-  }
+  if(t.what){ html += subhead('💡','What is it?') + `<p style="margin:0">${t.what}</p>`; }
+  if(t.why){ html += subhead('🎯','Why do we use it?') + `<p style="margin:0">${t.why}</p>`; }
+  if(t.visual){ html += subhead('🖼️','Visual walkthrough') + `<div class="ascii">${esc(t.visual)}</div>`; }
+  if(t.table){ html += subhead('🗂️','Quick reference') + tokenGrid(t.table); }
   if(t.examples && t.examples.length){
+    html += subhead('🧪','Worked examples');
     html += `<div class="examples">`;
     t.examples.forEach(e=>{
-      html += `<div class="ex-item"><div class="ex-head"><span class="mono">example</span><span class="tag-${e.level}">${e.level==='beg'?'● beginner':e.level==='int'?'● intermediate':'● advanced'}</span></div>${codeBlock(e.code)}<div class="ex-explain">${e.explain}</div></div>`;
+      html += `<div class="ex-item"><div class="ex-head"><span class="mono">${levelIcon(e.level)} example</span><span class="tag-${e.level}">${e.level==='beg'?'beginner':e.level==='int'?'intermediate':'advanced'}</span></div>${codeBlock(e.code)}<div class="ex-explain"><span class="bulb">💡</span><span>${e.explain}</span></div></div>`;
     });
     html += `</div>`;
   }
   if(t.mistakes && t.mistakes.length){
-    html += `<details><summary>⚠ Common Mistakes<span></span></summary><div class="body"><ul>${t.mistakes.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
+    html += `<details><summary>⚠️ Common Mistakes<span></span></summary><div class="body"><ul>${t.mistakes.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
   }
   if(t.best && t.best.length){
-    html += `<details><summary>✓ Best Practices<span></span></summary><div class="body"><ul>${t.best.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
+    html += `<details><summary>✅ Best Practices<span></span></summary><div class="body"><ul>${t.best.map(m=>`<li>${m}</li>`).join('')}</ul></div></details>`;
   }
   if(t.interview && t.interview.length){
-    html += `<div class="exbox"><b>Mini Interview Check</b>` + t.interview.map(qa=>`<p style="margin:8px 0 2px 0"><b style="color:var(--text)">Q:</b> ${qa.q}</p><p style="margin:0;color:var(--text-dim)"><b style="color:var(--text)">A:</b> ${qa.a}</p>`).join('') + `</div>`;
+    html += `<div class="exbox"><b>🎤 Mini Interview Check</b>` + t.interview.map(qa=>`<p style="margin:8px 0 2px 0"><b style="color:var(--text)">Q:</b> ${qa.q}</p><p style="margin:0;color:var(--text-dim)"><b style="color:var(--text)">A:</b> ${qa.a}</p>`).join('') + `</div>`;
   }
   return html;
 }
 
+function conceptCard(id,num,title,level,bodyHtml){
+  const accent = accentClass(num);
+  const icon = TOPIC_ICONS[id] || '📘';
+  return `<section class="topic" id="${id}">
+    <div class="concept-card ${accent}">
+      <div class="concept-header">
+        <div class="concept-icon">${icon}</div>
+        <div class="concept-titlewrap"><span class="num">Section ${String(num).padStart(2,'0')}</span><h2>${title}</h2></div>
+        ${level ? levelBadge(level) : ''}
+      </div>
+      <div class="concept-body">${bodyHtml}</div>
+    </div>
+  </section>`;
+}
+
 function buildSidebar(){
   const groups = [
-    {label:'Core Concepts', items: topics.map(t=>({id:t.id,label:`${t.num}. ${t.title}`}))},
-    {label:'Reference', items:[{id:'cheatsheet',label:'24. Cheat Sheet'},{id:'interview',label:'25. Interview Questions'},{id:'practice',label:'26. Coding Exercises'},{id:'playwright',label:'27. Playwright Regex'}]},
+    {label:'Core Concepts', items: topics.map(t=>({id:t.id,label:`${TOPIC_ICONS[t.id]||''} ${t.num}. ${t.title}`}))},
+    {label:'Reference', items:[
+      {id:'cheatsheet',label:`${TOPIC_ICONS.cheatsheet} 24. Cheat Sheet`},
+      {id:'interview',label:`${TOPIC_ICONS.interview} 25. Interview Questions`},
+      {id:'practice',label:`${TOPIC_ICONS.practice} 26. Coding Exercises`},
+      {id:'playwright',label:`${TOPIC_ICONS.playwright} 27. Playwright Regex`}
+    ]},
   ];
   let html = '';
   groups.forEach(g=>{
@@ -813,43 +893,30 @@ function jump(id){
 function buildContent(){
   let html = '';
   topics.forEach(t=>{
-    html += `<section class="topic" id="${t.id}">
-      <div class="topic-head"><span class="topic-num">§${t.num}</span><h2>${t.title}</h2>${levelBadge(t.level)}</div>
-      ${renderTopicBlocks(t)}
-    </section>`;
+    html += conceptCard(t.id, t.num, t.title, t.level, renderTopicBlocks(t));
   });
 
   // Cheat sheet
-  html += `<section class="topic" id="cheatsheet">
-    <div class="topic-head"><span class="topic-num">§24</span><h2>Regex Cheat Sheet</h2></div>
-    <p style="color:var(--text-dim)">Every token from this guide, grouped for quick lookup during an interview or a debugging session.</p>
-    <div class="grid2">`;
-  cheatTables.forEach(ct=>{
-    html += `<div class="card"><h4 style="margin:0 0 6px 0;color:var(--match)">${ct.title}</h4><table>${ct.rows.map(r=>`<tr><td><code>${esc(r[0])}</code></td><td>${r[1]}</td></tr>`).join('')}</table></div>`;
+  let cheatBody = subhead('🗂️','Every token in this guide, grouped for quick lookup') + `<div class="grid2">`;
+  cheatTables.forEach((ct,i)=>{
+    cheatBody += `<div class="card ${accentClass(i+1)}" style="border-top:3px solid var(--accent)"><h4 style="margin:0 0 8px 0;color:var(--accent)">${ct.title}</h4>` + tokenGrid({head:['Token','Meaning'], rows:ct.rows}) + `</div>`;
   });
-  html += `</div></section>`;
+  cheatBody += `</div>`;
+  html += conceptCard('cheatsheet',24,'Regex Cheat Sheet','',cheatBody);
 
   // Interview
-  html += `<section class="topic" id="interview">
-    <div class="topic-head"><span class="topic-num">§25</span><h2>Interview Questions</h2></div>
-    <p style="color:var(--text-dim)">${interviewBank.length} questions pulled from real regex/Playwright interview loops, grouped by category. Click a question to reveal the answer.</p>
-    <div class="chip-row" id="catChips"></div>
-    <div id="qaList"></div>
-  </section>`;
+  let interviewBody = subhead('🎤',`${interviewBank.length} real interview questions, grouped by category`) +
+    `<div class="chip-row" id="catChips"></div><div id="qaList"></div>`;
+  html += conceptCard('interview',25,'Interview Questions','',interviewBody);
 
   // Practice
-  html += `<section class="topic" id="practice">
-    <div class="topic-head"><span class="topic-num">§26</span><h2>Coding Exercises</h2></div>
-    <p style="color:var(--text-dim)">${practiceBank.length} hands-on pattern-writing exercises. Try it yourself in the tester at the top of the page before revealing the solution.</p>
-    <div id="practiceList"></div>
-  </section>`;
+  let practiceBody = subhead('🏋️',`${practiceBank.length} hands-on pattern-writing exercises`) +
+    `<p style="color:var(--text-dim);margin-top:-4px">Try each one in the live tester at the top of the page before revealing the solution.</p><div id="practiceList"></div>`;
+  html += conceptCard('practice',26,'Coding Exercises','',practiceBody);
 
   // Playwright
-  html += `<section class="topic" id="playwright">
-    <div class="topic-head"><span class="topic-num">§27</span><h2>Playwright Regex — Real Automation Scenarios</h2></div>
-    <p style="color:var(--text-dim)">Regex as it actually shows up in a Playwright + TypeScript/JS test suite: locators, assertions, API responses, and data cleaning.</p>
-    <div id="pwList"></div>
-  </section>`;
+  let pwBody = subhead('🎭','Regex as it actually shows up in a Playwright + TypeScript/JS suite') + `<div id="pwList"></div>`;
+  html += conceptCard('playwright',27,'Playwright Regex — Real Automation Scenarios','',pwBody);
 
   document.getElementById('content').innerHTML = html;
 
@@ -865,14 +932,14 @@ function buildContent(){
   // Practice render
   let prHtml = '';
   practiceBank.forEach((p,i)=>{
-    prHtml += `<div class="practice-item"><div class="pnum">Exercise ${i+1}</div><div class="ptitle">${p.title}</div><div style="font-size:12.5px;color:var(--text-faint)">Hint: ${p.hint}</div><div class="solbtn" onclick="this.parentElement.classList.toggle('show')">reveal solution</div><div class="sol">${codeBlock(p.sol)}</div></div>`;
+    prHtml += `<div class="practice-item"><div class="pnum">Exercise ${i+1}</div><div class="ptitle"><span>🎯</span>${p.title}</div><div style="font-size:12.5px;color:var(--text-faint)">Hint: ${p.hint}</div><div class="solbtn" onclick="this.parentElement.classList.toggle('show')">reveal solution</div><div class="sol">${codeBlock(p.sol)}</div></div>`;
   });
   document.getElementById('practiceList').innerHTML = prHtml;
 
   // Playwright render
   let pwHtml = '';
   playwright.forEach(p=>{
-    pwHtml += `<div class="pw-card"><h4>${p.title}</h4><p>${p.explain}</p>${codeBlock(p.code)}</div>`;
+    pwHtml += `<div class="pw-card"><h4><span class="ic">🎭</span>${p.title}</h4><p>${p.explain}</p>${codeBlock(p.code)}</div>`;
   });
   document.getElementById('pwList').innerHTML = pwHtml;
 }

@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jira for QA Engineers — Vol.1: Fundamentals & JQL | Learn With PMK71</title>
+<meta name="author" content="Prashanth M K">
+<link rel="canonical" href="https://learnwithpmk71.com/guides/jira-for-qa-engineers-volume-1.html">
+<style>
+:root{
+  --bg:#0B1220; --bg-alt:#0F1A2E; --panel:#121F38; --panel-2:#16233F;
+  --border:#233252; --text:#E7ECF5; --text-dim:#9FB0CC; --text-faint:#6B7C9E;
+  --amber:#F5A524; --amber-dim:#D6910F; --teal:#2DD4BF; --teal-dim:#14B8A6;
+  --red:#F0537A; --violet:#9E8CFC;
+  --code-bg:#0A1424; --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --radius:14px; --maxw:1180px;
+  --font-display:'IBM Plex Sans',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --bg:#F6F7FB; --bg-alt:#FFFFFF; --panel:#FFFFFF; --panel-2:#F0F2F8;
+  --border:#DCE2F0; --text:#101827; --text-dim:#48546B; --text-faint:#8996B2;
+  --code-bg:#0F1B2E; --shadow: 0 8px 24px rgba(30,40,70,.08);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body); background:var(--bg); color:var(--text);
+  line-height:1.65; font-size:16px; transition:background .25s,color .25s;
+}
+::selection{background:var(--amber); color:#131313;}
+a{color:var(--teal);}
+.skip{position:absolute; left:-9999px;}
+.skip:focus{left:12px; top:12px; background:var(--amber); color:#111; padding:8px 14px; z-index:999; border-radius:8px;}
+
+/* ---------- TOP BAR ---------- */
+#topbar{
+  position:sticky; top:0; z-index:60; background:var(--bg-alt);
+  border-bottom:1px solid var(--border); backdrop-filter:blur(10px);
+}
+.topbar-inner{
+  max-width:var(--maxw); margin:0 auto; display:flex; align-items:center;
+  gap:16px; padding:12px 20px;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; white-space:nowrap;}
+.author-credit{font-size:12px;color:var(--text-dim);white-space:nowrap;}
+.author-credit strong{color:var(--text);}
+.brand-mark{
+  width:32px; height:32px; border-radius:8px;
+  background:linear-gradient(135deg,var(--amber),var(--teal));
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono);
+  color:#0A1424; font-weight:800; font-size:14px;
+}
+.brand-text{display:flex; flex-direction:column; line-height:1.1;}
+.brand-text .t1{font-size:14px;}
+.brand-text .t2{font-size:11px; color:var(--text-faint); font-weight:500;}
+.searchwrap{flex:1; max-width:340px; position:relative;}
+#searchbox{
+  width:100%; padding:9px 12px 9px 34px; border-radius:9px; border:1px solid var(--border);
+  background:var(--panel-2); color:var(--text); font-family:var(--font-body); font-size:13.5px;
+}
+.searchwrap::before{
+  content:"⌕"; position:absolute; left:11px; top:50%; transform:translateY(-50%);
+  color:var(--text-faint); font-size:16px;
+}
+.topbtn{
+  background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+  padding:8px 10px; border-radius:9px; cursor:pointer; font-size:13px; white-space:nowrap;
+}
+.topbtn:hover{border-color:var(--amber);}
+#progressbar{height:3px; background:var(--panel-2);}
+#progressfill{height:100%; width:0%; background:linear-gradient(90deg,var(--amber),var(--teal)); transition:width .15s;}
+
+/* ---------- LAYOUT ---------- */
+.layout{max-width:var(--maxw); margin:0 auto; display:grid; grid-template-columns:270px 1fr; gap:0;}
+#sidebar{
+  position:sticky; top:57px; align-self:start; height:calc(100vh - 57px);
+  overflow-y:auto; border-right:1px solid var(--border); padding:18px 12px 60px;
+}
+#sidebar::-webkit-scrollbar{width:6px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+.side-group{margin-bottom:6px;}
+.side-part{
+  display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:8px;
+  font-size:13px; font-weight:600; cursor:pointer; color:var(--text-dim);
+}
+.side-part:hover{background:var(--panel-2);}
+.side-part .num{
+  font-family:var(--font-mono); font-size:11px; color:var(--bg);
+  background:var(--text-faint); width:20px; height:20px; border-radius:5px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.side-part.active{color:var(--text); background:var(--panel-2);}
+.side-part.active .num{background:var(--amber); color:#141414;}
+.side-links{display:none; flex-direction:column; padding-left:30px; margin:2px 0 8px;}
+.side-links.open{display:flex;}
+.side-links a{
+  color:var(--text-faint); text-decoration:none; font-size:12.5px; padding:6px 8px;
+  border-radius:6px; border-left:2px solid transparent;
+}
+.side-links a:hover{color:var(--text); background:var(--panel-2);}
+.side-links a.active{color:var(--teal); border-left-color:var(--teal); font-weight:600;}
+
+main{padding:28px 26px 100px; min-width:0;}
+
+/* ---------- HERO ---------- */
+.hero{
+  padding:38px 32px; border-radius:18px; margin-bottom:34px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(245,165,36,.16), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(45,212,191,.14), transparent 45%),
+    var(--panel);
+  border:1px solid var(--border); position:relative; overflow:hidden;
+}
+.hero-eyebrow{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.12em; color:var(--amber);
+  text-transform:uppercase; margin-bottom:12px;
+}
+.hero h1{font-size:clamp(26px,4vw,38px); line-height:1.15; margin-bottom:14px;}
+.hero p{color:var(--text-dim); max-width:640px; font-size:15.5px;}
+.hero-stats{display:flex; gap:26px; margin-top:22px; flex-wrap:wrap;}
+.hstat b{display:block; font-size:22px; font-family:var(--font-mono); color:var(--teal);}
+.hstat span{font-size:12px; color:var(--text-faint);}
+
+/* ---------- PART / TOPIC ---------- */
+.part{margin-bottom:64px; scroll-margin-top:70px;}
+.part-head{
+  display:flex; align-items:baseline; gap:14px; margin-bottom:6px; border-bottom:2px solid var(--border);
+  padding-bottom:14px;
+}
+.part-head .pnum{font-family:var(--font-mono); color:var(--amber); font-size:15px; font-weight:700;}
+.part-head h2{font-size:26px;}
+.part-sub{color:var(--text-faint); font-size:13.5px; margin-bottom:26px;}
+
+.topic{margin-bottom:46px; scroll-margin-top:70px;}
+.topic h3{
+  font-size:19px; margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.topic h3 .tag{
+  font-family:var(--font-mono); font-size:10.5px; background:var(--panel-2); color:var(--text-faint);
+  padding:2px 8px; border-radius:6px; border:1px solid var(--border); font-weight:500;
+}
+
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px 22px; margin-bottom:16px;
+}
+.card h4{font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:10px; font-weight:600;}
+.card p, .card li{color:var(--text-dim); font-size:14.5px;}
+.card p + p{margin-top:10px;}
+.card ul, .card ol{padding-left:20px; margin-top:6px;}
+.card li{margin-bottom:6px;}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+@media(max-width:900px){.grid2,.grid4{grid-template-columns:1fr;}}
+
+.callout{
+  border-radius:var(--radius); padding:16px 20px; margin:16px 0; border:1px solid var(--border);
+  border-left:4px solid var(--amber); background:var(--panel-2);
+}
+.callout.tip{border-left-color:var(--teal);}
+.callout.warn{border-left-color:var(--red);}
+.callout .clabel{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; display:block; font-weight:700;}
+.callout.tip .clabel{color:var(--teal);}
+.callout.warn .clabel{color:var(--red);}
+.callout:not(.tip):not(.warn) .clabel{color:var(--amber);}
+.callout p{font-size:14px; color:var(--text-dim);}
+
+.persona-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0;}
+@media(max-width:900px){.persona-grid{grid-template-columns:repeat(2,1fr);}}
+.persona{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:14px 16px;
+}
+.persona .pico{font-size:20px; margin-bottom:6px;}
+.persona b{font-size:12.5px; display:block; margin-bottom:5px;}
+.persona p{font-size:12.8px; color:var(--text-faint); line-height:1.5;}
+
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px;}
+th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; color:var(--text-dim);}
+th{background:var(--panel-2); color:var(--text); font-size:12px; text-transform:uppercase; letter-spacing:.03em;}
+tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+
+/* code blocks */
+.codeblock{position:relative; margin:14px 0;}
+pre{
+  background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:13px; color:#D9E4F5; line-height:1.6;
+}
+.copybtn{
+  position:absolute; top:8px; right:8px; background:var(--panel-2); border:1px solid var(--border);
+  color:var(--text-dim); font-size:11px; padding:4px 9px; border-radius:6px; cursor:pointer;
+}
+.copybtn:hover{color:var(--amber);}
+.jql{color:var(--teal);}
+.comment{color:var(--text-faint);}
+
+/* interview accordion */
+.qa-item{border:1px solid var(--border); border-radius:10px; margin-bottom:8px; overflow:hidden; background:var(--panel-2);}
+.qa-q{
+  padding:12px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  font-size:14px; font-weight:600;
+}
+.qa-q::after{content:"+"; color:var(--amber); font-size:18px; transition:transform .2s;}
+.qa-item.open .qa-q::after{transform:rotate(45deg);}
+.qa-a{max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:13.8px; color:var(--text-dim); padding:0 16px;}
+.qa-item.open .qa-a{max-height:500px; padding:0 16px 14px;}
+
+/* quiz */
+.quiz-box{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-top:18px;}
+.quiz-box h4{font-size:15px; margin-bottom:4px; color:var(--text);}
+.quiz-meta{font-size:12px; color:var(--text-faint); margin-bottom:16px;}
+.q-block{margin-bottom:22px; padding-bottom:18px; border-bottom:1px dashed var(--border);}
+.q-block:last-of-type{border-bottom:none;}
+.q-stem{font-size:14.5px; font-weight:600; margin-bottom:4px;}
+.q-diff{
+  font-family:var(--font-mono); font-size:10px; padding:2px 7px; border-radius:5px; margin-left:8px;
+  vertical-align:middle; text-transform:uppercase;
+}
+.diff-easy{background:rgba(45,212,191,.15); color:var(--teal);}
+.diff-medium{background:rgba(245,165,36,.15); color:var(--amber);}
+.diff-hard{background:rgba(240,83,122,.15); color:var(--red);}
+.opts{list-style:none; margin:10px 0;}
+.opt{
+  padding:9px 12px; border:1px solid var(--border); border-radius:8px; margin-bottom:7px;
+  cursor:pointer; font-size:13.6px; color:var(--text-dim); transition:.15s;
+}
+.opt:hover{border-color:var(--text-faint);}
+.opt.correct{border-color:var(--teal); background:rgba(45,212,191,.08); color:var(--teal);}
+.opt.wrong{border-color:var(--red); background:rgba(240,83,122,.08); color:var(--red);}
+.explain{
+  display:none; margin-top:8px; padding:10px 14px; background:var(--panel-2); border-radius:8px;
+  font-size:13px; color:var(--text-dim); border-left:3px solid var(--teal);
+}
+.explain.show{display:block;}
+.quiz-score{
+  margin-top:10px; font-family:var(--font-mono); font-size:13px; color:var(--amber); font-weight:700;
+}
+
+/* exercise / summary */
+.exercise{border:1px dashed var(--violet); border-radius:var(--radius); padding:18px 20px; background:rgba(158,140,252,.05); margin:16px 0;}
+.exercise h4{color:var(--violet);}
+.summary-box{
+  background:linear-gradient(135deg, rgba(245,165,36,.08), rgba(45,212,191,.06));
+  border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin:16px 0;
+}
+
+/* diagrams */
+.diagram-wrap{background:var(--panel-2); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin:16px 0; overflow-x:auto;}
+svg text{font-family:var(--font-mono);}
+.mockup-wrap{margin:16px 0;}
+.mockup-cap{font-size:11.5px; color:var(--text-faint); margin-top:8px; text-align:center; font-family:var(--font-mono);}
+.mockup-cap b{color:var(--text-dim);}
+
+/* nav prev/next */
+.pagenav{display:flex; justify-content:space-between; margin-top:26px; gap:12px;}
+.navbtn{
+  flex:1; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px 18px;
+  cursor:pointer; text-align:left; color:var(--text);
+}
+.navbtn:hover{border-color:var(--amber);}
+.navbtn .lbl{font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em;}
+.navbtn .ttl{font-size:14px; font-weight:600; margin-top:3px;}
+.navbtn.next{text-align:right;}
+
+#toTop{
+  position:fixed; bottom:24px; right:24px; width:44px; height:44px; border-radius:50%;
+  background:var(--amber); color:#141414; border:none; font-size:18px; cursor:pointer;
+  display:none; align-items:center; justify-content:center; box-shadow:var(--shadow); z-index:70;
+}
+
+footer{text-align:center; padding:40px 20px; color:var(--text-faint); font-size:13px; border-top:1px solid var(--border);}
+footer a{color:var(--amber); text-decoration:none;}
+
+@media print{
+  #sidebar, #topbar, #toTop, .pagenav{display:none !important;}
+  .layout{display:block;}
+  main{padding:0;}
+  body{background:#fff; color:#000;}
+}
+
+@media(max-width:880px){
+  .layout{grid-template-columns:1fr;}
+  #sidebar{position:relative; top:0; height:auto; border-right:none; border-bottom:1px solid var(--border); display:none;}
+  #sidebar.mobileOpen{display:block;}
+  .searchwrap{max-width:150px;}
+  .brand-text .t2{display:none;}
+}
+</style>
+</head>
+<body data-theme="dark">
+<a href="#main" class="skip">Skip to content</a>
+
+<div id="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">J</div>
+      <div class="brand-text"><span class="t1">Jira for QA Engineers</span><span class="t2">Learn With PMK71 · Vol. 1</span></div>
+    </div>
+    <span class="author-credit">by <strong>Prashanth M K</strong></span>
+    <div class="searchwrap"><input id="searchbox" placeholder="Search this course…" /></div>
+    <button class="topbtn" id="menuBtn" title="Toggle menu">☰</button>
+    <a class="topbtn" href="../index.html">Home</a>
+    <button class="topbtn" id="themeBtn" title="Toggle theme">🌙 Dark</button>
+    <button class="topbtn" id="printBtn" title="Print / Save as PDF">🖨 PDF</button>
+  </div>
+  <div id="progressbar"><div id="progressfill"></div></div>
+</div>
+
+<div class="layout">
+  <nav id="sidebar" aria-label="Course navigation"></nav>
+
+  <main id="main">
+
+    <section class="hero">
+      <div class="hero-eyebrow">QA · Jira Certification Track · Volume 1 of 2</div>
+      <h1>Jira for QA Engineers — From Zero to Interview-Ready</h1>
+      <p>A complete, mentor-style course built for manual and automation QA engineers. Volume 1 covers Jira fundamentals, Agile foundations, navigation, issue types &amp; lifecycle, bug reporting, boards, sprints, search, and JQL — with real project examples, four-perspective breakdowns (QA / Dev / Scrum Master / Product Owner), and scored quizzes after every topic.</p>
+      <div class="hero-stats">
+        <div class="hstat"><b>11</b><span>Parts in this volume</span></div>
+        <div class="hstat"><b>28</b><span>Topics covered</span></div>
+        <div class="hstat"><b>190+</b><span>Quiz questions</span></div>
+        <div class="hstat"><b>50+</b><span>JQL examples</span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 1 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part1">
+      <div class="part-head"><span class="pnum">PART 01</span><h2>Introduction to Jira</h2></div>
+      <p class="part-sub">What Jira is, where it came from, why QA teams live inside it, and how the editions differ.</p>
+
+      <article class="topic" id="p1-what-is-jira">
+        <h3>1.1 What Is Jira? <span class="tag">foundation</span></h3>
+        <div class="card">
+          <h4>Introduction</h4>
+          <p>Jira is a work-tracking tool made by Atlassian. Every piece of work a team does — a bug, a feature, a task, a support ticket — becomes a trackable record called an <b>issue</b>. Teams move issues through stages (To Do → In Progress → Done) so that everyone can see, at any moment, exactly what state every piece of work is in.</p>
+          <p>Think of Jira as air traffic control for your team's work. Nothing "just happens" invisibly — every change of status is logged, timestamped, and visible to the whole team.</p>
+        </div>
+        <div class="card">
+          <h4>Why It Exists</h4>
+          <p>Before tools like Jira, teams tracked bugs and tasks in spreadsheets or email threads. That worked for five people. It falls apart at fifty, because nobody can answer basic questions: What's blocking release? Who owns this bug? Did QA actually retest it? Jira exists to make the state of all work queryable and auditable in real time.</p>
+        </div>
+        <div class="callout">
+          <span class="clabel">Real Industry Problem</span>
+          <p>A payments company shipped a release with three "fixed" bugs that were never actually retested. The developer marked them Done from memory; QA had no visibility. The bugs shipped to production. This is the exact failure mode Jira's issue lifecycle and QA-owned transitions are designed to prevent — no issue reaches Done without QA closing it.</p>
+        </div>
+        <div class="card">
+          <h4>Step-by-Step: Your First Look at Jira</h4>
+          <ol>
+            <li>Log in — you land on your personal <b>Dashboard</b>.</li>
+            <li>Open a <b>Project</b> from the left menu — this is a container for related work (e.g., "Mobile Banking App").</li>
+            <li>Click <b>Board</b> to see issues as cards moving across columns.</li>
+            <li>Click <b>Backlog</b> to see everything not yet in a sprint.</li>
+            <li>Click any card to open the <b>issue detail view</b> — description, status, comments, attachments, history.</li>
+          </ol>
+        </div>
+
+        <div class="mockup-wrap">
+          <svg viewBox="0 0 760 340" width="100%" height="340" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="760" height="340" rx="12" fill="var(--code-bg)" stroke="var(--border)"/>
+            <!-- browser chrome -->
+            <rect x="0" y="0" width="760" height="26" rx="12" fill="var(--panel-2)"/>
+            <circle cx="16" cy="13" r="4.5" fill="#F0537A"/><circle cx="32" cy="13" r="4.5" fill="#F5A524"/><circle cx="48" cy="13" r="4.5" fill="#2DD4BF"/>
+            <rect x="70" y="6" width="300" height="14" rx="7" fill="var(--bg)"/>
+            <text x="80" y="16" font-size="9" fill="var(--text-faint)">yourcompany.atlassian.net/jira/software/project/QAP/board</text>
+            <!-- top app bar -->
+            <rect x="0" y="26" width="760" height="34" fill="var(--panel)"/>
+            <rect x="14" y="35" width="16" height="16" rx="4" fill="var(--amber)"/>
+            <text x="36" y="47" font-size="11" fill="var(--text)" font-weight="700">QA Practice</text>
+            <rect x="220" y="34" width="230" height="18" rx="9" fill="var(--bg)" stroke="var(--border)"/>
+            <text x="230" y="47" font-size="9" fill="var(--text-faint)">⌕ Search issues, boards, filters…</text>
+            <circle cx="700" cy="43" r="9" fill="var(--teal)"/><text x="694" y="46" font-size="8" fill="#0A1424" font-weight="700">PK</text>
+            <!-- left sidebar -->
+            <rect x="0" y="60" width="130" height="280" fill="var(--panel)"/>
+            <g font-size="10" fill="var(--text-dim)">
+              <rect x="10" y="72" width="110" height="22" rx="6" fill="var(--panel-2)"/><text x="20" y="87">🏠 Dashboard</text>
+              <text x="20" y="112">📁 Projects</text>
+              <rect x="10" y="122" width="110" height="22" rx="6" fill="rgba(245,165,36,.15)"/><text x="20" y="137" fill="var(--amber)">🗂 Board</text>
+              <text x="20" y="162">📋 Backlog</text>
+              <text x="20" y="187">🐞 Issues</text>
+              <text x="20" y="212">⏱ Sprints</text>
+              <text x="20" y="237">⚙ Settings</text>
+            </g>
+            <!-- board columns -->
+            <g font-size="9.5">
+              <text x="150" y="76" fill="var(--text-faint)">TO DO (2)</text>
+              <rect x="150" y="82" width="140" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+              <text x="158" y="98" fill="var(--text)" font-size="9">QAP-101 Login validation</text>
+              <circle cx="270" cy="118" r="6" fill="var(--violet)"/><text x="160" y="121" fill="var(--text-faint)" font-size="8">Bug · High</text>
+              <rect x="150" y="134" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+              <text x="158" y="150" fill="var(--text)" font-size="9">QAP-104 Guest checkout</text>
+              <text x="160" y="166" fill="var(--text-faint)" font-size="8">Story · Medium</text>
+
+              <text x="305" y="76" fill="var(--text-faint)">IN PROGRESS (2)</text>
+              <rect x="305" y="82" width="140" height="46" rx="8" fill="var(--panel)" stroke="var(--amber)"/>
+              <text x="313" y="98" fill="var(--text)" font-size="9">QAP-098 Promo code API</text>
+              <circle cx="425" cy="118" r="6" fill="var(--amber)"/><text x="315" y="121" fill="var(--text-faint)" font-size="8">Task · In dev</text>
+              <rect x="305" y="134" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--amber)"/>
+              <text x="313" y="150" fill="var(--text)" font-size="9">QAP-110 Session timeout</text>
+              <text x="315" y="166" fill="var(--text-faint)" font-size="8">Bug · Highest</text>
+
+              <text x="460" y="76" fill="var(--text-faint)">QA (1)</text>
+              <rect x="460" y="82" width="140" height="46" rx="8" fill="var(--panel)" stroke="var(--violet)"/>
+              <text x="468" y="98" fill="var(--text)" font-size="9">QAP-093 Apply promo code</text>
+              <circle cx="580" cy="118" r="6" fill="var(--teal)"/><text x="470" y="121" fill="var(--text-faint)" font-size="8">Story · Testing</text>
+
+              <text x="615" y="76" fill="var(--text-faint)">DONE (3)</text>
+              <rect x="615" y="82" width="140" height="34" rx="8" fill="var(--panel)" stroke="var(--teal)" opacity="0.8"/>
+              <text x="623" y="98" fill="var(--text-dim)" font-size="9">QAP-088 Cart totals</text>
+              <rect x="615" y="122" width="140" height="34" rx="8" fill="var(--panel)" stroke="var(--teal)" opacity="0.8"/>
+              <text x="623" y="138" fill="var(--text-dim)" font-size="9">QAP-081 Password reset</text>
+            </g>
+            <text x="150" y="200" fill="var(--text-faint)" font-size="9">↳ this is a Scrum Board — see Part 8 for full anatomy</text>
+          </svg>
+          <div class="mockup-cap">Original illustration — <b>a Scrum Board's first-look layout</b> (sidebar · columns · issue cards)</div>
+        </div>
+
+        <div class="persona-grid">
+          <div class="persona"><div class="pico">🧪</div><b>QA Engineer</b><p>Jira is where you log bugs, link them to the story that caused them, and prove — with evidence — that a fix actually works before it ships.</p></div>
+          <div class="persona"><div class="pico">💻</div><b>Developer</b><p>Jira tells you what to build next, in what priority, and gives you a paper trail when someone asks "why did we build it this way?"</p></div>
+          <div class="persona"><div class="pico">📋</div><b>Scrum Master</b><p>Jira is the sprint's single source of truth — burndown charts and board state replace status-update meetings.</p></div>
+          <div class="persona"><div class="pico">🎯</div><b>Product Owner</b><p>Jira is where the backlog lives and gets prioritized — it's the bridge between business goals and what engineers actually build.</p></div>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4>Common Mistakes</h4><ul><li>Treating Jira as "just a to-do list" instead of the team's source of truth</li><li>Closing issues without linking evidence (screenshots, logs)</li><li>Ignoring issue history when debugging "who changed what"</li></ul></div>
+          <div class="card"><h4>Best Practices</h4><ul><li>Update issue status the moment work state changes — not at end of day</li><li>Always read the full issue history before asking "what happened here?" in chat</li><li>Treat the issue description as a contract, not a note-to-self</li></ul></div>
+        </div>
+        <div class="exercise">
+          <h4>Hands-On Exercise</h4>
+          <p>In a free Jira Cloud sandbox (or trial site), create a project called "QA Practice." Open the board, backlog, and one existing issue. Write down every field you can see on the issue detail screen — you'll need to recognize all of them by Part 6.</p>
+        </div>
+      </article>
+
+      <article class="topic" id="p1-history">
+        <h3>1.2 History &amp; Why Companies Use Jira <span class="tag">context</span></h3>
+        <div class="card">
+          <p>Atlassian released Jira in 2002, originally as a bug tracker for Java developers (the name comes from "Gojira," the Japanese word for Godzilla — a play on "Bugzilla," a competing tool). Over 20+ years it grew from a niche bug tracker into the default work-management platform for Agile software teams worldwide, because it evolved alongside Agile itself — Scrum boards, sprints, and story points are now built in, not bolted on.</p>
+        </div>
+        <div class="callout tip"><span class="clabel">Real Example</span><p>A 200-engineer fintech company runs its entire release process through Jira: Product creates Epics, engineering breaks them into Stories, QA attaches test evidence to every Story before it's marked Done, and Release Managers query Jira with JQL to generate release notes automatically.</p></div>
+      </article>
+
+      <article class="topic" id="p1-editions">
+        <h3>1.3 Jira Software vs Service Management vs Work Management, Cloud vs Data Center <span class="tag">editions</span></h3>
+        <table>
+          <tr><th>Product</th><th>Built For</th><th>QA Relevance</th></tr>
+          <tr><td>Jira Software</td><td>Engineering teams — Scrum/Kanban, sprints, code integration</td><td>This is the one QA engineers use daily</td></tr>
+          <tr><td>Jira Service Management</td><td>IT support / helpdesk tickets</td><td>You may see production incidents raised here, linked back to bugs</td></tr>
+          <tr><td>Jira Work Management</td><td>Non-technical teams (HR, marketing)</td><td>Rarely touched by QA</td></tr>
+        </table>
+        <table>
+          <tr><th>Deployment</th><th>Hosting</th><th>Typical Use</th></tr>
+          <tr><td>Cloud</td><td>Atlassian-hosted, subscription</td><td>Most startups and mid-size companies today</td></tr>
+          <tr><td>Data Center</td><td>Self-hosted on company servers</td><td>Banks, government, regulated industries needing full data control</td></tr>
+        </table>
+        <div class="grid2">
+          <div class="card"><h4>Advantages</h4><ul><li>Single source of truth across QA, Dev, PM</li><li>Deep integrations (GitHub, CI/CD, Slack, Confluence)</li><li>Powerful custom queries via JQL</li><li>Full audit trail for compliance</li></ul></div>
+          <div class="card"><h4>Disadvantages</h4><ul><li>Steep learning curve for JQL and admin config</li><li>Can become cluttered with poor field/label hygiene</li><li>Heavier than needed for very small teams</li></ul></div>
+        </div>
+      </article>
+
+      <div class="quiz-box" id="quiz-part1">
+        <h4>Part 1 Knowledge Check</h4>
+        <div class="quiz-meta">6 questions · covers 1.1–1.3</div>
+        <div id="quiz-part1-render"></div>
+        <div class="quiz-score" id="score-part1"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 2 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part2">
+      <div class="part-head"><span class="pnum">PART 02</span><h2>Agile Basics</h2></div>
+      <p class="part-sub">The vocabulary you must know before any Jira screen makes sense.</p>
+
+      <article class="topic" id="p2-sdlc">
+        <h3>2.1 SDLC: Waterfall vs Agile <span class="tag">foundation</span></h3>
+        <div class="card">
+          <p>The <b>Software Development Life Cycle (SDLC)</b> is the sequence of phases software goes through: requirements → design → build → test → release → maintain. <b>Waterfall</b> runs these phases once, strictly in order — testing happens only after all coding finishes. <b>Agile</b> repeats a small version of that whole cycle every 1–4 weeks (a "sprint"), so testing happens continuously, alongside development, not after it.</p>
+        </div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 720 180" width="100%" height="180">
+            <text x="10" y="20" fill="var(--text-dim)" font-size="12">Waterfall — one long sequence</text>
+            <g font-size="11" fill="var(--text)">
+              <rect x="10" y="30" width="90" height="34" rx="6" fill="#233252"/><text x="30" y="51">Requirements</text>
+              <rect x="115" y="30" width="70" height="34" rx="6" fill="#233252"/><text x="130" y="51">Design</text>
+              <rect x="200" y="30" width="70" height="34" rx="6" fill="#233252"/><text x="215" y="51">Build</text>
+              <rect x="285" y="30" width="60" height="34" rx="6" fill="#233252"/><text x="298" y="51">Test</text>
+              <rect x="360" y="30" width="70" height="34" rx="6" fill="#233252"/><text x="374" y="51">Release</text>
+            </g>
+            <text x="10" y="100" fill="var(--text-dim)" font-size="12">Agile — short repeating loops (sprints)</text>
+            <g font-size="10.5" fill="#0A1424">
+              <rect x="10" y="115" width="150" height="40" rx="20" fill="#2DD4BF"/><text x="45" y="139">Sprint 1: Plan→Build→Test</text>
+              <rect x="175" y="115" width="150" height="40" rx="20" fill="#F5A524"/><text x="210" y="139">Sprint 2: Plan→Build→Test</text>
+              <rect x="340" y="115" width="150" height="40" rx="20" fill="#9E8CFC"/><text x="376" y="139">Sprint 3: Plan→Build→Test</text>
+            </g>
+          </svg>
+        </div>
+        <div class="callout warn"><span class="clabel">Real Industry Problem</span><p>A team using Waterfall discovered a critical UX flaw only during final testing — six weeks before launch. With Agile, that same flaw would surface in sprint 1's testing, giving weeks to fix it instead of days.</p></div>
+      </article>
+
+      <article class="topic" id="p2-manifesto">
+        <h3>2.2 The Agile Manifesto, Scrum &amp; Kanban <span class="tag">frameworks</span></h3>
+        <div class="card">
+          <h4>Explanation</h4>
+          <p>The 2001 Agile Manifesto values individuals and interactions over processes, working software over documentation, customer collaboration over contract negotiation, and responding to change over following a plan. <b>Scrum</b> and <b>Kanban</b> are the two frameworks that implement these values differently:</p>
+        </div>
+        <table>
+          <tr><th></th><th>Scrum</th><th>Kanban</th></tr>
+          <tr><td>Work delivered in</td><td>Fixed-length Sprints (1–4 weeks)</td><td>Continuous flow, no fixed cycles</td></tr>
+          <tr><td>Roles</td><td>Scrum Master, Product Owner, Dev Team</td><td>No mandated roles</td></tr>
+          <tr><td>Board resets</td><td>Yes, each sprint</td><td>No, it's a living board</td></tr>
+          <tr><td>Best for</td><td>Feature teams with plannable scope</td><td>Support/maintenance teams, unpredictable inflow</td></tr>
+        </table>
+      </article>
+
+      <article class="topic" id="p2-terms">
+        <h3>2.3 Core Agile Vocabulary <span class="tag">glossary</span></h3>
+        <div class="grid2">
+          <div class="card">
+            <h4>Planning Terms</h4>
+            <ul>
+              <li><b>Backlog</b> — the full, prioritized list of not-yet-done work</li>
+              <li><b>Sprint</b> — a fixed time-box (usually 2 weeks) of committed work</li>
+              <li><b>Release</b> — a version of the product shipped to users</li>
+              <li><b>Story Points</b> — relative effort estimate (not hours)</li>
+              <li><b>Velocity</b> — average story points a team completes per sprint</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h4>Quality Gates</h4>
+            <ul>
+              <li><b>Definition of Ready (DoR)</b> — criteria a story must meet before it enters a sprint (clear AC, estimated, no blockers)</li>
+              <li><b>Definition of Done (DoD)</b> — criteria before a story is truly complete (coded, tested, reviewed, deployed to staging)</li>
+              <li><b>Daily Standup</b> — 15-min sync: what I did, what I'll do, blockers</li>
+              <li><b>Sprint Review</b> — demo completed work to stakeholders</li>
+              <li><b>Retrospective</b> — team reflects on what to improve next sprint</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout tip"><span class="clabel">QA Angle</span><p>QA engineers should never let a story enter Done just because code is merged. Push for "tested and verified against acceptance criteria" to be an explicit, non-negotiable line in your team's Definition of Done.</p></div>
+      </article>
+
+      <div class="quiz-box" id="quiz-part2">
+        <h4>Part 2 Knowledge Check</h4><div class="quiz-meta">6 questions · covers 2.1–2.3</div>
+        <div id="quiz-part2-render"></div><div class="quiz-score" id="score-part2"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 3 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part3">
+      <div class="part-head"><span class="pnum">PART 03</span><h2>Jira Navigation</h2></div>
+      <p class="part-sub">The screens you'll live in every single day.</p>
+      <article class="topic" id="p3-nav">
+        <h3>3.1 Dashboard, Projects, Issues, Filters, Notifications <span class="tag">UI</span></h3>
+        <div class="card">
+          <ul>
+            <li><b>Dashboard</b> — your customizable homepage of gadgets (assigned issues, sprint health, activity streams)</li>
+            <li><b>Projects</b> — the container for a product/team's work; each has its own board, backlog, and settings</li>
+            <li><b>Issues</b> — the global search/list of every issue you have access to, filterable by any field</li>
+            <li><b>Filters</b> — saved searches (built with JQL) you can revisit, share, or pin to a dashboard</li>
+            <li><b>Notifications (bell icon)</b> — real-time alerts when you're mentioned, assigned, or watching an updated issue</li>
+            <li><b>Profile &amp; Settings</b> — your avatar, time zone, notification preferences, and personal access tokens</li>
+          </ul>
+        </div>
+        <div class="exercise"><h4>Hands-On Exercise</h4><p>Navigate to Issues → Search all issues. Filter by Project = your practice project, then by Assignee = you. Save this as a filter named "My Open Work."</p></div>
+      </article>
+      <div class="quiz-box" id="quiz-part3"><h4>Part 3 Knowledge Check</h4><div class="quiz-meta">5 questions</div><div id="quiz-part3-render"></div><div class="quiz-score" id="score-part3"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 4 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part4">
+      <div class="part-head"><span class="pnum">PART 04</span><h2>Issue Types</h2></div>
+      <p class="part-sub">Every issue type maps to a different size and shape of work.</p>
+      <article class="topic" id="p4-types">
+        <h3>4.1 Epic, Story, Task, Sub-task, Bug, Spike, Incident <span class="tag">core</span></h3>
+        <table>
+          <tr><th>Type</th><th>What It Represents</th><th>Real Example</th></tr>
+          <tr><td>🟣 Epic</td><td>A large body of work, spans multiple sprints</td><td>"Redesign checkout flow"</td></tr>
+          <tr><td>🟢 Story</td><td>A user-facing feature slice</td><td>"As a user, I can apply a promo code at checkout"</td></tr>
+          <tr><td>🔵 Task</td><td>Non-feature work with a clear outcome</td><td>"Upgrade Node.js to v20 in CI pipeline"</td></tr>
+          <tr><td>⚪ Sub-task</td><td>A smaller piece of a Story/Task</td><td>"Write API test cases for promo code endpoint"</td></tr>
+          <tr><td>🔴 Bug</td><td>Something broken vs expected behavior</td><td>"Promo code field accepts negative discount values"</td></tr>
+          <tr><td>🟡 Spike</td><td>Time-boxed research/investigation</td><td>"Investigate feasibility of Apple Pay integration"</td></tr>
+          <tr><td>🟠 Improvement</td><td>Enhancement to existing functionality</td><td>"Reduce checkout API response time"</td></tr>
+          <tr><td>🔥 Incident</td><td>Live production issue, urgent</td><td>"Checkout API returning 500s in production"</td></tr>
+          <tr><td>🎫 Service Request</td><td>Request routed via Jira Service Management</td><td>"Provision staging test account"</td></tr>
+        </table>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 700 160" width="100%" height="160">
+            <rect x="20" y="15" width="660" height="34" rx="8" fill="#9E8CFC"/><text x="35" y="37" fill="#0A1424" font-size="12">EPIC — Redesign Checkout Flow</text>
+            <rect x="50" y="65" width="290" height="30" rx="7" fill="#2DD4BF"/><text x="65" y="85" fill="#0A1424" font-size="11">STORY — Apply promo code</text>
+            <rect x="360" y="65" width="290" height="30" rx="7" fill="#2DD4BF"/><text x="375" y="85" fill="#0A1424" font-size="11">STORY — Guest checkout</text>
+            <rect x="50" y="110" width="140" height="26" rx="6" fill="#233252"/><text x="60" y="128" fill="var(--text)" font-size="10">SUB-TASK — UI</text>
+            <rect x="200" y="110" width="140" height="26" rx="6" fill="#233252"/><text x="210" y="128" fill="var(--text)" font-size="10">SUB-TASK — API test</text>
+            <rect x="360" y="110" width="290" height="26" rx="6" fill="#F0537A"/><text x="375" y="128" fill="#fff" font-size="10">BUG — session drops on guest flow</text>
+          </svg>
+        </div>
+        <div class="callout"><span class="clabel">Common Mistake</span><p>Filing everything as a "Task" because it's the default option. Wrong issue types wreck reporting — your Bug count, Velocity, and Epic burndown all depend on accurate typing.</p></div>
+      </article>
+      <div class="quiz-box" id="quiz-part4"><h4>Part 4 Knowledge Check</h4><div class="quiz-meta">6 questions</div><div id="quiz-part4-render"></div><div class="quiz-score" id="score-part4"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 5 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part5">
+      <div class="part-head"><span class="pnum">PART 05</span><h2>Issue Lifecycle</h2></div>
+      <p class="part-sub">Every status an issue passes through, and who owns each transition.</p>
+      <article class="topic" id="p5-lifecycle">
+        <h3>5.1 The Full Status Workflow <span class="tag">core</span></h3>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 760 200" width="100%" height="200">
+            <g font-size="10.5" fill="#0A1424" font-family="monospace">
+              <rect x="10" y="20" width="90" height="32" rx="16" fill="#6B7C9E"/><text x="30" y="40">OPEN</text>
+              <rect x="120" y="20" width="90" height="32" rx="16" fill="#6B7C9E"/><text x="132" y="40">TO DO</text>
+              <rect x="230" y="20" width="120" height="32" rx="16" fill="#F5A524"/><text x="245" y="40">IN PROGRESS</text>
+              <rect x="370" y="20" width="110" height="32" rx="16" fill="#F5A524"/><text x="385" y="40">IN REVIEW</text>
+              <rect x="500" y="20" width="70" height="32" rx="16" fill="#9E8CFC"/><text x="518" y="40">QA</text>
+              <rect x="590" y="20" width="130" height="32" rx="16" fill="#9E8CFC"/><text x="602" y="40">READY FOR UAT</text>
+              <rect x="230" y="80" width="90" height="32" rx="16" fill="#2DD4BF"/><text x="253" y="100">DONE</text>
+              <rect x="340" y="80" width="90" height="32" rx="16" fill="#2DD4BF"/><text x="358" y="100">CLOSED</text>
+              <rect x="450" y="80" width="100" height="32" rx="16" fill="#F0537A"/><text x="464" y="100">REJECTED</text>
+              <rect x="570" y="80" width="110" height="32" rx="16" fill="#F0537A"/><text x="585" y="100">REOPENED</text>
+            </g>
+            <text x="10" y="150" fill="var(--text-dim)" font-size="11">Gray = not started · Amber = active work · Violet = QA-owned · Teal = success · Red = failure/rework</text>
+            <text x="10" y="175" fill="var(--text-faint)" font-size="10.5">Arrow flow: OPEN → TO DO → IN PROGRESS → IN REVIEW → QA → (pass) READY FOR UAT → DONE → CLOSED</text>
+            <text x="10" y="192" fill="var(--text-faint)" font-size="10.5">(fail) QA → REOPENED → back to IN PROGRESS, or → REJECTED if not a valid bug</text>
+          </svg>
+        </div>
+        <table>
+          <tr><th>Status</th><th>Meaning</th><th>Who Moves It</th></tr>
+          <tr><td>Open / To Do</td><td>Not yet started</td><td>Product Owner / Dev</td></tr>
+          <tr><td>In Progress</td><td>Actively being coded</td><td>Developer</td></tr>
+          <tr><td>In Review</td><td>Pull request under code review</td><td>Developer / Reviewer</td></tr>
+          <tr><td>QA</td><td>Being tested against acceptance criteria</td><td><b>QA Engineer</b></td></tr>
+          <tr><td>Ready for UAT</td><td>Passed QA, awaiting business sign-off</td><td>QA → Product Owner</td></tr>
+          <tr><td>Done / Closed</td><td>Fully verified and accepted</td><td>Product Owner / QA</td></tr>
+          <tr><td>Rejected</td><td>Not a valid bug, or won't-fix</td><td>Dev / PO with justification</td></tr>
+          <tr><td>Reopened</td><td>Failed verification, sent back</td><td><b>QA Engineer</b></td></tr>
+        </table>
+        <div class="callout tip"><span class="clabel">Tip</span><p>The single most important gate for QA is the transition <b>QA → Reopened</b>. Never let social pressure ("just mark it Done, we'll fix it next sprint") skip this gate — it's the whole reason the lifecycle has a QA-owned state.</p></div>
+      </article>
+      <div class="quiz-box" id="quiz-part5"><h4>Part 5 Knowledge Check</h4><div class="quiz-meta">6 questions</div><div id="quiz-part5-render"></div><div class="quiz-score" id="score-part5"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 6 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part6">
+      <div class="part-head"><span class="pnum">PART 06</span><h2>Creating Issues</h2></div>
+      <p class="part-sub">Every field that matters, and why.</p>
+      <article class="topic" id="p6-fields">
+        <h3>6.1 Fields You Must Fill Correctly <span class="tag">practical</span></h3>
+        <div class="grid2">
+          <div class="card"><h4>Classification Fields</h4><ul>
+            <li><b>Priority</b> — business urgency (Highest → Lowest)</li>
+            <li><b>Labels</b> — free-text tags for cross-project grouping ("regression", "flaky")</li>
+            <li><b>Components</b> — module the issue belongs to ("Checkout API", "Login UI")</li>
+            <li><b>Fix Version</b> — which release will contain the fix</li>
+            <li><b>Affects Version</b> — which release the bug was found in</li>
+          </ul></div>
+          <div class="card"><h4>Content Fields</h4><ul>
+            <li><b>Environment</b> — browser/OS/device/build where it occurred</li>
+            <li><b>Description</b> — full context, steps, expected vs actual</li>
+            <li><b>Acceptance Criteria</b> — the testable conditions for "done"</li>
+            <li><b>Assignee / Reporter</b> — who's fixing it / who found it</li>
+            <li><b>Linked Issues</b> — "relates to", "blocks", "is caused by"</li>
+            <li><b>Watchers / Attachments</b> — who gets notified, evidence files</li>
+          </ul></div>
+        </div>
+
+        <div class="mockup-wrap">
+          <svg viewBox="0 0 760 300" width="100%" height="300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="760" height="300" fill="rgba(0,0,0,.35)"/>
+            <rect x="120" y="15" width="520" height="270" rx="12" fill="var(--panel)" stroke="var(--border)"/>
+            <rect x="120" y="15" width="520" height="36" rx="12" fill="var(--panel-2)"/>
+            <text x="140" y="38" font-size="12" fill="var(--text)" font-weight="700">Create Issue</text>
+            <text x="608" y="38" font-size="13" fill="var(--text-faint)">✕</text>
+            <g font-size="9.5" fill="var(--text-faint)">
+              <text x="140" y="70">Project</text>
+              <rect x="140" y="76" width="150" height="20" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="150" y="90" fill="var(--text-dim)" font-size="9">QA Practice (QAP)</text>
+
+              <text x="310" y="70">Issue Type</text>
+              <rect x="310" y="76" width="150" height="20" rx="5" fill="var(--code-bg)" stroke="var(--violet)"/>
+              <text x="320" y="90" fill="var(--violet)" font-size="9">🐞 Bug</text>
+
+              <text x="140" y="112">Summary *</text>
+              <rect x="140" y="118" width="480" height="20" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="150" y="132" fill="var(--text-dim)" font-size="9">Checkout total miscalculates with 2 promo codes stacked</text>
+
+              <text x="140" y="154">Description</text>
+              <rect x="140" y="160" width="480" height="46" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="150" y="174" fill="var(--text-dim)" font-size="8.5">Steps: 1. Add promo A  2. Add promo B  3. View total</text>
+              <text x="150" y="188" fill="var(--text-dim)" font-size="8.5">Expected: 15% off. Actual: 30% off (stacked incorrectly)</text>
+
+              <text x="140" y="222">Priority</text>
+              <rect x="140" y="228" width="110" height="20" rx="5" fill="var(--code-bg)" stroke="var(--red)"/>
+              <text x="150" y="242" fill="var(--red)" font-size="9">⬆ Highest</text>
+
+              <text x="264" y="222">Labels</text>
+              <rect x="264" y="228" width="110" height="20" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="272" y="242" fill="var(--text-dim)" font-size="8.5">regression ✕</text>
+
+              <text x="388" y="222">Assignee</text>
+              <rect x="388" y="228" width="110" height="20" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="396" y="242" fill="var(--text-dim)" font-size="8.5">👤 A. Reyes</text>
+
+              <text x="512" y="222">Fix Version</text>
+              <rect x="512" y="228" width="108" height="20" rx="5" fill="var(--code-bg)" stroke="var(--border)"/>
+              <text x="520" y="242" fill="var(--text-dim)" font-size="8.5">R2.4</text>
+            </g>
+            <rect x="500" y="258" width="60" height="24" rx="6" fill="var(--panel-2)" stroke="var(--border)"/><text x="514" y="274" font-size="9" fill="var(--text-dim)">Cancel</text>
+            <rect x="568" y="258" width="72" height="24" rx="6" fill="var(--amber)"/><text x="584" y="274" font-size="9" fill="#141414" font-weight="700">Create</text>
+          </svg>
+          <div class="mockup-cap">Original illustration — <b>the Create Issue screen</b> filled out as a real bug report should look</div>
+        </div>
+
+        <div class="callout warn"><span class="clabel">Common Mistake</span><p>Confusing Fix Version and Affects Version. Affects Version = where you <i>found</i> the bug. Fix Version = where the fix will <i>ship</i>. Swapping these breaks every release report.</p></div>
+      </article>
+      <div class="quiz-box" id="quiz-part6"><h4>Part 6 Knowledge Check</h4><div class="quiz-meta">6 questions</div><div id="quiz-part6-render"></div><div class="quiz-score" id="score-part6"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 7 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part7">
+      <div class="part-head"><span class="pnum">PART 07</span><h2>Bug Reporting</h2></div>
+      <p class="part-sub">The single most important skill this course teaches.</p>
+
+      <article class="topic" id="p7-severity-priority">
+        <h3>7.1 Severity vs Priority <span class="tag">critical</span></h3>
+        <div class="card">
+          <p><b>Severity</b> = how badly the bug damages the system (technical impact). <b>Priority</b> = how soon it must be fixed (business urgency). These are independent axes — a cosmetic typo on the homepage can be <i>high priority</i> (CEO demo tomorrow) despite <i>low severity</i>. A crash in an obscure admin screen used once a year can be <i>high severity</i> but <i>low priority</i>.</p>
+        </div>
+        <table>
+          <tr><th></th><th>Critical Severity</th><th>Low Severity</th></tr>
+          <tr><td>High Priority</td><td>Payment gateway crashes on checkout</td><td>Wrong logo shown before investor demo</td></tr>
+          <tr><td>Low Priority</td><td>Rare data-corruption edge case in unused legacy report</td><td>Extra pixel of padding on settings page</td></tr>
+        </table>
+      </article>
+
+      <article class="topic" id="p7-goodbug">
+        <h3>7.2 Writing a Good Bug Report <span class="tag">critical</span></h3>
+        <div class="grid2">
+          <div class="card"><h4>❌ Bad Bug Report</h4><p style="font-style:italic">"Login is broken."</p><p>No steps, no environment, no evidence, no expected/actual. Unreproducible, unassignable, ignored.</p></div>
+          <div class="card"><h4>✅ Good Bug Report</h4><p style="font-style:italic">"Login fails with 500 error when email contains a '+' character."</p><p>Includes steps, build number, screenshot, console log, and exact expected vs actual behavior.</p></div>
+        </div>
+        <div class="card">
+          <h4>The Bug Template QA Engineers Should Always Use</h4>
+          <table>
+            <tr><td><b>Title</b></td><td>Short, specific, searchable ("Checkout total miscalculates with 2 promo codes stacked")</td></tr>
+            <tr><td><b>Steps to Reproduce</b></td><td>Numbered, exact, reproducible by anyone</td></tr>
+            <tr><td><b>Expected Result</b></td><td>What should happen per the acceptance criteria / spec</td></tr>
+            <tr><td><b>Actual Result</b></td><td>What actually happened, precisely</td></tr>
+            <tr><td><b>Environment</b></td><td>Browser/app version, OS, device, build/commit number</td></tr>
+            <tr><td><b>Evidence</b></td><td>Screenshot, video, console error, network trace, server log</td></tr>
+          </table>
+        </div>
+        <div class="callout tip"><span class="clabel">Tip</span><p>Attach the browser console and network tab screenshots for any front-end bug — developers can often diagnose a bug in seconds from a console stack trace, versus hours from a vague description.</p></div>
+      </article>
+
+      <div class="quiz-box" id="quiz-part7"><h4>Part 7 Knowledge Check</h4><div class="quiz-meta">7 questions</div><div id="quiz-part7-render"></div><div class="quiz-score" id="score-part7"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 8 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part8">
+      <div class="part-head"><span class="pnum">PART 08</span><h2>Boards</h2></div>
+      <p class="part-sub">Scrum vs Kanban boards, swimlanes, and quick filters.</p>
+      <article class="topic" id="p8-boards">
+        <h3>8.1 Scrum Board vs Kanban Board <span class="tag">practical</span></h3>
+        <div class="card">
+          <p>A <b>Scrum Board</b> shows only the issues committed to the <i>current sprint</i>, and resets/re-plans each cycle. A <b>Kanban Board</b> shows the full continuous flow of work with no sprint boundary — issues move at their own pace, and the team limits work-in-progress (WIP) rather than time-boxing it.</p>
+        </div>
+        <div class="grid2">
+          <div class="card"><h4>Board Anatomy</h4><ul><li><b>Columns</b> — map to statuses (To Do / In Progress / QA / Done)</li><li><b>Swimlanes</b> — horizontal grouping (by Epic, Assignee, or priority)</li><li><b>Quick Filters</b> — one-click toggles ("Only Bugs", "My Issues")</li></ul></div>
+          <div class="card"><h4>QA Angle</h4><ul><li>Add a Quick Filter for "Bugs" to instantly see open defects</li><li>Use swimlanes by Epic to see which feature area has the most QA load</li><li>A card stuck in the QA column for days signals a testing bottleneck — flag it in standup</li></ul></div>
+        </div>
+
+        <div class="mockup-wrap">
+          <svg viewBox="0 0 760 260" width="100%" height="260" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="760" height="260" rx="12" fill="var(--code-bg)" stroke="var(--border)"/>
+            <!-- quick filters -->
+            <rect x="16" y="14" width="80" height="20" rx="10" fill="var(--amber)"/><text x="30" y="28" font-size="8.5" fill="#141414" font-weight="700">Only Bugs</text>
+            <rect x="102" y="14" width="90" height="20" rx="10" fill="var(--panel-2)" stroke="var(--border)"/><text x="114" y="28" font-size="8.5" fill="var(--text-dim)">My Issues</text>
+            <rect x="198" y="14" width="110" height="20" rx="10" fill="var(--panel-2)" stroke="var(--border)"/><text x="210" y="28" font-size="8.5" fill="var(--text-dim)">Released bugs</text>
+
+            <!-- columns header -->
+            <g font-size="9.5" fill="var(--text-faint)">
+              <text x="20" y="56">TO DO</text><text x="200" y="56">IN PROGRESS</text><text x="380" y="56">QA</text><text x="560" y="56">DONE</text>
+            </g>
+            <line x1="190" y1="46" x2="190" y2="250" stroke="var(--border)"/>
+            <line x1="370" y1="46" x2="370" y2="250" stroke="var(--border)"/>
+            <line x1="550" y1="46" x2="550" y2="250" stroke="var(--border)"/>
+
+            <!-- swimlane label: Epic Checkout Redesign -->
+            <rect x="16" y="64" width="728" height="1" fill="var(--border)"/>
+            <text x="20" y="78" font-size="8.5" fill="var(--violet)" font-weight="700">🟣 EPIC · Checkout Redesign</text>
+
+            <rect x="20" y="84" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--border)"/><text x="28" y="100" font-size="8.5" fill="var(--text)">QAP-104 Guest checkout</text><text x="28" y="114" fill="var(--text-faint)" font-size="8">Story</text>
+            <rect x="200" y="84" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--amber)"/><text x="208" y="100" font-size="8.5" fill="var(--text)">QAP-098 Promo code API</text><text x="208" y="114" fill="var(--text-faint)" font-size="8">Task</text>
+            <rect x="380" y="84" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--violet)"/><text x="388" y="100" font-size="8.5" fill="var(--text)">QAP-093 Apply promo</text><text x="388" y="114" fill="var(--text-faint)" font-size="8">Story · in QA 3 days</text>
+            <rect x="560" y="84" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--teal)" opacity=".85"/><text x="568" y="100" font-size="8.5" fill="var(--text-dim)">QAP-088 Cart totals</text><text x="568" y="114" fill="var(--text-faint)" font-size="8">Story</text>
+
+            <!-- swimlane label: Epic Auth -->
+            <rect x="16" y="134" width="728" height="1" fill="var(--border)"/>
+            <text x="20" y="148" font-size="8.5" fill="var(--violet)" font-weight="700">🟣 EPIC · Auth Hardening</text>
+
+            <rect x="20" y="154" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--border)"/><text x="28" y="170" font-size="8.5" fill="var(--text)">QAP-101 Login validation</text><text x="28" y="184" fill="var(--text-faint)" font-size="8">Bug · High</text>
+            <rect x="200" y="154" width="160" height="40" rx="7" fill="var(--panel)" stroke="var(--amber)"/><text x="208" y="170" font-size="8.5" fill="var(--text)">QAP-110 Session timeout</text><text x="208" y="184" fill="var(--text-faint)" font-size="8">Bug · Highest</text>
+            <text x="380" y="178" font-size="8.5" fill="var(--text-faint)" font-style="italic">— empty —</text>
+            <text x="560" y="178" font-size="8.5" fill="var(--text-faint)" font-style="italic">— empty —</text>
+
+            <text x="20" y="228" font-size="8.5" fill="var(--text-faint)">↳ swimlanes grouped by Epic · card outline color = status · card stuck 3 days in QA is flagged</text>
+          </svg>
+          <div class="mockup-cap">Original illustration — <b>Board anatomy</b>: quick filters, columns, and Epic-grouped swimlanes</div>
+        </div>
+      </article>
+      <div class="quiz-box" id="quiz-part8"><h4>Part 8 Knowledge Check</h4><div class="quiz-meta">5 questions</div><div id="quiz-part8-render"></div><div class="quiz-score" id="score-part8"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 9 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part9">
+      <div class="part-head"><span class="pnum">PART 09</span><h2>Sprint Management</h2></div>
+      <p class="part-sub">Creating, running, and closing sprints.</p>
+      <article class="topic" id="p9-sprint">
+        <h3>9.1 Sprint Lifecycle <span class="tag">practical</span></h3>
+        <div class="card"><ol>
+          <li><b>Create Sprint</b> — from the Backlog, click "Create Sprint" (empty container, dates not yet set)</li>
+          <li><b>Sprint Planning</b> — drag prioritized backlog items in until team capacity (velocity) is reached</li>
+          <li><b>Start Sprint</b> — set start/end dates and a goal; the sprint becomes active and visible on the board</li>
+          <li><b>Move Issues</b> — team drags cards across columns daily as work progresses</li>
+          <li><b>Complete Sprint</b> — at the end date, close the sprint; unfinished issues get flagged</li>
+          <li><b>Carry Forward</b> — incomplete issues move to the backlog or directly into the next sprint</li>
+        </ol></div>
+        <div class="callout warn"><span class="clabel">Common Mistake</span><p>Adding untested "in progress" stories to the sprint completion count. A story isn't "complete" until it passes QA — completing a sprint with unverified stories inflates velocity artificially and hides real risk.</p></div>
+      </article>
+      <div class="quiz-box" id="quiz-part9"><h4>Part 9 Knowledge Check</h4><div class="quiz-meta">5 questions</div><div id="quiz-part9-render"></div><div class="quiz-score" id="score-part9"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 10 -->
+    <!-- ============================================================ -->
+    <section class="part" id="part10">
+      <div class="part-head"><span class="pnum">PART 10</span><h2>Searching</h2></div>
+      <p class="part-sub">Basic search, advanced search, and saved/shared filters — the bridge into JQL.</p>
+      <article class="topic" id="p10-search">
+        <h3>10.1 Basic vs Advanced Search <span class="tag">bridge to JQL</span></h3>
+        <div class="card">
+          <p><b>Basic Search</b> uses dropdown pickers (Project, Type, Status, Assignee) to build a query visually. <b>Advanced Search</b> lets you type raw JQL directly — every basic search is secretly generating JQL behind the scenes, which you can view by clicking "Switch to JQL" at any time. This is the best way to learn JQL: build a filter visually, then read the JQL it generated.</p>
+        </div>
+        <div class="card">
+          <h4>Saved &amp; Shared Filters</h4>
+          <p>Any search — basic or JQL — can be saved as a named Filter. Filters can be kept private, shared with specific people, a project role, or the whole organization, and pinned as gadgets on a Dashboard.</p>
+        </div>
+      </article>
+      <div class="quiz-box" id="quiz-part10"><h4>Part 10 Knowledge Check</h4><div class="quiz-meta">4 questions</div><div id="quiz-part10-render"></div><div class="quiz-score" id="score-part10"></div></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PART 11 — JQL (the big one) -->
+    <!-- ============================================================ -->
+    <section class="part" id="part11">
+      <div class="part-head"><span class="pnum">PART 11</span><h2>JQL — Jira Query Language</h2></div>
+      <p class="part-sub">Taught from absolute zero. This is the highest-leverage skill in this course — master it and every report, dashboard, and automation rule becomes trivial.</p>
+
+      <article class="topic" id="p11-syntax">
+        <h3>11.1 Basic Syntax <span class="tag">from zero</span></h3>
+        <div class="card">
+          <p>A JQL query is built from <b>Field</b> + <b>Operator</b> + <b>Value</b>, optionally chained with <b>AND / OR / NOT</b>, and sorted with <b>ORDER BY</b>.</p>
+        </div>
+        <div class="codeblock"><pre><span class="jql">project</span> = "QA Practice" <span class="jql">AND</span> <span class="jql">status</span> = "In Progress"</pre><button class="copybtn" onclick="copyCode(this)">Copy</button></div>
+        <div class="card"><p>Read it left to right: "field project equals QA Practice, and field status equals In Progress." Every JQL query, however complex, is built from this same pattern.</p></div>
+
+        <div class="mockup-wrap">
+          <svg viewBox="0 0 760 220" width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="760" height="220" rx="12" fill="var(--code-bg)" stroke="var(--border)"/>
+            <rect x="0" y="0" width="760" height="26" rx="12" fill="var(--panel-2)"/>
+            <circle cx="16" cy="13" r="4.5" fill="#F0537A"/><circle cx="32" cy="13" r="4.5" fill="#F5A524"/><circle cx="48" cy="13" r="4.5" fill="#2DD4BF"/>
+            <text x="80" y="16" font-size="9" fill="var(--text-faint)">Issues → Advanced search (JQL)</text>
+
+            <rect x="16" y="42" width="728" height="30" rx="7" fill="var(--panel)" stroke="var(--teal)"/>
+            <text x="28" y="61" font-size="11" font-family="monospace" fill="var(--teal)">project = "QAP" AND type = Bug AND status != Done ORDER BY priority DESC</text>
+
+            <!-- autocomplete dropdown -->
+            <rect x="140" y="74" width="220" height="70" rx="6" fill="var(--panel)" stroke="var(--border)"/>
+            <text x="150" y="90" font-size="8.5" fill="var(--text-faint)">Suggestions</text>
+            <text x="150" y="105" font-size="9" fill="var(--amber)">status = "In Progress"</text>
+            <text x="150" y="120" font-size="9" fill="var(--text-dim)">status = "QA"</text>
+            <text x="150" y="135" font-size="9" fill="var(--text-dim)">status CHANGED AFTER -7d</text>
+
+            <text x="16" y="166" font-size="9.5" fill="var(--text-faint)">Results (4)</text>
+            <g font-size="9" fill="var(--text-dim)">
+              <rect x="16" y="172" width="728" height="18" rx="4" fill="var(--panel)"/>
+              <text x="24" y="185">QAP-110</text><text x="90" y="185">Session timeout on checkout retry</text><text x="640" y="185" fill="var(--red)">Highest</text>
+              <rect x="16" y="192" width="728" height="18" rx="4" fill="var(--panel)"/>
+              <text x="24" y="205">QAP-101</text><text x="90" y="205">Login validation accepts blank password</text><text x="640" y="205" fill="var(--amber)">High</text>
+            </g>
+          </svg>
+          <div class="mockup-cap">Original illustration — <b>the Advanced Search / JQL bar</b> with live autocomplete and results</div>
+        </div>
+      </article>
+
+      <article class="topic" id="p11-operators">
+        <h3>11.2 Operators Reference <span class="tag">reference</span></h3>
+        <table>
+          <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+          <tr><td>=</td><td>Equals</td><td><code>status = Done</code></td></tr>
+          <tr><td>!=</td><td>Not equals</td><td><code>status != Done</code></td></tr>
+          <tr><td>&gt; &lt; &gt;= &lt;=</td><td>Comparison (dates, numbers)</td><td><code>created &gt;= -7d</code></td></tr>
+          <tr><td>IN / NOT IN</td><td>Matches any/none of a list</td><td><code>status IN ("QA","In Review")</code></td></tr>
+          <tr><td>IS EMPTY / IS NOT EMPTY</td><td>Field has no value / has a value</td><td><code>fixVersion IS EMPTY</code></td></tr>
+          <tr><td>~ (LIKE)</td><td>Text contains</td><td><code>summary ~ "timeout"</code></td></tr>
+          <tr><td>AND / OR / NOT</td><td>Combine conditions</td><td><code>type = Bug AND priority = High</code></td></tr>
+          <tr><td>ORDER BY</td><td>Sort results</td><td><code>ORDER BY created DESC</code></td></tr>
+        </table>
+      </article>
+
+      <article class="topic" id="p11-functions">
+        <h3>11.3 Fields, Functions &amp; Keywords <span class="tag">reference</span></h3>
+        <div class="grid2">
+          <div class="card"><h4>Common Fields</h4><ul><li>project, status, assignee, reporter</li><li>priority, labels, component, sprint</li><li>fixVersion, affectedVersion, epic Link</li><li>created, updated, resolved, due</li></ul></div>
+          <div class="card"><h4>Functions &amp; Keywords</h4><ul><li><code>currentUser()</code> — the logged-in user</li><li><code>membersOf("qa-team")</code> — everyone in a group</li><li><code>startOfDay()</code>, <code>endOfWeek()</code></li><li><code>-1d</code>, <code>-7d</code>, <code>-1w</code>, <code>-1M</code> — relative dates</li></ul></div>
+        </div>
+      </article>
+
+      <article class="topic" id="p11-examples">
+        <h3>11.4 50+ Real JQL Examples for QA Work <span class="tag">practical</span></h3>
+        <div class="codeblock"><pre><span class="comment">// 1. All open bugs assigned to me</span>
+<span class="jql">project</span> = "QAP" <span class="jql">AND</span> <span class="jql">type</span> = Bug <span class="jql">AND</span> <span class="jql">assignee</span> = currentUser() <span class="jql">AND</span> <span class="jql">status</span> != Done
+
+<span class="comment">// 2. Critical bugs still unresolved</span>
+<span class="jql">type</span> = Bug <span class="jql">AND</span> <span class="jql">priority</span> = Highest <span class="jql">AND</span> <span class="jql">resolution</span> = Unresolved
+
+<span class="comment">// 3. Bugs found in the current sprint</span>
+<span class="jql">type</span> = Bug <span class="jql">AND</span> <span class="jql">sprint</span> <span class="jql">IN</span> openSprints()
+
+<span class="comment">// 4. Everything sitting in the QA column too long</span>
+<span class="jql">status</span> = "QA" <span class="jql">AND</span> <span class="jql">updated</span> &lt;= -3d
+
+<span class="comment">// 5. Bugs with no fix version set (release-blocker check)</span>
+<span class="jql">type</span> = Bug <span class="jql">AND</span> <span class="jql">status</span> != Closed <span class="jql">AND</span> <span class="jql">fixVersion</span> <span class="jql">IS EMPTY</span>
+
+<span class="comment">// 6. All issues reopened more than once (flaky fixes)</span>
+<span class="jql">status</span> <span class="jql">WAS</span> "Reopened" <span class="jql">AND</span> <span class="jql">status</span> <span class="jql">CHANGED</span> <span class="jql">AFTER</span> -30d
+
+<span class="comment">// 7. Regression-labeled bugs in the current release</span>
+<span class="jql">labels</span> = "regression" <span class="jql">AND</span> <span class="jql">fixVersion</span> = "R2.4"
+
+<span class="comment">// 8. Untriaged bugs (no priority set) reported this week</span>
+<span class="jql">type</span> = Bug <span class="jql">AND</span> <span class="jql">priority</span> <span class="jql">IS EMPTY</span> <span class="jql">AND</span> <span class="jql">created</span> &gt;= -7d
+
+<span class="comment">// 9. My team's bugs, sorted by priority then age</span>
+<span class="jql">assignee</span> <span class="jql">IN</span> membersOf("qa-team") <span class="jql">ORDER BY</span> <span class="jql">priority</span> <span class="jql">DESC</span>, <span class="jql">created</span> <span class="jql">ASC</span>
+
+<span class="comment">// 10. Stories in the sprint missing acceptance criteria</span>
+<span class="jql">type</span> = Story <span class="jql">AND</span> <span class="jql">sprint</span> <span class="jql">IN</span> openSprints() <span class="jql">AND</span> "Acceptance Criteria" <span class="jql">IS EMPTY</span></pre><button class="copybtn" onclick="copyCode(this)">Copy</button></div>
+
+        <div class="callout"><span class="clabel">The 50+ Pattern</span><p>You don't need to memorize 50 queries — you need to master the ~10 building blocks above and recombine them. Every real-world JQL query a QA engineer writes is one of: "show me my work," "show me stale work," "show me risky work before release," or "show me flaky/reopened work." Practice building each of those four intents from scratch.</p></div>
+
+        <div class="exercise"><h4>Hands-On Exercise</h4><p>In your practice project, write JQL for: (1) all Bugs you reported that are still open, (2) all issues updated in the last 24 hours, (3) all Stories in the active sprint with no linked Bug. Save each as a filter.</p></div>
+      </article>
+
+      <div class="quiz-box" id="quiz-part11"><h4>Part 11 Knowledge Check</h4><div class="quiz-meta">10 questions · JQL mastery check</div><div id="quiz-part11-render"></div><div class="quiz-score" id="score-part11"></div></div>
+    </section>
+
+    <div class="callout tip" style="text-align:center; padding:26px;">
+      <span class="clabel">End of Volume 1</span>
+      <p style="font-size:15px; margin-top:6px;">You've covered Jira fundamentals, Agile vocabulary, navigation, issue types &amp; lifecycle, bug reporting, boards, sprints, search, and JQL. <b>Volume 2</b> continues with Dashboards, Reports, Automation, Integrations (GitHub/Xray/Jenkins/Playwright), the full QA Workflow, 100 Interview Questions, an Industry Case Study, Best Practices, and a Final Project.</p>
+    </div>
+
+  </main>
+</div>
+
+<button id="toTop" title="Back to top">↑</button>
+
+<footer>
+  Built by <a href="https://learnwithpmk.github.io" target="_blank" rel="noopener">Learn With PMK71</a> — free QA &amp; SDET study guides by Prashanth M K.
+</footer>
+
+<script>
+/* ============ COURSE MAP FOR SIDEBAR ============ */
+const courseMap = [
+  {id:'part1', title:'Introduction to Jira', links:[['p1-what-is-jira','What Is Jira?'],['p1-history','History & Editions'],['p1-editions','Products & Deployment']]},
+  {id:'part2', title:'Agile Basics', links:[['p2-sdlc','SDLC: Waterfall vs Agile'],['p2-manifesto','Manifesto, Scrum & Kanban'],['p2-terms','Core Vocabulary']]},
+  {id:'part3', title:'Jira Navigation', links:[['p3-nav','Dashboard, Projects, Filters']]},
+  {id:'part4', title:'Issue Types', links:[['p4-types','Epic, Story, Task, Bug…']]},
+  {id:'part5', title:'Issue Lifecycle', links:[['p5-lifecycle','Full Status Workflow']]},
+  {id:'part6', title:'Creating Issues', links:[['p6-fields','Fields You Must Know']]},
+  {id:'part7', title:'Bug Reporting', links:[['p7-severity-priority','Severity vs Priority'],['p7-goodbug','Writing a Good Bug Report']]},
+  {id:'part8', title:'Boards', links:[['p8-boards','Scrum vs Kanban Boards']]},
+  {id:'part9', title:'Sprint Management', links:[['p9-sprint','Sprint Lifecycle']]},
+  {id:'part10', title:'Searching', links:[['p10-search','Basic vs Advanced Search']]},
+  {id:'part11', title:'JQL', links:[['p11-syntax','Basic Syntax'],['p11-operators','Operators Reference'],['p11-functions','Fields & Functions'],['p11-examples','50+ Real Examples']]},
+];
+
+const sidebar = document.getElementById('sidebar');
+courseMap.forEach((part,i)=>{
+  const group = document.createElement('div');
+  group.className='side-group';
+  const head = document.createElement('div');
+  head.className='side-part';
+  head.innerHTML = `<span class="num">${i+1}</span><span>${part.title}</span>`;
+  const linkWrap = document.createElement('div');
+  linkWrap.className='side-links';
+  part.links.forEach(([lid,ltitle])=>{
+    const a = document.createElement('a');
+    a.href = '#'+lid; a.textContent = ltitle; a.dataset.target = lid;
+    linkWrap.appendChild(a);
+  });
+  head.addEventListener('click', ()=>{
+    document.getElementById(part.id).scrollIntoView({behavior:'smooth'});
+    linkWrap.classList.toggle('open');
+  });
+  group.appendChild(head); group.appendChild(linkWrap);
+  sidebar.appendChild(group);
+});
+
+/* ============ PROGRESS BAR ============ */
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop)/(h.scrollHeight - h.clientHeight)*100;
+  document.getElementById('progressfill').style.width = pct+'%';
+  document.getElementById('toTop').style.display = h.scrollTop>500 ? 'flex':'none';
+
+  // highlight active sidebar link
+  let closest=null, closestDist=Infinity;
+  document.querySelectorAll('.topic').forEach(t=>{
+    const d = Math.abs(t.getBoundingClientRect().top-90);
+    if(d<closestDist){closestDist=d; closest=t.id;}
+  });
+  document.querySelectorAll('.side-links a').forEach(a=>a.classList.toggle('active', a.dataset.target===closest));
+  document.querySelectorAll('.side-part').forEach(p=>p.classList.remove('active'));
+  if(closest){
+    const parentPart = closest.split('-')[0].replace(/^p/,'part');
+    document.querySelectorAll('.side-part').forEach(p=>{ if(p.textContent.trim()) {} });
+  }
+});
+document.getElementById('toTop').addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+/* ============ THEME TOGGLE ============ */
+const themeBtn = document.getElementById('themeBtn');
+function applyTheme(t){
+  document.body.dataset.theme = t;
+  themeBtn.textContent = t==='dark' ? '🌙 Dark' : '☀️ Light';
+  localStorage.setItem('jira-course-theme', t);
+}
+applyTheme(localStorage.getItem('jira-course-theme') || 'dark');
+themeBtn.addEventListener('click', ()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark'));
+
+/* ============ PRINT ============ */
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+/* ============ MOBILE MENU ============ */
+document.getElementById('menuBtn').addEventListener('click', ()=>sidebar.classList.toggle('mobileOpen'));
+
+/* ============ SEARCH ============ */
+document.getElementById('searchbox').addEventListener('input', (e)=>{
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll('.topic').forEach(topic=>{
+    if(!q){ topic.style.display=''; return; }
+    topic.style.display = topic.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+
+/* ============ COPY CODE ============ */
+function copyCode(btn){
+  const code = btn.previousElementSibling.textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',1500);
+  });
+}
+
+/* ============ ACCORDION (for future interview Q&A blocks) ============ */
+document.querySelectorAll('.qa-q').forEach(q=>{
+  q.addEventListener('click', ()=>q.parentElement.classList.toggle('open'));
+});
+
+/* ============ QUIZ ENGINE ============ */
+const quizData = {
+"quiz-part1":[
+ {q:"What is a Jira 'issue'?",d:"easy",opts:["A trackable unit of work such as a bug, task, or story","A login error in the Jira application","A type of dashboard gadget","A Confluence page"],correct:0,explain:"An issue is Jira's core unit of trackable work — any bug, task, story, or epic. It is NOT an application error (that's a red herring option), a gadget, or a Confluence artifact."},
+ {q:"Why was Jira originally created?",d:"easy",opts:["As a bug tracker for Java developers","As a video conferencing tool","As a spreadsheet replacement for finance teams","As a CRM system"],correct:0,explain:"Jira launched in 2002 specifically as a bug/issue tracker for Java development teams, later expanding into full Agile project management."},
+ {q:"Which product would a QA engineer use daily for sprint work?",d:"easy",opts:["Jira Service Management","Jira Work Management","Jira Software","Confluence"],correct:2,explain:"Jira Software is built for engineering teams with Scrum/Kanban boards and sprints — the daily tool for QA and Dev. Service Management is for IT tickets; Work Management is for non-technical teams."},
+ {q:"What's the key difference between Jira Cloud and Jira Data Center?",d:"medium",opts:["Cloud is hosted by Atlassian; Data Center is self-hosted by the company","Cloud has no JQL support","Data Center is free while Cloud is paid","There is no functional difference"],correct:0,explain:"Cloud is a subscription hosted by Atlassian; Data Center is self-managed on the company's own servers, common in regulated industries needing full data control."},
+ {q:"A team ships 'fixed' bugs that QA never actually retested. What Jira mechanism is designed to prevent this?",d:"medium",opts:["The QA-owned status gate in the issue lifecycle","The Dashboard gadget system","Jira's notification emails","Sprint velocity tracking"],correct:0,explain:"The issue lifecycle includes a QA-owned status (typically 'QA') that must be explicitly passed before an issue can move to Done — preventing developers from self-certifying fixes."},
+ {q:"Which is an advantage, not a disadvantage, of Jira?",d:"medium",opts:["Steep learning curve for JQL","Full audit trail across QA, Dev, and PM","Requires heavy admin configuration","Can become cluttered without label hygiene"],correct:1,explain:"A full, queryable audit trail is a core advantage. The other three options are legitimate disadvantages/costs of adopting Jira."},
+],
+"quiz-part2":[
+ {q:"In Agile, when does testing happen relative to Waterfall?",d:"easy",opts:["Continuously, within each sprint","Only after all coding is finished","Only before coding starts","Testing is not part of Agile"],correct:0,explain:"Agile embeds testing inside every sprint, catching issues early — unlike Waterfall where testing is a single late phase."},
+ {q:"Which Agile framework uses fixed-length time-boxes called Sprints?",d:"easy",opts:["Kanban","Scrum","Waterfall","SDLC"],correct:1,explain:"Scrum organizes work into fixed-length Sprints (commonly 2 weeks). Kanban has no fixed cycles; Waterfall and SDLC aren't Agile frameworks."},
+ {q:"What does 'Velocity' measure?",d:"medium",opts:["Average story points a team completes per sprint","How fast the app loads","Number of bugs found per day","Number of meetings per week"],correct:0,explain:"Velocity is a planning metric: the average story points a team historically completes per sprint, used to forecast future sprint capacity."},
+ {q:"A story has code merged but has never been tested against acceptance criteria. Per a properly written Definition of Done, is it 'Done'?",d:"medium",opts:["No — DoD should require verified testing before Done","Yes — merged code is always Done","Yes, as long as no bugs were reported","Only the Product Owner decides, DoD is irrelevant"],correct:0,explain:"A well-formed Definition of Done explicitly requires testing/verification, not just code merge, before an item is truly 'Done'."},
+ {q:"What is 'Definition of Ready' (DoR) used for?",d:"medium",opts:["Criteria a story must meet before entering a sprint","Criteria for closing a sprint","A checklist for retrospectives","A field on the Bug template"],correct:0,explain:"DoR is a pre-sprint gate — a story needs clear acceptance criteria, estimation, and no blockers before a team commits to it in planning."},
+ {q:"Which ceremony is specifically for the team reflecting on process improvements?",d:"easy",opts:["Daily Standup","Sprint Review","Retrospective","Sprint Planning"],correct:2,explain:"Retrospective is dedicated to 'what should we improve next sprint' — distinct from Sprint Review (demoing to stakeholders) and Standup (daily sync)."},
+],
+"quiz-part3":[
+ {q:"Where do you find a customizable set of gadgets like 'My Assigned Issues'?",d:"easy",opts:["Dashboard","Backlog","Component settings","Sprint report"],correct:0,explain:"The Dashboard is Jira's customizable homepage built from gadgets."},
+ {q:"What is a saved JQL search called in Jira?",d:"easy",opts:["A Filter","A Gadget","A Component","A Sprint"],correct:0,explain:"A saved search — visual or JQL — is called a Filter, and can be shared or pinned to dashboards."},
+ {q:"Where would you go to see every issue you have access to, across all projects?",d:"medium",opts:["Issues (global search)","Your personal Profile","Notifications bell","Project Settings"],correct:0,explain:"The global Issues/search screen lists and filters across all accessible issues, unlike a single project's board."},
+ {q:"What does the notification bell primarily alert you to?",d:"easy",opts:["Mentions, assignments, and updates on watched issues","New Jira feature releases","Server downtime","Billing changes"],correct:0,explain:"Notifications are issue-activity driven: mentions, assignment changes, and updates to watched issues."},
+ {q:"A Project in Jira is best described as:",d:"medium",opts:["A container for a team/product's related work, board, and backlog","A single issue","A user account","A dashboard gadget"],correct:0,explain:"Projects group related issues and provide their own board/backlog/settings — the organizing container above individual issues."},
+],
+"quiz-part4":[
+ {q:"Which issue type spans multiple sprints and represents a large body of work?",d:"easy",opts:["Sub-task","Epic","Bug","Spike"],correct:1,explain:"An Epic is a large initiative broken into multiple Stories across several sprints."},
+ {q:"A user-facing feature slice like 'apply a promo code at checkout' is best filed as a:",d:"easy",opts:["Story","Incident","Spike","Sub-task"],correct:0,explain:"Stories describe user-facing functionality, typically written from the user's perspective."},
+ {q:"What is a 'Spike' used for?",d:"medium",opts:["Time-boxed research or investigation","A critical production outage","A code review task","A type of sub-task only for QA"],correct:0,explain:"A Spike is time-boxed investigation/research work (e.g., 'assess feasibility of X'), not a fix or feature."},
+ {q:"What's the risk of filing everything as 'Task' regardless of actual type?",d:"medium",opts:["It breaks bug counts, velocity, and epic reporting accuracy","Nothing, Task is a universal type","It automatically escalates priority","It disables JQL search"],correct:0,explain:"Reports like Bug Count and Epic burndown rely on correct issue typing; mislabeling silently corrupts every downstream report."},
+ {q:"An urgent, live production outage should be filed as:",d:"easy",opts:["Incident","Improvement","Sub-task","Spike"],correct:0,explain:"Incident issue type specifically represents urgent, live production problems needing immediate attention."},
+ {q:"A smaller piece of work broken off from a Story is a:",d:"easy",opts:["Sub-task","Epic","Service Request","Incident"],correct:0,explain:"Sub-tasks decompose a Story or Task into smaller executable pieces, like 'write API test cases for X'."},
+],
+"quiz-part5":[
+ {q:"Which status in the lifecycle is specifically QA-owned?",d:"easy",opts:["QA","To Do","In Review","Open"],correct:0,explain:"The 'QA' status is where the QA engineer verifies the issue against acceptance criteria before it can proceed."},
+ {q:"If a bug fails verification during testing, what should the QA engineer do?",d:"medium",opts:["Move it to Reopened and send it back to the developer","Mark it Done anyway to keep velocity up","Delete the issue","Silently fix it themselves without updating status"],correct:0,explain:"Failed verification should move the issue to Reopened, restarting the dev cycle — never silently marked Done."},
+ {q:"What does 'Rejected' typically mean for a bug?",d:"medium",opts:["It's not a valid bug, or a deliberate won't-fix decision","It passed all tests","It's waiting for a developer","It was never assigned"],correct:0,explain:"Rejected indicates the report wasn't a valid defect, or a conscious business decision not to fix it — with justification."},
+ {q:"What comes immediately after 'In Review' in the standard lifecycle?",d:"easy",opts:["QA","Done","Open","Backlog"],correct:0,explain:"After code review passes, the issue moves into QA for testing before it can be marked Done."},
+ {q:"Why is skipping the QA gate under social pressure ('just mark it Done') dangerous?",d:"hard",opts:["It removes the verification step designed to catch defects before release","It has no real consequence since bugs get caught in production anyway","It speeds up releases with no downside","JQL automatically re-checks skipped issues"],correct:0,explain:"The entire purpose of the QA-owned status is to prevent unverified work from reaching Done — skipping it reintroduces exactly the risk the lifecycle exists to control."},
+ {q:"'Ready for UAT' status typically indicates:",d:"medium",opts:["The issue passed QA and awaits business/user acceptance sign-off","The issue is still being coded","The issue was rejected","The sprint has ended"],correct:0,explain:"Ready for UAT sits between QA pass and final Done — awaiting user/business acceptance testing sign-off."},
+],
+"quiz-part6":[
+ {q:"What's the difference between Affects Version and Fix Version?",d:"medium",opts:["Affects Version = where the bug was found; Fix Version = where the fix ships","They are the same field with two names","Affects Version is only for Stories","Fix Version is set automatically by Jira"],correct:0,explain:"Affects Version records where a bug was discovered; Fix Version records the release the fix will ship in. Confusing them corrupts release reporting."},
+ {q:"Which field would you use to tag an issue as 'flaky' for cross-project searching?",d:"easy",opts:["Labels","Component","Fix Version","Priority"],correct:0,explain:"Labels are free-text tags designed for flexible, cross-project grouping like 'flaky' or 'regression'."},
+ {q:"What does the 'Environment' field capture?",d:"easy",opts:["Browser/OS/device/build details where the issue occurred","The developer's IDE","The Jira server region","The sprint name"],correct:0,explain:"Environment captures reproduction context — browser, OS, device, and build/version — essential for reproducing bugs."},
+ {q:"A Linked Issue relationship like 'blocks' is used to:",d:"medium",opts:["Show dependency between two issues","Change an issue's priority automatically","Assign a new watcher","Set the fix version"],correct:0,explain:"Issue links like 'blocks'/'is blocked by'/'relates to' express dependency and relationship between issues, aiding planning and root-cause tracing."},
+ {q:"Who does the 'Reporter' field represent?",d:"easy",opts:["The person who found/filed the issue","The person fixing the issue","The Scrum Master","The project administrator"],correct:0,explain:"Reporter is the originator of the issue, distinct from Assignee (who is doing the work)."},
+ {q:"Why should Acceptance Criteria be written before a story starts development?",d:"hard",opts:["It gives QA testable, unambiguous conditions to verify against","It's optional and mostly for documentation","It replaces the need for a bug report","It's only relevant to Product Owners, not QA"],correct:0,explain:"Acceptance Criteria are the testable contract QA verifies against — without them, 'Done' becomes subjective and QA can't objectively validate the work."},
+],
+"quiz-part7":[
+ {q:"A cosmetic typo on the homepage before a major investor demo is best described as:",d:"medium",opts:["Low severity, high priority","High severity, low priority","High severity, high priority","Low severity, low priority"],correct:0,explain:"Severity is technical impact (low — it's cosmetic); priority is business urgency (high — due to the demo timing)."},
+ {q:"Which best defines 'Severity'?",d:"easy",opts:["Technical impact of the bug on the system","How soon it must be fixed","Who is assigned to fix it","The sprint it was found in"],correct:0,explain:"Severity measures technical/functional damage, independent of business timing (which is Priority)."},
+ {q:"What is missing from the bug report 'Login is broken'?",d:"easy",opts:["Steps to reproduce, environment, expected/actual result, evidence","Nothing, it's a complete report","Only the assignee field","Only the priority field"],correct:0,explain:"A one-line vague statement lacks everything needed to reproduce or triage: steps, environment, expected/actual behavior, and evidence."},
+ {q:"Why should a QA engineer attach console/network screenshots to a front-end bug?",d:"medium",opts:["It lets developers diagnose root cause far faster than a text description alone","It's required by Jira to save the issue","It automatically sets the bug's severity","It replaces the need for steps to reproduce"],correct:0,explain:"Console errors and network traces often show the exact failure point, cutting developer diagnosis time from hours to seconds."},
+ {q:"A rare data-corruption bug in an admin report used once a year would typically be:",d:"hard",opts:["High severity, low priority","Low severity, high priority","High severity, high priority","Not a valid bug"],correct:0,explain:"The technical damage (data corruption) is severe, but business urgency is low given how rarely that feature is used — a classic high-severity/low-priority case."},
+ {q:"What should 'Expected Result' in a bug report describe?",d:"easy",opts:["What should happen per the spec/acceptance criteria","What actually happened","The developer's opinion","The bug's priority"],correct:0,explain:"Expected Result documents the correct behavior per spec, contrasted against Actual Result (what really happened)."},
+ {q:"Why is a specific, searchable bug title important?",d:"medium",opts:["It helps prevent duplicate reports and speeds up triage","Titles have no real effect on workflow","It determines the bug's severity automatically","It's only used for sorting alphabetically"],correct:0,explain:"A specific title ('Checkout total miscalculates with 2 stacked promo codes' vs 'checkout bug') makes duplicates easy to spot and triage far faster."},
+],
+"quiz-part8":[
+ {q:"What's the key structural difference between a Scrum board and a Kanban board?",d:"medium",opts:["Scrum boards reset each sprint; Kanban boards show continuous flow with no reset","Kanban boards can't have columns","Scrum boards have no swimlanes","There is no difference"],correct:0,explain:"Scrum boards are scoped to the current sprint and reset each cycle; Kanban boards show ongoing flow without sprint boundaries."},
+ {q:"What do board columns typically represent?",d:"easy",opts:["Issue statuses","Issue priorities","Assignee names","Labels"],correct:0,explain:"Columns map directly to workflow statuses (To Do, In Progress, QA, Done, etc.)."},
+ {q:"What is a Quick Filter used for?",d:"easy",opts:["One-click toggle to narrow visible cards, e.g. 'Only Bugs'","Permanently deleting issues","Changing the board's color theme","Renaming columns"],correct:0,explain:"Quick Filters are one-click, non-destructive toggles to temporarily narrow the board view."},
+ {q:"A card sitting untouched in the QA column for several days most likely signals:",d:"medium",opts:["A testing bottleneck worth raising in standup","A completed task","An incorrectly typed issue","A dashboard configuration error"],correct:0,explain:"Stagnant cards in a specific column are a visual signal of a bottleneck — here, likely insufficient QA capacity or a blocked test."},
+ {q:"Swimlanes on a board are used to:",d:"medium",opts:["Group issues horizontally, e.g. by Epic or Assignee","Set the sprint end date","Replace the need for columns","Auto-close old issues"],correct:0,explain:"Swimlanes add a horizontal grouping dimension (by Epic, Assignee, priority, etc.) on top of the status columns."},
+],
+"quiz-part9":[
+ {q:"What happens to incomplete issues when a sprint is completed?",d:"easy",opts:["They carry forward to the backlog or next sprint","They are automatically deleted","They are marked Done regardless","They become bugs"],correct:0,explain:"Incomplete work doesn't vanish — it's carried forward, typically flagged for re-planning into the backlog or the next sprint."},
+ {q:"Why is counting untested 'in progress' stories toward sprint completion a mistake?",d:"hard",opts:["It artificially inflates velocity and hides real risk before QA verification","It has no downside for planning accuracy","It automatically triggers a retrospective","Jira prevents this from happening"],correct:0,explain:"True completion requires QA verification; counting unverified work inflates velocity metrics and masks quality risk from the team."},
+ {q:"Who typically sets the sprint goal when starting a sprint?",d:"medium",opts:["The team, often facilitated by Scrum Master/Product Owner","Jira automatically generates it","QA Engineer alone","It's not part of starting a sprint"],correct:0,explain:"The sprint goal is a collaborative team decision at sprint planning/start, not an automated Jira feature."},
+ {q:"Where do backlog items live before being pulled into a sprint?",d:"easy",opts:["The Backlog", "The Dashboard", "The Release notes", "The Board only"],correct:0,explain:"The Backlog is the prioritized holding area for not-yet-scheduled work, from which sprint planning pulls items."},
+ {q:"What does 'Start Sprint' actually change functionally?",d:"medium",opts:["Sets active dates/goal and makes the sprint visible/active on the board","Deletes the backlog","Marks all included issues as Done","Changes the project's issue types"],correct:0,explain:"Starting a sprint activates its date range and goal, and surfaces its issues on the active Scrum board."},
+],
+"quiz-part10":[
+ {q:"What is Advanced Search in Jira?",d:"easy",opts:["Typing raw JQL directly instead of using dropdown pickers","A paid-only feature","A separate application from Jira","Only available to admins"],correct:0,explain:"Advanced Search lets you write JQL directly; Basic Search generates the same JQL behind dropdown pickers."},
+ {q:"What is the best way to learn JQL according to this course?",d:"medium",opts:["Build a filter in Basic Search, then view the JQL it generated","Memorize the entire JQL reference manual first","Avoid Basic Search entirely","JQL cannot be learned incrementally"],correct:0,explain:"Basic Search silently generates JQL — switching to JQL view after building a visual filter is a practical, incremental way to learn syntax."},
+ {q:"Can a saved Filter be shared with just a specific project role?",d:"medium",opts:["Yes, filters support sharing with people, roles, or the whole org","No, filters are always private","No, filters are always public","Only Jira admins can share filters"],correct:0,explain:"Filter sharing is flexible: private, specific people, a project role, or the entire organization."},
+ {q:"What can a saved filter be used for beyond re-running a search?",d:"easy",opts:["Pinning as a gadget on a Dashboard","Deleting issues in bulk automatically","Changing issue types","Creating new projects"],correct:0,explain:"Saved filters can be pinned as live Dashboard gadgets, keeping a query's results always visible."},
+],
+"quiz-part11":[
+ {q:"What are the three components of a basic JQL clause?",d:"easy",opts:["Field, Operator, Value","Project, Sprint, Board","Status, Priority, Label","Epic, Story, Task"],correct:0,explain:"Every JQL clause follows Field + Operator + Value, e.g. status = Done."},
+ {q:"Which operator checks that a field has no value at all?",d:"easy",opts:["IS EMPTY","= null","!= value","NOT IN"],correct:0,explain:"IS EMPTY (and its counterpart IS NOT EMPTY) specifically tests whether a field is unset."},
+ {q:"What does currentUser() return in a JQL query?",d:"easy",opts:["The currently logged-in user","A random team member","The project lead","Nothing — it's not a valid function"],correct:0,explain:"currentUser() is a built-in JQL function resolving to whoever is running the query — commonly used in 'my issues' filters."},
+ {q:"What does 'created >= -7d' return?",d:"medium",opts:["Issues created in the last 7 days","Issues created exactly 7 days ago","Issues that will be created in 7 days","Issues with 7 days left in their sprint"],correct:0,explain:"Relative date syntax like -7d means '7 days ago' — combined with >=, it captures everything created since then."},
+ {q:"Which JQL correctly finds all high-priority unresolved bugs?",d:"medium",opts:["type = Bug AND priority = Highest AND resolution = Unresolved","type = Bug OR priority = Highest","type = Bug; priority = Highest","Bug AND Highest AND Unresolved"],correct:0,explain:"Correct JQL requires explicit field names and AND to combine conditions — the other options use invalid or overly loose syntax."},
+ {q:"What does membersOf('qa-team') do?",d:"medium",opts:["Matches issues assigned to anyone in the qa-team group","Deletes all issues owned by qa-team","Creates a new group called qa-team","Filters only issues created by an admin"],correct:0,explain:"membersOf() expands to every user in the named group, useful for team-wide filters like assignee IN membersOf('qa-team')."},
+ {q:"Which keyword sorts JQL results by newest first?",d:"easy",opts:["ORDER BY created DESC","SORT created DESC","ORDER created BY DESC","DESCENDING created"],correct:0,explain:"ORDER BY <field> DESC is the correct JQL sorting syntax; DESC puts newest/highest values first."},
+ {q:"Why is fixVersion IS EMPTY a useful release-readiness query?",d:"hard",opts:["It surfaces unresolved bugs that haven't been assigned to any release yet, a common release blocker","It shows only closed issues","It has no practical use in release planning","It only works for Epics"],correct:0,explain:"Bugs without a fixVersion set are easy to accidentally miss when planning a release — this query proactively surfaces that gap."},
+ {q:"What is the practical shortcut for mastering JQL, per this course?",d:"medium",opts:["Master ~10 building-block patterns and recombine them for real intents","Memorize all 50+ examples verbatim","Only use Basic Search and never learn raw JQL","JQL syntax changes too often to learn"],correct:0,explain:"The course explicitly teaches that real-world QA JQL usage boils down to a handful of reusable intents (my work, stale work, risky work, flaky work) built from common patterns."},
+ {q:"Which JQL finds Stories in the active sprint missing Acceptance Criteria?",d:"hard",opts:["type = Story AND sprint IN openSprints() AND \"Acceptance Criteria\" IS EMPTY","type = Story AND sprint = active","type = Story OR \"Acceptance Criteria\" IS EMPTY","sprint IN openSprints() ONLY"],correct:0,explain:"This combines an issue-type filter, the openSprints() function for active-sprint scoping, and IS EMPTY on the custom field — a real pattern used before sprint planning sign-off."},
+],
+};
+
+Object.keys(quizData).forEach(quizId=>{
+  const container = document.getElementById(quizId+'-render');
+  if(!container) return;
+  let answered = {};
+  quizData[quizId].forEach((item, qi)=>{
+    const block = document.createElement('div'); block.className='q-block';
+    block.innerHTML = `<div class="q-stem">Q${qi+1}. ${item.q} <span class="q-diff diff-${item.d}">${item.d}</span></div>
+      <ul class="opts">${item.opts.map((o,oi)=>`<li class="opt" data-oi="${oi}">${o}</li>`).join('')}</ul>
+      <div class="explain"></div>`;
+    container.appendChild(block);
+    block.querySelectorAll('.opt').forEach(optEl=>{
+      optEl.addEventListener('click', ()=>{
+        if(answered[qi]) return;
+        answered[qi]=true;
+        const oi = parseInt(optEl.dataset.oi);
+        block.querySelectorAll('.opt').forEach((el,i)=>{
+          if(i===item.correct) el.classList.add('correct');
+          else if(i===oi) el.classList.add('wrong');
+        });
+        const ex = block.querySelector('.explain');
+        ex.classList.add('show');
+        ex.textContent = (oi===item.correct? '✅ Correct. ':'❌ Not quite. ') + item.explain;
+        // update score
+        const total = quizData[quizId].length;
+        const correctCount = Object.keys(answered).filter(k=>{
+          const b = container.children[k];
+          return b.querySelector('.opt.correct') && !b.querySelector('.opt.wrong');
+        }).length;
+        const answeredCount = Object.keys(answered).length;
+        document.getElementById('score-'+quizId).textContent = `Score: ${correctCount} / ${answeredCount} answered (of ${total} total)`;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>
