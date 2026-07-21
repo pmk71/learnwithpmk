@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Core Java Day 1: a hands-on introduction to Java, the JVM, JDK, JRE, bytecode, and your first Java program.">
+<meta name="author" content="Prashanth M K">
+<title>Core Java Day 1: Meet Java | Learn With PMK71</title>
+<style>
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#2A3444;
+    --paper:#FAF6EE;
+    --paper-dim:#F1EADC;
+    --rule:#DDD3BF;
+    --amber:#C97C2C;
+    --amber-deep:#9C5E1E;
+    --teal:#2F7A5D;
+    --rust:#B4452A;
+    --ink-70:rgba(27,36,48,0.7);
+    --ink-50:rgba(27,36,48,0.5);
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: 'SF Mono', 'Consolas', 'Menlo', 'Liberation Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+  }
+
+  /* ===== Reading progress bar ===== */
+  .progress-rail{
+    position:sticky;
+    top:0;
+    z-index:60;
+    height:3px;
+    background:rgba(27,36,48,0.08);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--amber-deep), var(--amber));
+    transition:width .08s linear;
+  }
+
+  /* ===== Day rail (nav) ===== */
+  .rail{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    overflow-x:auto;
+    padding:14px 24px;
+    background:var(--ink);
+    position:sticky;
+    top:3px;
+    z-index:50;
+  }
+  .home-link{flex:0 0 auto;color:var(--paper);border:1px solid rgba(250,246,238,.26);border-radius:7px;padding:6px 10px;text-decoration:none;font-family:var(--sans);font-size:12px;font-weight:700;transition:background .18s ease,border-color .18s ease;}
+  .home-link:hover,.home-link:focus-visible{background:rgba(250,246,238,.12);border-color:var(--amber);outline:none;}
+  .rail-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:rgba(250,246,238,0.4);
+    margin-right:10px;
+    flex:0 0 auto;
+    display:none;
+  }
+  @media (min-width:700px){ .rail-title{ display:inline; } }
+  .rail::-webkit-scrollbar{height:4px;}
+  .rail-item{
+    flex:0 0 auto;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--mono);
+    font-size:12px;
+    color:rgba(250,246,238,0.35);
+    border:1px solid rgba(250,246,238,0.18);
+    cursor:default;
+    position:relative;
+  }
+  .rail-item[title]:hover::after{
+    content:attr(title);
+    position:absolute;
+    top:38px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--ink-soft);
+    color:var(--paper);
+    font-family:var(--sans);
+    font-size:11px;
+    white-space:nowrap;
+    padding:5px 9px;
+    border-radius:6px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.25);
+    z-index:80;
+  }
+  .rail-item.active{
+    background:var(--amber);
+    border-color:var(--amber);
+    color:var(--ink);
+    font-weight:700;
+  }
+
+  /* ===== Hero ===== */
+  .hero{
+    padding:64px 24px 56px;
+    max-width:920px;
+    margin:0 auto;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--amber-deep);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:26px;
+    height:1px;
+    background:var(--amber-deep);
+  }
+  h1{
+    font-family:var(--serif);
+    font-size:clamp(34px,6vw,58px);
+    line-height:1.05;
+    margin:0 0 20px;
+    font-weight:400;
+    letter-spacing:-0.01em;
+  }
+  h1 em{
+    font-style:normal;
+    color:var(--amber);
+  }
+  .lede{
+    font-size:19px;
+    color:var(--ink-70);
+    max-width:62ch;
+    margin:0 0 30px;
+  }
+  .lede b{ color: var(--ink); }
+  .author-card{display:inline-flex;align-items:center;gap:10px;margin-top:4px;padding:9px 12px;border:1px solid var(--rule);border-radius:9px;color:var(--ink-70);font-size:12px;}
+  .author-mark{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-family:var(--mono);font-weight:700;font-size:10px;}
+  .author-card strong{display:block;color:var(--ink);font-size:12px;}
+
+  /* ===== hero split: text + illustration ===== */
+  .hero-top{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:36px;
+    align-items:center;
+  }
+  @media (max-width:760px){ .hero-top{ grid-template-columns:1fr; } }
+  .hero-art{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .hero-art svg{ width:100%; max-width:280px; height:auto; }
+
+  /* ===== compile pipeline — signature element ===== */
+  .pipeline{
+    margin-top:40px;
+    padding:26px 22px 22px;
+    background:var(--ink);
+    border-radius:14px;
+    overflow-x:auto;
+  }
+  .pipeline-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:rgba(250,246,238,0.45);
+    margin-bottom:16px;
+  }
+  .pipe-row{
+    display:flex;
+    align-items:center;
+    gap:0;
+    min-width:640px;
+  }
+  .pipe-node{
+    flex:0 0 auto;
+    text-align:center;
+  }
+  .pipe-box{
+    width:96px;
+    height:72px;
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--paper);
+    gap:4px;
+  }
+  .pipe-box small{ font-size:9px; opacity:0.6; letter-spacing:0.04em;}
+  .pipe-node .cap{
+    margin-top:8px;
+    font-family:var(--sans);
+    font-size:11.5px;
+    color:rgba(250,246,238,0.55);
+    max-width:110px;
+  }
+  .pipe-arrow{
+    flex:1 1 auto;
+    height:1px;
+    background:repeating-linear-gradient(90deg, var(--amber) 0 6px, transparent 6px 11px);
+    position:relative;
+    min-width:30px;
+  }
+  .pipe-arrow::after{
+    content:"›";
+    position:absolute;
+    right:-3px; top:50%;
+    transform:translateY(-50%);
+    color:var(--amber);
+    font-size:18px;
+  }
+  .b-src{background:#374357;}
+  .b-compiler{background:var(--amber-deep);}
+  .b-byte{background:#374357;}
+  .b-jvm{background:var(--teal);}
+  .b-os{background:#4a5568;}
+
+  /* ===== Sections ===== */
+  section{
+    max-width:920px;
+    margin:0 auto;
+    padding:8px 24px 64px;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:26px;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:14px;
+  }
+  .section-num{
+    font-family:var(--serif);
+    font-size:15px;
+    color:var(--amber-deep);
+  }
+  .section-head h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:28px;
+    margin:0;
+  }
+
+  /* story analogy block */
+  .analogy{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border:1px solid var(--rule);
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:8px;
+  }
+  .analogy > div{ padding:26px 28px; }
+  .analogy .real{ background:var(--paper-dim); }
+  .analogy .code{ background:var(--ink); color:var(--paper); }
+  .analogy h3{
+    font-family:var(--mono);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin:0 0 14px;
+    color:var(--ink-50);
+  }
+  .analogy .code h3{ color:rgba(250,246,238,0.5); }
+  .steps{ list-style:none; margin:0; padding:0; }
+  .steps li{
+    display:flex;
+    gap:12px;
+    font-size:14.5px;
+    padding:7px 0;
+    color:var(--ink-70);
+  }
+  .steps .n{
+    font-family:var(--mono);
+    color:var(--amber-deep);
+    font-weight:700;
+    flex:0 0 18px;
+  }
+  .code pre{
+    margin:0;
+    font-family:var(--mono);
+    font-size:13.5px;
+    line-height:1.8;
+    white-space:pre-wrap;
+  }
+  .code .c1{color:#8FB8A8;}
+  .code .c2{color:#E8B978;}
+
+  @media (max-width:640px){
+    .analogy{ grid-template-columns:1fr; }
+  }
+
+  /* card grid for features */
+  .grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+  @media (max-width:760px){ .grid3{grid-template-columns:1fr 1fr;} }
+  @media (max-width:480px){ .grid3{grid-template-columns:1fr;} }
+
+  .fcard{
+    border:1px solid var(--rule);
+    border-radius:12px;
+    padding:20px;
+    background:#fff;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .fcard:hover{ transform:translateY(-3px); box-shadow:0 10px 24px rgba(27,36,48,0.08); }
+  .fcard .ficon{
+    width:34px; height:34px;
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:12px;
+  }
+  .fcard h4{ font-size:15.5px; margin:0 0 6px; font-family:var(--serif); font-weight:700;}
+  .fcard p{ font-size:13.5px; color:var(--ink-70); margin:0; }
+
+  /* JVM/JDK/JRE diagram */
+  .stack-diagram{
+    border:1px solid var(--rule);
+    border-radius:14px;
+    padding:30px;
+    background:#fff;
+  }
+  .stack-box{
+    border-radius:10px;
+    padding:16px 20px;
+    margin-bottom:0;
+    position:relative;
+  }
+  .stack-jdk{ background:#F6E9D8; border:1.5px solid var(--amber); padding-bottom:56px;}
+  .stack-jre{ background:#EFF3EE; border:1.5px solid var(--teal); margin:14px 16px; padding-bottom:52px; position:relative; top:-16px;}
+  .stack-jvm{ background:var(--ink); color:var(--paper); margin:12px 16px; position:relative; top:-30px;}
+  .stack-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.06em;
+  }
+  .stack-jdk .stack-tag{ color:var(--amber-deep); }
+  .stack-jre .stack-tag{ color:var(--teal); }
+  .stack-jvm .stack-tag{ color:#8FB8A8; }
+  .stack-title{ font-family:var(--serif); font-size:17px; margin:4px 0 4px;}
+  .stack-desc{ font-size:13px; color:var(--ink-70); max-width:60ch;}
+  .stack-jvm .stack-desc{ color:rgba(250,246,238,0.65); }
+
+  /* timeline */
+  .timeline{
+    display:flex;
+    overflow-x:auto;
+    gap:0;
+    padding:22px 4px 14px;
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+  }
+  .tl-item{
+    flex:0 0 auto;
+    width:150px;
+    padding-right:18px;
+    position:relative;
+  }
+  .tl-item::before{
+    content:"";
+    position:absolute;
+    top:-22px; left:0;
+    width:100%; height:2px;
+    background:var(--rule);
+  }
+  .tl-item::after{
+    content:"";
+    position:absolute;
+    top:-26px; left:0;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--amber);
+  }
+  .tl-year{ font-family:var(--mono); font-size:12px; color:var(--amber-deep); font-weight:700;}
+  .tl-desc{ font-size:12.5px; color:var(--ink-70); margin-top:4px;}
+
+  /* code block generic */
+  .codeblock{
+    background:var(--ink);
+    color:var(--paper);
+    border-radius:12px;
+    padding:22px 24px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    line-height:1.85;
+    overflow-x:auto;
+    position:relative;
+  }
+  .codeblock .tabdots{
+    position:absolute; top:14px; left:18px;
+    display:flex; gap:6px;
+  }
+  .tabdots span{ width:8px; height:8px; border-radius:50%; }
+  .tabdots span:nth-child(1){background:#B4452A;}
+  .tabdots span:nth-child(2){background:#C97C2C;}
+  .tabdots span:nth-child(3){background:#2F7A5D;}
+  .codeblock code{ display:block; margin-top:20px; white-space:pre;}
+  .kw{color:#E8B978;} .cls{color:#8FB8A8;} .str{color:#D6A75C;} .cmt{color:rgba(250,246,238,0.4); font-style:italic;}
+
+  .breakdown{
+    margin-top:18px;
+    display:grid;
+    gap:10px;
+  }
+  .bd-row{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:14px;
+    padding:12px 16px;
+    border-radius:9px;
+    background:var(--paper-dim);
+    align-items:start;
+  }
+  .bd-row code{ font-family:var(--mono); font-size:13px; color:var(--amber-deep); font-weight:700;}
+  .bd-row p{ margin:0; font-size:13.5px; color:var(--ink-70);}
+
+  .callout{
+    border-left:3px solid var(--teal);
+    background:#EFF6F1;
+    padding:14px 18px;
+    border-radius:0 8px 8px 0;
+    font-size:14px;
+    color:var(--ink-70);
+    margin-top:20px;
+  }
+  .callout b{ color:var(--teal); }
+
+  .practice{
+    border:1.5px dashed var(--rule);
+    border-radius:12px;
+    padding:22px 24px;
+  }
+  .practice ol{ margin:0; padding-left:20px; }
+  .practice li{ margin-bottom:10px; font-size:14.5px; color:var(--ink-70); }
+
+  footer{
+    max-width:920px;
+    margin:0 auto;
+    padding:20px 24px 70px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:var(--ink-50);
+    font-size:13px;
+    font-family:var(--mono);
+  }
+  .next-btn{
+    font-family:var(--sans);
+    font-weight:600;
+    color:var(--paper);
+    background:var(--ink);
+    padding:11px 18px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:13.5px;
+  }
+  .footer-author{display:block;margin-top:4px;color:var(--amber-deep);font-family:var(--sans);font-size:12px;font-weight:700;text-decoration:none;}
+  .footer-author:hover{text-decoration:underline;}
+  @media (max-width:620px){footer{align-items:flex-start;flex-direction:column;gap:16px;padding-bottom:36px;}.next-btn{width:100%;text-align:center;}}
+
+  /* terminal / commands */
+  .terminal{
+    background:#12161D;
+    border-radius:12px;
+    padding:22px 24px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    line-height:2;
+    color:#D8E3DA;
+    overflow-x:auto;
+  }
+  .terminal .prompt{ color:#6FA98A; }
+  .terminal .comment{ color:rgba(216,227,218,0.4); }
+  .terminal .out{ color:#E8B978; display:block; padding-left:20px;}
+
+  .run-btn{
+    position:absolute;
+    top:12px; right:92px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+    background:var(--amber);
+    border:1px solid var(--amber);
+    border-radius:6px;
+    padding:5px 12px;
+    cursor:pointer;
+    font-weight:700;
+    transition:background .15s;
+  }
+  .run-btn:hover{ background:var(--amber-deep); border-color:var(--amber-deep); color:var(--paper); }
+  .run-btn.ran{ background:var(--teal); border-color:var(--teal); color:var(--paper); }
+  #termOutput{ transition:filter .35s ease, opacity .35s ease; }
+  #termOutput.hidden-run{ filter:blur(7px); opacity:0.3; user-select:none; }
+  .reveal-hint{ font-family:var(--mono); font-size:11px; color:rgba(216,227,218,0.45); margin-top:6px; }
+
+  /* inline icon sizing inside colored icon chips */
+  .ficon svg, .exec-icon svg{ display:block; }
+
+  .flow-steps{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    margin-bottom:26px;
+  }
+  @media (max-width:760px){ .flow-steps{ grid-template-columns:repeat(2,1fr);} }
+  .flow-step{
+    border:1px solid var(--rule);
+    border-radius:10px;
+    padding:14px 14px 16px;
+    background:#fff;
+    position:relative;
+  }
+  .flow-step .fs-num{
+    font-family:var(--serif);
+    font-size:22px;
+    color:var(--amber);
+    line-height:1;
+    margin-bottom:8px;
+  }
+  .flow-step h5{ margin:0 0 4px; font-size:13.5px; font-family:var(--sans); font-weight:700;}
+  .flow-step p{ margin:0; font-size:12px; color:var(--ink-70); }
+
+  .exec-diagram{
+    border:1px solid var(--rule);
+    border-radius:14px;
+    padding:26px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    gap:0;
+    overflow-x:auto;
+  }
+  .exec-node{
+    flex:0 0 auto;
+    text-align:center;
+    min-width:110px;
+  }
+  .exec-icon{
+    width:64px; height:64px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    margin:0 auto 10px;
+  }
+  .exec-node h5{ margin:0 0 4px; font-size:12.5px; font-family:var(--mono); font-weight:700; color:var(--ink);}
+  .exec-node p{ margin:0; font-size:11px; color:var(--ink-50); max-width:110px; margin:0 auto;}
+  .exec-line{
+    flex:1 1 auto;
+    height:2px;
+    background:var(--rule);
+    min-width:24px;
+    position:relative;
+    top:-30px;
+  }
+
+  /* interactive quiz */
+  .quiz{ border:1px solid var(--rule); border-radius:14px; padding:24px 26px; background:#fff; }
+  .quiz-q{ margin-bottom:22px; }
+  .quiz-q p{ font-size:14.5px; font-weight:700; margin:0 0 10px; color:var(--ink); }
+  .quiz-opts{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{ display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid var(--rule); border-radius:8px; cursor:pointer; font-size:13.5px; color:var(--ink-70); transition:border-color .15s, background .15s; }
+  .quiz-opt:hover{ border-color:var(--amber); }
+  .quiz-opt input{ accent-color:var(--amber-deep); }
+  .quiz-opt.correct{ background:#EFF6F1; border-color:var(--teal); color:var(--ink); }
+  .quiz-opt.incorrect{ background:#F7EDE9; border-color:var(--rust); color:var(--ink); }
+  .quiz-btn{ font-family:var(--sans); font-weight:600; font-size:13.5px; color:var(--paper); background:var(--ink); padding:10px 20px; border:none; border-radius:8px; cursor:pointer; }
+  .quiz-btn:hover{ background:var(--amber-deep); }
+  .quiz-score{ font-family:var(--mono); font-size:13.5px; margin-top:16px; padding:12px 16px; border-radius:8px; background:var(--paper-dim); display:none; }
+  .quiz-score.show{ display:block; }
+
+  .quiz-start{ text-align:center; padding:34px 20px; }
+  .quiz-start .qs-icon{ margin:0 auto 14px; width:52px; height:52px; border-radius:50%; background:#F6E9D8; display:flex; align-items:center; justify-content:center; }
+  .quiz-start h4{ font-family:var(--serif); font-size:19px; margin:0 0 6px; color:var(--ink); }
+  .quiz-start p{ font-family:var(--mono); font-size:12.5px; color:var(--ink-50); margin:0 0 20px; }
+  .quiz-start-btn{ font-size:14px; padding:12px 26px; }
+  .quiz-body{ display:none; }
+  .quiz-body.show{ display:block; }
+
+  /* ===== copy-to-clipboard buttons on code/terminal blocks ===== */
+  .codeblock, .terminal{ position:relative; }
+  .copy-btn{
+    position:absolute;
+    top:12px; right:14px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:rgba(250,246,238,0.55);
+    background:rgba(250,246,238,0.08);
+    border:1px solid rgba(250,246,238,0.2);
+    border-radius:6px;
+    padding:5px 10px;
+    cursor:pointer;
+    transition:background .15s, color .15s;
+  }
+  .copy-btn:hover{ background:rgba(250,246,238,0.16); color:var(--paper); }
+  .copy-btn.copied{ background:var(--teal); color:var(--paper); border-color:var(--teal); }
+
+  /* ===== flip flashcards (key-terms revision deck) ===== */
+  .flash-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  @media (max-width:760px){ .flash-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:480px){ .flash-grid{ grid-template-columns:1fr; } }
+  .flash-card{
+    perspective:1000px;
+    height:150px;
+    cursor:pointer;
+  }
+  .flash-inner{
+    position:relative;
+    width:100%; height:100%;
+    text-align:left;
+    transition:transform .5s;
+    transform-style:preserve-3d;
+  }
+  .flash-card.flipped .flash-inner{ transform:rotateY(180deg); }
+  .flash-face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .flash-front{
+    background:#fff;
+    border:1px solid var(--rule);
+  }
+  .flash-front .fterm{
+    font-family:var(--serif);
+    font-size:19px;
+    color:var(--ink);
+  }
+  .flash-front .fhint{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-50);
+    margin-top:10px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+  .flash-back{
+    background:var(--ink);
+    color:var(--paper);
+    transform:rotateY(180deg);
+    font-size:13px;
+    line-height:1.55;
+  }
+  .flash-back b{ color:var(--amber); }
+  .flash-hint-row{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--ink-50);
+    margin-bottom:14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+<nav class="rail" aria-label="course concept outline">
+  <a class="home-link" href="../index.html" aria-label="Return to Learn With PMK71 home">&larr; Home</a>
+  <span class="rail-title">Core Java · Day</span>
+  <div class="rail-item active" title="Meet Java">1</div>
+  <div class="rail-item" title="Data Types &amp; Variables">2</div>
+  <div class="rail-item" title="Operators &amp; Type Casting">3</div>
+  <div class="rail-item" title="Conditionals">4</div>
+  <div class="rail-item" title="Loops">5</div>
+  <div class="rail-item" title="Arrays">6</div>
+  <div class="rail-item" title="Methods">7</div>
+  <div class="rail-item" title="OOP Basics">8</div>
+  <div class="rail-item" title="Inheritance">9</div>
+  <div class="rail-item" title="Polymorphism">10</div>
+  <div class="rail-item" title="Abstraction &amp; Interfaces">11</div>
+  <div class="rail-item" title="Exception Handling">12</div>
+  <div class="rail-item" title="Collections">13</div>
+  <div class="rail-item" title="Multithreading">14</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="eyebrow">Concept 01 · Core Java Notes</div>
+      <h1>Meet <em>Java</em> — from a recipe on your stove to code on the JVM</h1>
+      <p class="lede">Before any syntax, one idea unlocks everything else: <b>a program is just a list of instructions</b> — the same way a recipe is. Today you'll see where Java came from, why it can run on almost any machine on Earth, and you'll write your first real program.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="120" cy="120" r="112" fill="#F1EADC"/>
+        <path d="M96 74 C90 60, 104 52, 100 40" stroke="#C97C2C" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.55"/>
+        <path d="M122 74 C116 58, 132 50, 126 36" stroke="#C97C2C" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.4"/>
+        <path d="M148 74 C144 62, 156 54, 152 44" stroke="#C97C2C" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.3"/>
+        <rect x="70" y="88" width="104" height="80" rx="10" fill="#1B2430"/>
+        <path d="M174 100 h14 a14 14 0 0 1 0 44 h-14" fill="none" stroke="#1B2430" stroke-width="9"/>
+        <rect x="78" y="96" width="88" height="16" rx="3" fill="#374357"/>
+        <text x="122" y="108" text-anchor="middle" font-family="SF Mono, Consolas, monospace" font-size="10" fill="#E8B978">&lt;/&gt;</text>
+        <rect x="78" y="150" width="88" height="10" rx="5" fill="#2F7A5D"/>
+        <text x="60" y="205" font-family="Georgia, serif" font-size="15" fill="#9C5E1E">01</text>
+        <text x="82" y="205" font-family="SF Mono, Consolas, monospace" font-size="11" fill="#2A3444" opacity="0.6">Meet Java</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="author-card" aria-label="Lesson author"><span class="author-mark" aria-hidden="true">PMK</span><span><strong>Written by Prashanth M K</strong>Learn With PMK71 · Core Java learning series</span></div>
+
+  <div class="pipeline">
+    <div class="pipeline-label">How your code becomes a running program</div>
+    <div class="pipe-row">
+      <div class="pipe-node">
+        <div class="pipe-box b-src">Demo.java<small>you write this</small></div>
+        <div class="cap">Human-readable source code</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-node">
+        <div class="pipe-box b-compiler">javac<small>compiler</small></div>
+        <div class="cap">Translates to bytecode</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-node">
+        <div class="pipe-box b-byte">Demo.class<small>bytecode</small></div>
+        <div class="cap">Platform-independent</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-node">
+        <div class="pipe-box b-jvm">JVM<small>interpreter</small></div>
+        <div class="cap">Reads bytecode, talks to OS</div>
+      </div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-node">
+        <div class="pipe-box b-os">Output<small>on screen</small></div>
+        <div class="cap">Windows, Mac, Linux — same result</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>What is "code," really?</h2>
+  </div>
+  <div class="analogy">
+    <div class="real">
+      <h3>Making Maggi noodles</h3>
+      <ul class="steps">
+        <li><span class="n">1</span> Switch on the gas stove</li>
+        <li><span class="n">2</span> Fill a vessel with 500ml water</li>
+        <li><span class="n">3</span> Wait until it boils</li>
+        <li><span class="n">4</span> Put the noodles inside</li>
+        <li><span class="n">5</span> Add the masala packet</li>
+        <li><span class="n">6</span> Wait 2 minutes, then turn it off</li>
+      </ul>
+    </div>
+    <div class="code">
+      <h3>The same idea, as code</h3>
+      <pre><span class="c1">// a set of instructions, in order</span>
+<span class="c2">startStove</span>();
+<span class="c2">fillVessel</span>(500);
+<span class="c2">waitUntilBoiling</span>();
+<span class="c2">addNoodles</span>();
+<span class="c2">addMasala</span>();
+<span class="c2">wait</span>(2);
+<span class="c2">stopStove</span>();</pre>
+    </div>
+  </div>
+  <div class="callout">
+    <b>Key idea:</b> A <b>program</b> is just an ordered set of instructions to do one specific task. A <b>programming language</b> (Java, Python, C) is how humans write those instructions so a machine can follow them. Machines only understand <b>binary (0s and 1s)</b> — electrical signals that are either on or off — so every language you write eventually gets translated down to that.
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Java at a glance</h2>
+  </div>
+  <div class="grid3">
+    <div class="fcard"><div class="ficon" style="background:#F6E9D8;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 9h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 4c-.5 1 .5 1.5 0 2.5M12 4c-.5 1 .5 1.5 0 2.5"/></svg></div><h4>Created by</h4><p>James Gosling, Sun Microsystems (now Oracle), 1995. Originally called <b>Oak</b>, project name "Green Team."</p></div>
+    <div class="fcard"><div class="ficon" style="background:#EFF3EE;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div><h4>Platform independent</h4><p>Compiled once into bytecode, that bytecode runs on any OS with a JVM — <b>Write Once, Run Anywhere (WORA)</b>.</p></div>
+    <div class="fcard"><div class="ficon" style="background:#F6E9D8;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 3v9M4 7.5l8 4.5 8-4.5"/></svg></div><h4>Object-oriented</h4><p>Everything is modeled as objects — built on Class, Object, Inheritance, Polymorphism, Abstraction, Encapsulation.</p></div>
+    <div class="fcard"><div class="ficon" style="background:#EFF3EE;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h4>Secure</h4><p>Code runs inside the JVM sandbox — if something goes wrong, only the JVM is affected, never your operating system.</p></div>
+    <div class="fcard"><div class="ficon" style="background:#F6E9D8;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div><h4>Robust</h4><p>Handles memory automatically through <b>garbage collection</b> — you rarely manage memory by hand.</p></div>
+    <div class="fcard"><div class="ficon" style="background:#EFF3EE;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"/><circle cx="20" cy="12" r="1.6" fill="#1B2430"/><circle cx="19" cy="18" r="1.6" fill="#1B2430"/></svg></div><h4>Multithreaded</h4><p>Can run multiple tasks at the same time within one program — covered later in Collections &amp; Multithreading.</p></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-year">1995</div><div class="tl-desc">JDK Alpha/Beta released</div></div>
+    <div class="tl-item"><div class="tl-year">1996</div><div class="tl-desc">JDK 1.0, 23 Jan</div></div>
+    <div class="tl-item"><div class="tl-year">1998</div><div class="tl-desc">J2SE 1.2</div></div>
+    <div class="tl-item"><div class="tl-year">2004</div><div class="tl-desc">J2SE 5.0 — generics, enums</div></div>
+    <div class="tl-item"><div class="tl-year">2014</div><div class="tl-desc">Java SE 8 — lambdas, streams</div></div>
+    <div class="tl-item"><div class="tl-year">2018</div><div class="tl-desc">Java SE 11 — LTS release</div></div>
+    <div class="tl-item"><div class="tl-year">2020+</div><div class="tl-desc">Java SE 14 and onward</div></div>
+  </div>
+
+  <p style="font-size:13.5px; color:var(--ink-70); margin-top:14px;">Java is used across three flavors: <b>J2SE</b> (core Java — what you're learning now), <b>J2EE</b> (enterprise/full-stack web apps), and <b>J2ME</b> (micro/embedded devices).</p>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>JDK vs JRE vs JVM</h2>
+  </div>
+  <div class="stack-diagram">
+    <div class="stack-box stack-jdk">
+      <div class="stack-tag">JDK — JAVA DEVELOPMENT KIT</div>
+      <div class="stack-title">Everything you need to write and build Java</div>
+      <div class="stack-desc">Includes the compiler (<b>javac</b>), debugger, and other dev tools — plus a full JRE inside it. This is what you install to start coding.</div>
+    </div>
+    <div class="stack-box stack-jre">
+      <div class="stack-tag">JRE — JAVA RUNTIME ENVIRONMENT</div>
+      <div class="stack-title">Everything you need to run Java</div>
+      <div class="stack-desc">Core libraries + the JVM. If someone only wants to <i>run</i> a Java app (not write one), the JRE alone is enough.</div>
+    </div>
+    <div class="stack-box stack-jvm">
+      <div class="stack-tag">JVM — JAVA VIRTUAL MACHINE</div>
+      <div class="stack-title">The engine that actually executes your bytecode</div>
+      <div class="stack-desc">Reads the .class file line by line and translates it into instructions your specific OS understands. This is the piece that makes WORA possible.</div>
+    </div>
+  </div>
+  <div class="callout"><b>Think of it like:</b> JDK = a fully equipped kitchen (you can cook AND eat). JRE = a plate of food ready to eat (you can eat, not cook). JVM = your mouth and stomach — the part that actually "runs" the food, no matter what kitchen it came from.</div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Your first Java program</h2>
+  </div>
+  <div class="codeblock">
+    <div class="tabdots"><span></span><span></span><span></span></div>
+    <button class="copy-btn" onclick="copyBlock(this,'progCode')">Copy</button>
+    <code id="progCode"><span class="kw">public</span> <span class="kw">class</span> <span class="cls">Demo</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> main(<span class="cls">String</span> args[]) {
+        System.out.println(<span class="str">"This is my first program"</span>);
+    }
+}</code>
+  </div>
+
+  <div class="breakdown">
+    <div class="bd-row"><code>public class Demo</code><p><b>Class declaration.</b> "public" = access modifier (freely accessible). "class" is a fixed keyword. "Demo" is the class name — it <b>must match the file name</b> (Demo.java) and by convention starts with a capital letter.</p></div>
+    <div class="bd-row"><code>public static void main</code><p><b>The main method</b> — every Java program starts execution here. "static" means it runs without needing to create an object first. "void" means it returns nothing.</p></div>
+    <div class="bd-row"><code>String args[]</code><p>Command-line arguments — a way to pass input into your program when it starts. You'll rarely touch this as a beginner, but it must always be present in <code>main</code>.</p></div>
+    <div class="bd-row"><code>System.out.println()</code><p><b>System</b> is a built-in class, <b>out</b> is an object inside it, <b>println()</b> is a method on that object. Whatever is inside the double quotes gets printed exactly as written.</p></div>
+  </div>
+
+  <div class="callout"><b>println vs print:</b> <code>println()</code> moves to a new line after printing. <code>print()</code> keeps the cursor on the same line, so the next output continues right after it.</div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>From source code to a running app</h2>
+  </div>
+
+  <div class="flow-steps">
+    <div class="flow-step"><div class="fs-num">1</div><h5>Pick an editor</h5><p>Notepad, Notepad++, or an IDE like Eclipse / IntelliJ. IDEs automate ~75% of the setup work.</p></div>
+    <div class="flow-step"><div class="fs-num">2</div><h5>Write the logic</h5><p>Type your class, main method, and statements — this is your source code.</p></div>
+    <div class="flow-step"><div class="fs-num">3</div><h5>Save the file</h5><p>Always with a <code>.java</code> extension, matching the public class name exactly.</p></div>
+    <div class="flow-step"><div class="fs-num">4</div><h5>Compile it</h5><p>Converts source into bytecode. Catches syntax errors — brackets, semicolons, spelling, case sensitivity.</p></div>
+    <div class="flow-step"><div class="fs-num">5</div><h5>Execute it</h5><p>The JVM runs the bytecode line by line, catching logical errors along the way.</p></div>
+  </div>
+
+  <div class="terminal" id="termBlock">
+    <button class="run-btn" id="runBtn" onclick="revealOutput()">▶ Run</button>
+    <button class="copy-btn" onclick="copyBlock(this,'termCode')">Copy</button>
+<span id="termCode"><span class="comment">// Step 1 — compile the source file into bytecode</span>
+<span class="prompt">$</span> javac Hello.java
+<span id="termOutput" class="hidden-run"><span class="out">→ generates Hello.class (bytecode)</span>
+
+<span class="comment">// Step 2 — run the compiled bytecode</span>
+<span class="prompt">$</span> java Hello
+<span class="out">→ This is my first program</span></span></span>
+  </div>
+  <p class="reveal-hint" style="color:var(--ink-50); margin-top:8px;">Output is hidden — predict what <code>javac</code> and <code>java</code> will print, then click <b>▶ Run</b> to check yourself.</p>
+
+  <div class="exec-diagram" style="margin-top:22px;">
+    <div class="exec-node">
+      <div class="exec-icon" style="background:#F6E9D8;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 16h6M9 10h3"/></svg></div>
+      <h5>Hello.java</h5>
+      <p>You write this</p>
+    </div>
+    <div class="exec-line"></div>
+    <div class="exec-node">
+      <div class="exec-icon" style="background:#E9DCC8;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M4.2 7.5l1.7 1M18.1 15.5l1.7 1M3 12h2M19 12h2M4.2 16.5l1.7-1M18.1 8.5l1.7-1M7.5 4.2l1 1.7M15.5 18.1l1 1.7M7.5 19.8l1-1.7M15.5 5.9l1-1.7"/></svg></div>
+      <h5>javac</h5>
+      <p>Checks syntax, compiles once</p>
+    </div>
+    <div class="exec-line"></div>
+    <div class="exec-node">
+      <div class="exec-icon" style="background:#F6E9D8;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4z"/><path d="M3 8v9l9 4M21 8v9l-9 4M12 12v9"/></svg></div>
+      <h5>Hello.class</h5>
+      <p>Bytecode, same on every OS</p>
+    </div>
+    <div class="exec-line"></div>
+    <div class="exec-node">
+      <div class="exec-icon" style="background:#DCEBE3;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 4v3M12 4v3M15 4v3M9 17v3M12 17v3M15 17v3M4 9h3M4 12h3M4 15h3M17 9h3M17 12h3M17 15h3"/></svg></div>
+      <h5>JVM + JIT</h5>
+      <p>Reads it line by line, hands each line to the OS</p>
+    </div>
+    <div class="exec-line"></div>
+    <div class="exec-node">
+      <div class="exec-icon" style="background:#EFEAE0;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></div>
+      <h5>Output</h5>
+      <p>Printed to your screen</p>
+    </div>
+  </div>
+
+  <div class="callout"><b>What is JIT?</b> The <b>Just-In-Time compiler</b> lives inside the JVM. Instead of interpreting the same bytecode line over and over, it compiles frequently-used parts directly into native machine code — making your program run noticeably faster the longer it executes.</div>
+</section>
+
+<section>
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Try it yourself</h2>
+  </div>
+  <div class="practice">
+    <ol>
+      <li>Write a program that prints your name, age, and city — each on a new line using <code>println()</code>.</li>
+      <li>Write a program using only <code>print()</code> statements and predict the output before running it — notice how everything joins onto one line.</li>
+      <li>Change the class name and file name so they <b>don't</b> match, and observe the compiler error. This confirms the rule: file name = public class name.</li>
+      <li>Add a single-line comment (<code>//</code>) above your printline explaining what it does — comments are ignored by the compiler.</li>
+    </ol>
+    <div class="callout" style="margin-top:18px;"><b>Common beginner mistakes:</b> forgetting the semicolon <code>;</code>, mismatched <code>{ }</code>, saving the file with a different name than the public class, or typing <code>Main</code>/<code>MAIN</code> instead of exactly <code>main</code> — Java is case-sensitive everywhere.</div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><span class="section-num">07</span><h2>Key terms — flip to revise</h2></div>
+  <p class="flash-hint-row">Tap a card to flip it. Cover the term, say the definition out loud, then flip to check yourself.</p>
+  <div class="flash-grid" id="flashGrid">
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">Bytecode</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back">The platform-independent output of <b>javac</b> (a <code>.class</code> file). Not machine code — the JVM reads it and translates it for whatever OS it's on.</div>
+      </div>
+    </div>
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">JVM</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back"><b>Java Virtual Machine.</b> Reads bytecode line by line and executes it on the actual OS underneath — the piece that makes WORA possible.</div>
+      </div>
+    </div>
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">JIT</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back"><b>Just-In-Time compiler</b>, inside the JVM. Compiles hot/frequently-used bytecode into native machine code so the program speeds up as it runs.</div>
+      </div>
+    </div>
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">WORA</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back"><b>Write Once, Run Anywhere.</b> You compile your source once into bytecode; any OS with a JVM installed can run that same bytecode unchanged.</div>
+      </div>
+    </div>
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">javac</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back">The Java <b>compiler</b>. Takes your <code>.java</code> source file, checks syntax, and produces a <code>.class</code> bytecode file with the same name.</div>
+      </div>
+    </div>
+    <div class="flash-card" onclick="this.classList.toggle('flipped')">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="fterm">Garbage Collection</div><div class="fhint">tap to flip</div></div>
+        <div class="flash-face flash-back">Java's automatic memory manager. It reclaims memory used by objects no longer referenced, so you rarely allocate or free memory by hand.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><span class="section-num">08</span><h2>Take the test — check your learning</h2></div>
+  <div class="quiz" id="quiz1">
+    <div class="quiz-start" id="quiz1-start">
+      <div class="qs-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#1B2430" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.8-2.2 2-2.2 3.8" /><circle cx="12" cy="16.3" r="0.15" fill="#1B2430" stroke-width="2.2"/></svg></div>
+      <h4>Ready to check what stuck?</h4>
+      <p>8 questions · covers everything from today · about 3 minutes</p>
+      <button class="quiz-btn quiz-start-btn" onclick="startQuiz('quiz1')">▶ Take the test</button>
+    </div>
+    <div class="quiz-body" id="quiz1-body">
+    <div class="quiz-q" data-answer="c">
+      <p>1. What does JVM stand for and what is its main job?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q1" value="a"> Java Verified Machine — checks your syntax</label>
+        <label class="quiz-opt"><input type="radio" name="q1" value="b"> Java Variable Manager — stores your variables</label>
+        <label class="quiz-opt"><input type="radio" name="q1" value="c"> Java Virtual Machine — executes bytecode on your specific OS</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="b">
+      <p>2. Which tool actually compiles your .java file into bytecode?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q2" value="a"> java</label>
+        <label class="quiz-opt"><input type="radio" name="q2" value="b"> javac</label>
+        <label class="quiz-opt"><input type="radio" name="q2" value="c"> JVM</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="a">
+      <p>3. What makes Java "Write Once, Run Anywhere"?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q3" value="a"> Bytecode is platform-independent; only the JVM differs per OS</label>
+        <label class="quiz-opt"><input type="radio" name="q3" value="b"> Java source code runs directly on any OS with no compilation</label>
+        <label class="quiz-opt"><input type="radio" name="q3" value="c"> Every OS has its own version of the Java language</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="b">
+      <p>4. Who created Java, and under what original name?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q4" value="a"> Dennis Ritchie, called "C++"</label>
+        <label class="quiz-opt"><input type="radio" name="q4" value="b"> James Gosling at Sun Microsystems, originally called "Oak"</label>
+        <label class="quiz-opt"><input type="radio" name="q4" value="c"> Guido van Rossum, originally called "Duke"</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="c">
+      <p>5. If you only want to run a Java application (not write one), which is enough?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q5" value="a"> Just the JDK</label>
+        <label class="quiz-opt"><input type="radio" name="q5" value="b"> Just javac</label>
+        <label class="quiz-opt"><input type="radio" name="q5" value="c"> The JRE (core libraries + JVM)</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="a">
+      <p>6. In <code>public class Demo</code>, why must "Demo" match the file name?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q6" value="a"> Java requires the public class name and .java file name to be identical</label>
+        <label class="quiz-opt"><input type="radio" name="q6" value="b"> It's only a style convention with no compiler enforcement</label>
+        <label class="quiz-opt"><input type="radio" name="q6" value="c"> Only the first letter needs to match</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="b">
+      <p>7. What's the difference between <code>print()</code> and <code>println()</code>?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q7" value="a"> print() is faster to execute than println()</label>
+        <label class="quiz-opt"><input type="radio" name="q7" value="b"> println() moves to a new line after printing; print() keeps the cursor on the same line</label>
+        <label class="quiz-opt"><input type="radio" name="q7" value="c"> print() can only output numbers, println() only strings</label>
+      </div>
+    </div>
+    <div class="quiz-q" data-answer="c">
+      <p>8. What does the JIT compiler do inside the JVM?</p>
+      <div class="quiz-opts">
+        <label class="quiz-opt"><input type="radio" name="q8" value="a"> Deletes unused variables to save memory</label>
+        <label class="quiz-opt"><input type="radio" name="q8" value="b"> Converts .java files directly into an executable</label>
+        <label class="quiz-opt"><input type="radio" name="q8" value="c"> Compiles frequently-used bytecode into native machine code as the program runs, speeding it up</label>
+      </div>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz('quiz1')">Check my answers</button>
+    <div class="quiz-score" id="quiz1-score"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div><span>Core Java Learning Series · Day 1: Meet Java</span><a class="footer-author" href="https://www.linkedin.com/in/prashanthmk1106/" target="_blank" rel="noopener noreferrer">Created by Prashanth M K</a></div>
+  <span class="next-btn">Next → Data Types, Variables, Operators &amp; Type Casting</span>
+</footer>
+
+<script>
+function startQuiz(quizId){
+  document.getElementById(quizId+'-start').style.display = 'none';
+  const body = document.getElementById(quizId+'-body');
+  body.classList.add('show');
+  body.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function checkQuiz(quizId){
+  const quiz = document.getElementById(quizId);
+  const questions = quiz.querySelectorAll('.quiz-q');
+  let correct = 0;
+  questions.forEach(q => {
+    const answer = q.getAttribute('data-answer');
+    const selected = q.querySelector('input:checked');
+    const opts = q.querySelectorAll('.quiz-opt');
+    opts.forEach(o => o.classList.remove('correct','incorrect'));
+    if(selected){
+      const selectedLabel = selected.closest('.quiz-opt');
+      if(selected.value === answer){
+        selectedLabel.classList.add('correct');
+        correct++;
+      } else {
+        selectedLabel.classList.add('incorrect');
+        q.querySelector('input[value="'+answer+'"]').closest('.quiz-opt').classList.add('correct');
+      }
+    }
+  });
+  const scoreBox = document.getElementById(quizId+'-score');
+  scoreBox.textContent = 'Score: ' + correct + ' / ' + questions.length + (correct === questions.length ? '  🎉 Perfect! You\'ve nailed Meet Java.' : '  — review the highlighted answers above.');
+  scoreBox.classList.add('show');
+  scoreBox.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// Reading progress bar
+(function(){
+  const fill = document.getElementById('progressFill');
+  function update(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (scrolled / max) * 100 : 0;
+    fill.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// Reveal terminal output on demand
+function revealOutput(){
+  const out = document.getElementById('termOutput');
+  const btn = document.getElementById('runBtn');
+  const isHidden = out.classList.contains('hidden-run');
+  if(isHidden){
+    out.classList.remove('hidden-run');
+    btn.textContent = '✓ Ran';
+    btn.classList.add('ran');
+  } else {
+    out.classList.add('hidden-run');
+    btn.textContent = '▶ Run';
+    btn.classList.remove('ran');
+  }
+}
+
+function copyBlock(btn, id){
+  const el = document.getElementById(id);
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+  });
+}
+</script>
+</body>
+</html>

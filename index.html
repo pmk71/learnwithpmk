@@ -47,7 +47,7 @@ html[data-theme="light"]{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden}
+body{background:radial-gradient(circle at 8% 16%,rgba(88,166,255,.055),transparent 24%),radial-gradient(circle at 90% 50%,rgba(210,168,255,.045),transparent 28%),var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden}
 
 /* Accessibility improvements */
 a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -100,6 +100,18 @@ nav{max-width:1140px;margin:0 auto;padding:14px 24px;display:flex;align-items:ce
 @keyframes fadeInUp{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
+}
+@keyframes floatGlow{
+  0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.55}
+  50%{transform:translate3d(18px,14px,0) scale(1.08);opacity:.9}
+}
+@keyframes shimmer{
+  from{transform:translateX(-130%)}
+  to{transform:translateX(230%)}
+}
+@keyframes roadmapPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,166,87,.35)}
+  50%{box-shadow:0 0 0 6px rgba(255,166,87,0)}
 }
 .card{animation:fadeInUp .4s ease-out forwards}
 .card:nth-child(1){animation-delay:.05s}
@@ -181,6 +193,11 @@ html[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,.08);border-c
   background-size:28px 28px;
   pointer-events:none;mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,black,transparent);
 }
+.hero-wrap::after{
+  content:'';position:absolute;width:310px;height:310px;right:-100px;top:35px;border-radius:50%;
+  background:radial-gradient(circle,rgba(210,168,255,.13),transparent 67%);filter:blur(6px);
+  pointer-events:none;animation:floatGlow 8s ease-in-out infinite;
+}
 .hero{max-width:1140px;margin:0 auto;padding:100px 24px 70px;position:relative}
 .eyebrow{
   display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--accent);font-weight:600;
@@ -246,7 +263,7 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
   padding:28px;text-decoration:none;color:inherit;
   display:flex;flex-direction:column;gap:16px;
-  transition:transform .2s cubic-bezier(.22,1,.36,1),border-color .2s,box-shadow .2s,background .2s;
+  transition:transform .28s cubic-bezier(.22,1,.36,1),border-color .28s,box-shadow .28s,background .28s;
   position:relative;overflow:hidden;
 }
 .card::before{
@@ -254,8 +271,13 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
   background:linear-gradient(135deg,rgba(88,166,255,.06) 0%,transparent 60%);
   transition:opacity .2s;
 }
+.card::after{
+  content:'';position:absolute;top:0;left:0;width:36%;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);opacity:0;
+}
 .card:hover::before{opacity:1}
-.card:hover{transform:translateY(-4px);border-color:rgba(88,166,255,.5);box-shadow:0 20px 40px -16px rgba(88,166,255,.2)}
+.card:hover::after{opacity:1;animation:shimmer 1.25s ease-out}
+.card:hover{transform:translateY(-6px);border-color:rgba(88,166,255,.5);box-shadow:0 24px 46px -18px rgba(88,166,255,.26)}
 .card-icon{
   width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;
   font-size:24px;background:linear-gradient(135deg,rgba(88,166,255,.12),rgba(210,168,255,.12));
@@ -301,9 +323,40 @@ h1 em{font-style:normal;color:var(--accent);background:linear-gradient(90deg,var
   color:var(--accent);background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.2)
 }
 .featured-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block}
+.upcoming-badge{
+  display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent5);background:rgba(255,166,87,.12);border:1px solid rgba(255,166,87,.25)
+}
+.upcoming-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent5);display:inline-block}
 .card.super-card{background:linear-gradient(135deg,rgba(210,168,255,.08),rgba(88,166,255,.08));border-color:rgba(210,168,255,.28);}
 .card.super-card .card-icon{background:linear-gradient(135deg,rgba(210,168,255,.18),rgba(88,166,255,.14));border-color:rgba(210,168,255,.3);}
+.grid > .card{min-height:420px;}
+.card.super-card{cursor:pointer;}
+.card.super-card .card-topics,.card.super-card .roadmap-progress{display:none;}
+.card.super-card .card-cta{margin-top:auto;}
+.card.upcoming-card{background:linear-gradient(135deg,rgba(255,166,87,.1),rgba(210,168,255,.07));border-color:rgba(255,166,87,.32);}
+.card.upcoming-card .card-icon{background:linear-gradient(135deg,rgba(255,166,87,.18),rgba(210,168,255,.14));border-color:rgba(255,166,87,.28);}
+.card.upcoming-card .topic-card{cursor:default;}
+.card.upcoming-card .topic-card:hover{background:rgba(255,166,87,.1);border-color:rgba(255,166,87,.32);box-shadow:0 12px 26px -18px rgba(255,166,87,.45);}
+.roadmap-progress{position:relative;z-index:1;padding:13px 14px;border:1px solid rgba(255,166,87,.2);border-radius:10px;background:rgba(255,166,87,.055)}
+.roadmap-progress-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--accent5)}
+.roadmap-track{display:grid;grid-template-columns:repeat(15,1fr);gap:4px}
+.roadmap-track span{height:5px;border-radius:999px;background:rgba(255,166,87,.2);transition:transform .2s,background .2s}
+.upcoming-card:hover .roadmap-track span:nth-child(-n+5){background:var(--accent5);animation:roadmapPulse 1.6s ease-in-out infinite}
+.upcoming-card:hover .roadmap-track span:nth-child(2){animation-delay:.1s}.upcoming-card:hover .roadmap-track span:nth-child(3){animation-delay:.2s}.upcoming-card:hover .roadmap-track span:nth-child(4){animation-delay:.3s}.upcoming-card:hover .roadmap-track span:nth-child(5){animation-delay:.4s}
+.upcoming-card:hover .roadmap-track span{transform:scaleY(1.5)}
+.roadmap-modal[hidden]{display:none}
+.roadmap-modal{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:24px;background:rgba(1,4,9,.72);backdrop-filter:blur(10px);animation:modalFade .2s ease-out}
+@keyframes modalFade{from{opacity:0}to{opacity:1}}
+.roadmap-modal-dialog{width:min(900px,100%);max-height:min(760px,calc(100vh - 48px));overflow:auto;position:relative;padding:28px;border-radius:20px;background:var(--bg2);border:1px solid rgba(88,166,255,.32);box-shadow:0 32px 90px rgba(0,0,0,.45);animation:fadeInUp .25s ease-out}
+.modal-close{position:absolute;right:18px;top:18px;width:36px;height:36px;border:1px solid var(--border);border-radius:9px;background:var(--bg3);color:var(--text);font-size:22px;line-height:1;cursor:pointer}
+.modal-close:hover{background:rgba(88,166,255,.14);border-color:var(--accent)}
+.roadmap-modal-head{padding-right:46px;margin-bottom:22px}.roadmap-modal-head h3{font-family:'Sora',sans-serif;font-size:23px;line-height:1.25;margin-bottom:8px}.roadmap-modal-head p{font-size:14px;color:var(--text2);line-height:1.65}
+.roadmap-modal .roadmap-progress{display:block;margin-bottom:18px}.roadmap-modal .card-topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.roadmap-modal .topic-card{min-height:118px}.roadmap-modal button.topic-card{font-family:inherit;text-align:left;cursor:pointer}.roadmap-modal .topic-card:hover{background:rgba(88,166,255,.12)}
+.modal-status{min-height:22px;margin-top:16px;color:var(--accent5);font-size:13px;font-weight:600}
 .card.super-card .card-topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin-top:4px;}
+.grid .card.super-card .card-topics{display:none;}
 .topic-card{
   position:relative;z-index:1;min-height:86px;padding:12px;border-radius:8px;
   display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--text);
@@ -396,6 +449,9 @@ footer{
   h1{font-size:32px}
   nav{padding:12px 16px;gap:8px}
   .nav-links{flex-direction:column;gap:0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 </style>
 
@@ -707,13 +763,13 @@ footer{
       <div class="card-cta">Open guide <span class="arrow">→</span></div>
     </a>
 
-    <div class="card super-card" data-key="jira-concepts" data-difficulty="beginner">
+    <div class="card super-card" data-key="jira-concepts" data-difficulty="beginner" role="button" tabindex="0" aria-label="Open Jira for QA Engineers topics">
       <div class="card-accent-bar"></div>
       <span class="featured-badge">Jira Learning</span>
       <div class="card-icon">J</div>
       <div class="card-meta">
-        <span>QA Workflow</span><span class="sep">Â·</span>
-        <span>Beginner</span><span class="sep">Â·</span>
+        <span>QA Workflow</span><span class="sep">&middot;</span>
+        <span>Beginner</span><span class="sep">&middot;</span>
         <span class="read-time">75 min</span>
       </div>
       <h3>Jira for QA Engineers — Super Card</h3>
@@ -732,10 +788,10 @@ footer{
         <span class="tag">JQL</span>
         <span class="tag">Defect Tracking</span>
       </div>
-      <div class="card-cta">Explore Jira volumes <span class="arrow">â†’</span></div>
+      <div class="card-cta">View Jira volumes <span class="arrow">&rarr;</span></div>
     </div>
 
-    <div class="card super-card" data-key="javascript-concepts" data-difficulty="beginner">
+    <div class="card super-card" data-key="javascript-concepts" data-difficulty="beginner" role="button" tabindex="0" aria-label="Open JavaScript Concepts topics">
       <div class="card-accent-bar"></div>
       <span class="featured-badge">JS Concepts</span>
       <div class="card-icon">🧠</div>
@@ -785,7 +841,48 @@ footer{
         <span class="tag">Core</span>
         <span class="tag">QA</span>
       </div>
-      <div class="card-cta">Explore topics <span class="arrow">→</span></div>
+      <div class="card-cta">View topics <span class="arrow">→</span></div>
+    </div>
+
+    <div class="card super-card upcoming-card" data-key="core-java-plan" data-difficulty="beginner" role="button" tabindex="0" aria-label="Open Core Java 15-day roadmap">
+      <div class="card-accent-bar"></div>
+      <span class="upcoming-badge">Day 1 live</span>
+      <div class="card-icon">☕</div>
+      <div class="card-meta">
+        <span>15-Day Plan</span><span class="sep">·</span>
+        <span>Beginner to Advanced</span><span class="sep">·</span>
+        <span class="difficulty-badge beginner">Beginner</span>
+      </div>
+      <h3>Core Java — 15-Day Learning Plan</h3>
+      <p>A structured Core Java path from your first program through OOP, collections, maps, and multithreading. Each day focuses on one foundation-building section.</p>
+      <div class="roadmap-progress" aria-label="15-day roadmap in progress">
+        <div class="roadmap-progress-head"><span>15 learning days</span><span>Roadmap loading</span></div>
+        <div class="roadmap-track" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="card-topics" aria-label="Core Java plan topics">
+        <a class="topic-card" href="./guides/day-01-meet-java.html"><strong>Day 1 · Meet Java</strong><span>History, features, JDK/JRE/JVM, WORA, first program structure</span><em>Open lesson</em></a>
+        <div class="topic-card"><strong>Day 2 · Data Types &amp; Variables</strong><span>Primitive and non-primitive types, variables, keywords, identifiers</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 3 · Operators &amp; Casting</strong><span>Arithmetic, relational, logical, bitwise, implicit and explicit casting</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 4 · Decision Making</strong><span>if, if-else, nested if, and switch-case</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 5 · Loops &amp; Patterns</strong><span>for, while, do-while, for-each, star and number patterns</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 6 · Methods</strong><span>Syntax, parameters, return types, and method overloading</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 7 · Constructors</strong><span>Default and parameterized constructors, this, chaining, overloading</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 8 · OOP Foundations</strong><span>Classes vs objects, four pillars overview, and UML diagrams</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 9 · Inheritance</strong><span>Inheritance types, overriding, super, and interfaces</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 10 · Abstraction &amp; Interfaces</strong><span>Abstract classes, interfaces, and real-world modeling</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 11 · Encapsulation &amp; Polymorphism</strong><span>Access specifiers, getters/setters, compile-time and runtime polymorphism</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 12 · Casting &amp; Specialization</strong><span>Object casting, generalization, and specialization</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 13 · Object, Strings &amp; Arrays</strong><span>Object class methods, String handling, and array programming</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 14 · Exceptions &amp; Wrappers</strong><span>try/catch/finally, custom exceptions, wrappers, autoboxing</span><em>Coming soon</em></div>
+        <div class="topic-card"><strong>Day 15 · Collections &amp; Threads</strong><span>ArrayList/List, Map, thread creation, and lifecycle</span><em>Coming soon</em></div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Core Java</span>
+        <span class="tag">OOP</span>
+        <span class="tag">Collections</span>
+        <span class="tag">15-Day Plan</span>
+      </div>
+      <div class="card-cta">View 15-day roadmap <span class="arrow">→</span></div>
     </div>
 
   </div>
@@ -926,6 +1023,18 @@ footer{
 </section>
 </main>
 
+<div class="roadmap-modal" id="roadmapModal" role="dialog" aria-modal="true" aria-labelledby="roadmapModalTitle" hidden>
+  <div class="roadmap-modal-dialog" role="document">
+    <button class="modal-close" type="button" aria-label="Close roadmap">×</button>
+    <div class="roadmap-modal-head">
+      <h3 id="roadmapModalTitle"></h3>
+      <p id="roadmapModalDescription"></p>
+    </div>
+    <div id="roadmapModalContent"></div>
+    <p class="modal-status" id="roadmapModalStatus" aria-live="polite"></p>
+  </div>
+</div>
+
 <!-- ── FOOTER ── -->
 <footer>
   <div class="footer-inner">
@@ -990,7 +1099,8 @@ const cardData = {
   'network-interception': { difficulty: 'advanced', tags: ['playwright', 'network', 'mocking', 'interviews'] },
   'locator-strategies': { difficulty: 'advanced', tags: ['locator strategies', 'locators', 'xpath', 'css selectors', 'playwright', 'selenium', 'shadow dom', 'iframes'] },
   'javascript-concepts': { difficulty: 'beginner', tags: ['javascript', 'strings', 'arrays', 'objects', 'functions', 'async', 'regex', 'concepts'] },
-  'jira-concepts': { difficulty: 'beginner', tags: ['jira', 'qa workflow', 'jql', 'defect tracking', 'agile', 'scrum'] }
+  'jira-concepts': { difficulty: 'beginner', tags: ['jira', 'qa workflow', 'jql', 'defect tracking', 'agile', 'scrum'] },
+  'core-java-plan': { difficulty: 'beginner', tags: ['core java', 'java', 'jdk', 'jre', 'jvm', 'data types', 'variables', 'operators', 'casting', 'loops', 'methods', 'constructors', 'oop', 'inheritance', 'abstraction', 'interfaces', 'encapsulation', 'polymorphism', 'strings', 'arrays', 'exceptions', 'collections', 'multithreading'] }
 };
 
 function getCardDifficulty(card) {
@@ -1008,12 +1118,14 @@ function filterGuides() {
     const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
     const description = card.querySelector('p')?.textContent.toLowerCase() || '';
     const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase());
+    const cardText = card.textContent.toLowerCase();
     const difficulty = getCardDifficulty(card);
 
     const matchesSearch = searchTerm === '' || 
       title.includes(searchTerm) || 
       description.includes(searchTerm) || 
-      tags.some(tag => tag.includes(searchTerm));
+      tags.some(tag => tag.includes(searchTerm)) ||
+      cardText.includes(searchTerm);
 
     const matchesFilter = activeFilter === 'all' || difficulty === activeFilter;
     
@@ -1132,6 +1244,65 @@ topicCards.forEach(card => {
   card.addEventListener('blur', () => hideTopicPreview(topicPreview));
   topicPreview.addEventListener('mouseenter', cancelHideTopicPreview);
   topicPreview.addEventListener('mouseleave', () => hideTopicPreview(topicPreview));
+});
+
+// Keep super cards compact; open their complete topic list in a dialog.
+const roadmapModal = document.getElementById('roadmapModal');
+const roadmapModalTitle = document.getElementById('roadmapModalTitle');
+const roadmapModalDescription = document.getElementById('roadmapModalDescription');
+const roadmapModalContent = document.getElementById('roadmapModalContent');
+const roadmapModalStatus = document.getElementById('roadmapModalStatus');
+const modalClose = roadmapModal.querySelector('.modal-close');
+let lastFocusedCard;
+
+function openRoadmap(card) {
+  lastFocusedCard = card;
+  roadmapModalTitle.textContent = card.querySelector('h3')?.textContent || 'Learning roadmap';
+  roadmapModalDescription.textContent = card.querySelector('p')?.textContent || '';
+  roadmapModalStatus.textContent = '';
+
+  const progress = card.querySelector('.roadmap-progress');
+  const topics = Array.from(card.querySelectorAll('.card-topics > .topic-card'));
+  const topicMarkup = topics.map(topic => {
+    if (topic.matches('a') && topic.href) return topic.outerHTML;
+    return `<button type="button" class="topic-card modal-topic-card" data-title="${topic.querySelector('strong')?.textContent || 'Topic'}">${topic.innerHTML}</button>`;
+  }).join('');
+  roadmapModalContent.innerHTML = `${progress ? progress.outerHTML : ''}<div class="card-topics">${topicMarkup}</div>`;
+  roadmapModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  modalClose.focus();
+
+  roadmapModalContent.querySelectorAll('.modal-topic-card').forEach(topic => {
+    topic.addEventListener('click', () => {
+      roadmapModalStatus.textContent = `${topic.dataset.title} is coming soon — the roadmap is being prepared.`;
+    });
+  });
+}
+
+function closeRoadmap() {
+  roadmapModal.hidden = true;
+  document.body.style.overflow = '';
+  lastFocusedCard?.focus();
+}
+
+document.querySelectorAll('.card.super-card[role="button"]').forEach(card => {
+  card.addEventListener('click', event => {
+    if (!event.target.closest('a, button')) openRoadmap(card);
+  });
+  card.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openRoadmap(card);
+    }
+  });
+});
+
+modalClose.addEventListener('click', closeRoadmap);
+roadmapModal.addEventListener('click', event => {
+  if (event.target === roadmapModal) closeRoadmap();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !roadmapModal.hidden) closeRoadmap();
 });
 </script>
 </body>
