@@ -157,6 +157,12 @@
   .author-card{display:inline-flex;align-items:center;gap:10px;margin-top:4px;padding:9px 12px;border:1px solid var(--rule);border-radius:9px;color:var(--ink-70);font-size:12px;}
   .author-mark{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-family:var(--mono);font-weight:700;font-size:10px;}
   .author-card strong{display:block;color:var(--ink);font-size:12px;}
+  .setup-cta{margin-top:24px;padding:20px;border:1px solid #C97C2C;border-radius:14px;background:linear-gradient(135deg,#FFF7EA,#F6E9D8);display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 12px 30px rgba(156,94,30,.10);}
+  .setup-cta p{margin:4px 0 0;color:var(--ink-70);font-size:13px;}
+  .setup-cta-title{font-family:var(--serif);font-size:21px;color:var(--ink);}
+  .setup-button{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;padding:14px 19px;border-radius:9px;background:var(--amber-deep);color:var(--paper);font-weight:700;text-decoration:none;font-size:14px;box-shadow:0 5px 12px rgba(156,94,30,.24);transition:transform .18s ease,background .18s ease;}
+  .setup-button:hover,.setup-button:focus-visible{background:var(--ink);transform:translateY(-2px);outline:none;}
+  @media (max-width:620px){.setup-cta{align-items:stretch;flex-direction:column;}.setup-button{width:100%;}}
 
   /* ===== hero split: text + illustration ===== */
   .hero-top{
@@ -736,6 +742,8 @@
       </svg>
     </div>
   </div>
+
+  <div class="setup-cta" role="complementary" aria-label="Java installation prerequisite"><div><div class="setup-cta-title">Before you start: install Java (JDK)</div><p>Set up Java and configure your system so you can compile and run every example in this lesson.</p></div><a class="setup-button" href="./install-configure-java.html">Install &amp; Configure Java →</a></div>
 
   <div class="author-card" aria-label="Lesson author"><span class="author-mark" aria-hidden="true">PMK</span><span><strong>Written by Prashanth M K</strong>Learn With PMK71 · Core Java learning series</span></div>
 
